@@ -22,6 +22,10 @@ export default function HomeScreen() {
     setPassword(text);
   };
 
+  const handleForgotPassword = () => {
+    console.log("Forgot password pressed");
+  };
+
   const handleLogin = () => {
     if (email.length === 0 || password.length === 0) {
       console.log("Email and password are required");
@@ -59,6 +63,10 @@ export default function HomeScreen() {
           secureTextEntry
         />
 
+        <Text style={styles.forgotPassword} onPress={handleForgotPassword}>
+          Forgot Password?
+        </Text>
+
         <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
           <Text style={styles.loginButtonText}>Login</Text>
         </TouchableOpacity>
@@ -74,6 +82,7 @@ export default function HomeScreen() {
   );
 }
 
+// Styles for the HomeScreen component
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -113,6 +122,13 @@ const styles = StyleSheet.create({
     color: "#007AFF", // Blue text to match outline
     fontSize: 16,
     fontWeight: "bold",
+  },
+  forgotPassword: {
+    fontSize: 16,
+    color: "#007AFF",
+    fontWeight: "bold",
+    alignSelf: "flex-end", // Right-align under the input
+    marginBottom: 15, // Space before the Login button
   },
   signupContainer: {
     flexDirection: "row",
