@@ -1,10 +1,11 @@
 import { Stack } from "expo-router";
 
+// include screens folder stacks here as well, to disable headerShown. See line 8
 export default function RootLayout() {
   return (
     <Stack>
-      <Stack.Screen name="index" options={{ title: "goCite" }} />
-      {/* Add other screens here if needed */}
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="screens/homePage" options={{ headerShown: false }} />
     </Stack>
   );
 }
