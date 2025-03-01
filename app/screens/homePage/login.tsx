@@ -10,6 +10,7 @@ import {
 import { router, useRouter } from "expo-router"; // Import useRouter
 import { useState } from "react";
 import LoginForm from "@/app/components/compound/auth/loginForm";
+import validateEmail from "@/app/utils/validateEmail";
 
 export default function HomeScreen() {
   const [email, setEmail] = useState("");

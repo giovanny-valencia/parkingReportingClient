@@ -1,12 +1,6 @@
-import {
-  Keyboard,
-  TouchableWithoutFeedback,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import InputField from "../../common/inputField";
-import { InputType, InputFieldProps } from "../../common/inputField";
+import { InputType } from "../../common/inputField";
 
 interface LoginFormProps {
   email: string;
@@ -16,15 +10,6 @@ interface LoginFormProps {
   setPassword: (password: string) => void;
   // setError: (error: string) => void;
 }
-
-/**
- * Login form component
- *
- * - render email field, incorrect email format logic handled by homepage
- * - render password field, incorrect credentials (includes email) handled by homepage
- * - render login button
- * - render sign up link
- */
 
 export default function LoginForm({
   email,

@@ -1,13 +1,14 @@
 import {
+  StyleSheet,
   Text,
   TouchableWithoutFeedback,
-  TouchableOpacity,
   Keyboard,
-  TextInput,
   View,
+  TouchableOpacity,
 } from "react-native";
-import { router, useRouter } from "expo-router"; // Import useRouter
 import { useState } from "react";
+import validateEmail from "@/app/utils/validateEmail";
+import SignUpForm from "@/app/components/compound/auth/signUpForm";
 
 export default function SignUpScreen() {
   const [firstName, setFirstName] = useState("");
@@ -15,78 +16,123 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState(""); // use a more suitable type for date
+  const [dateOfBirth, setDateOfBirth] = useState(
+    new Date().toLocaleDateString("en-US")
+  ); // String
+  const [errorType, setErrorType] = useState(""); // Add error type state
+  const [error, setError] = useState<string | null>(null); // Add error state
 
   function handleFirstNameChange(text: string) {
     setFirstName(text);
   }
 
+  function handleLastNameChange(text: string) {
+    setLastName(text);
+  }
+
+  function handleEmailChange(text: string) {
+    setEmail(text);
+    validateEmail({ email: text, setError }); // Validate on change
+  }
+
+  function handlePasswordChange(text: string) {
+    setPassword(text);
+  }
+
+  function handleConfirmPasswordChange(text: string) {
+    setConfirmPassword(text);
+  }
+
+  function handleDateChange(dateString: string) {
+    const parsedDate = new Date(dateString);
+    if (!isNaN(parsedDate.getTime())) {
+      setDateOfBirth(dateString); // Keep as string
+    }
+  }
+
+  function handleSignUp() {
+    // Add your sign-up logic here
+    console.log("Sign up attempted with:", {
+      firstName,
+      lastName,
+      email,
+      password,
+      confirmPassword,
+      dateOfBirth,
+    });
+  }
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View>
-        <Text>Sign Up</Text>
-        <Text>First Name: </Text>
-        <TextInput
-          placeholder="First name"
-          value={firstName}
-          onChangeText={handleFirstNameChange} // Pass the function directly
-          keyboardType="name-phone-pad"
-          autoCapitalize="words"
+      <View style={styles.container}>
+        <SignUpForm
+          firstName={firstName}
+          lastName={lastName}
+          email={email}
+          password={password}
+          confirmPassword={confirmPassword}
+          dateOfBirth={dateOfBirth} // String
+          error={error || ""} // Pass error, default to empty string if null
+          errorType={errorType} // Pass error type
+          setFirstName={handleFirstNameChange}
+          setLastName={handleLastNameChange}
+          setEmail={handleEmailChange}
+          setPassword={handlePasswordChange}
+          setConfirmPassword={handleConfirmPasswordChange}
+          setDateOfBirth={handleDateChange}
         />
-        <Text>Last Name: </Text>
-        <TextInput
-          placeholder="Last name"
-          value={lastName}
-          onChangeText={(text) => setLastName(text)} // Pass the function directly
-          keyboardType="name-phone-pad"
-          autoCapitalize="words"
-        />
-        <Text>Email: </Text>
-        <TextInput
-          placeholder="email"
-          value={email}
-          onChangeText={setEmail} // Pass the function directly
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-        // Add a date picker for date of birth
-        <Text>Password: </Text>
-        <TextInput
-          placeholder="password"
-          value={password}
-          onChangeText={setPassword} // Pass the function directly
-          secureTextEntry
-          autoCapitalize="none"
-        />
-        <Text>Confirm Password: </Text>
-        <TextInput
-          placeholder="confirm password"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword} // Pass the function directly
-          secureTextEntry
-          autoCapitalize="none"
-        />
-        <TouchableOpacity>
-          <Text>Create Account</Text>
+
+        <TouchableOpacity style={styles.signupButton} onPress={handleSignUp}>
+          <Text style={styles.signupButtonText}>Sign Up</Text>
         </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
   );
-
-  /**
-   * surface level validation for user input:
-   * - check if all fields are filled
-   * - does password and confirm password match
-   * - is password strong enough (pass criteria)
-   * - is date of birth valid (in the past, valid date, over 18 years from today)
-   * - is email valid and not already registered //backend validation
-   * - is user not already registered //backend validation
-   */
-
-  // validate email
-  function validateEmail(email: string) {
-    const regex =
-      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    return regex.test(email);
-  }
 }
+
+/**
+ * Surface-level validation for user input (to be implemented):
+ * - Check if all fields are filled
+ * - Does password and confirm password match
+ * - Is password strong enough (pass criteria)
+ * - Is date of birth valid (in the past, valid date, over 18 years from today)
+ * - Is email valid and not already registered (backend validation)
+ * - Is user not already registered (backend validation)
+ */
+
+// Styles
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  title: {
+    textAlign: "center",
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 28,
+  },
+  error: {
+    color: "red",
+    fontSize: 12,
+    marginBottom: 16,
+  },
+  signupButton: {
+    borderWidth: 2,
+    borderColor: "#007AFF",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    width: "100%",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  signupButtonText: {
+    color: "#007AFF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+});

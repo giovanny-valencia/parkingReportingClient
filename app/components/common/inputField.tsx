@@ -16,16 +16,17 @@ import DateTimePicker, {
 export enum InputType {
   email = "Email",
   password = "Password",
-  firstName = "First name",
-  lastName = "Last name",
+  firstName = "First Name",
+  lastName = "Last Name",
   dateOfBirth = "Date of Birth",
-  phoneNumber = "Phone number",
+  phoneNumber = "Phone Number",
+  confirmPassword = "Confirm Password",
 }
 
 export interface InputFieldProps {
   label: InputType; // label for the input field, e.g., "Email" or "Password"
   value: string; // value of the input field to display to user
-  onChangeText: (text: string) => void; // function to handle text change
+  onChangeText: (text: string) => void; // Always expects a string
 }
 
 const renderers: Record<InputType, (props: InputFieldProps) => JSX.Element> = {
@@ -35,6 +36,7 @@ const renderers: Record<InputType, (props: InputFieldProps) => JSX.Element> = {
   [InputType.lastName]: renderDefaultField,
   [InputType.phoneNumber]: renderDefaultField,
   [InputType.dateOfBirth]: renderDateField,
+  [InputType.confirmPassword]: renderDefaultField,
 };
 
 const keyboardTypes: Record<InputType, KeyboardTypeOptions> = {
@@ -44,6 +46,7 @@ const keyboardTypes: Record<InputType, KeyboardTypeOptions> = {
   [InputType.lastName]: "default",
   [InputType.dateOfBirth]: "numeric", // resolve this later
   [InputType.phoneNumber]: "phone-pad",
+  [InputType.confirmPassword]: "default",
 };
 
 function renderDefaultField({ label, value, onChangeText }: InputFieldProps) {
@@ -51,7 +54,7 @@ function renderDefaultField({ label, value, onChangeText }: InputFieldProps) {
     <>
       <TextInput
         style={styles.input}
-        placeholder={label.toLowerCase()}// placeholder based on label
+        placeholder={label.toLowerCase()} // placeholder based on label
         placeholderTextColor={"grey"} // placeholder color
         value={value} // value of the input field
         onChangeText={onChangeText} // Pass the function directly
