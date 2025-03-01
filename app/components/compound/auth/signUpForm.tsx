@@ -4,6 +4,7 @@ import { InputType } from "../../common/inputField";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import { FieldError } from "@/app/screens/homePage/signup";
 
 interface SignUpFormProps {
   firstName: string;
@@ -12,8 +13,7 @@ interface SignUpFormProps {
   password: string;
   confirmPassword: string;
   dateOfBirth: string; // Align with string
-  errorType: string;
-  error: string;
+  error: FieldError[];
   setFirstName: (text: string) => void;
   setLastName: (text: string) => void;
   setEmail: (text: string) => void;
@@ -29,7 +29,6 @@ export default function SignUpForm({
   password,
   confirmPassword,
   dateOfBirth,
-  errorType,
   error,
   setFirstName,
   setLastName,

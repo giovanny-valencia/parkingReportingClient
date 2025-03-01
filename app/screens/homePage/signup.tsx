@@ -10,6 +10,20 @@ import { useState } from "react";
 import validateEmail from "@/app/utils/validateEmail";
 import SignUpForm from "@/app/components/compound/auth/signUpForm";
 
+export interface FieldError {
+  id: number;
+  message: string;
+}
+
+const FIELD_INDICES = {
+  firstName: 0,
+  lastName: 1,
+  email: 2,
+  password: 3,
+  confirmPassword: 4,
+  dateOfBirth: 5,
+} as const;
+
 export default function SignUpScreen() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -18,9 +32,29 @@ export default function SignUpScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState(
     new Date().toLocaleDateString("en-US")
-  ); // String
-  const [errorType, setErrorType] = useState(""); // Add error type state
-  const [error, setError] = useState<string | null>(null); // Add error state
+  ); // Default to today's date, fix later
+
+  const initialErrors: FieldError[] = Object.values(FIELD_INDICES).map(
+    (index) => ({
+      id: index,
+      message: "",
+    })
+  );
+
+  const [error, setError] = useState<FieldError[]>(initialErrors);
+
+  function handleSetError(errorIndex: number, errorMessage: string) {
+    const updatedErrors = error.map((fieldError) => {
+      if (fieldError.id === errorIndex) {
+        return {
+          ...fieldError,
+          message: errorMessage,
+        };
+      }
+      return fieldError;
+    });
+    setError(updatedErrors);
+  }
 
   function handleFirstNameChange(text: string) {
     setFirstName(text);
@@ -32,7 +66,6 @@ export default function SignUpScreen() {
 
   function handleEmailChange(text: string) {
     setEmail(text);
-    validateEmail({ email: text, setError }); // Validate on change
   }
 
   function handlePasswordChange(text: string) {
@@ -43,6 +76,7 @@ export default function SignUpScreen() {
     setConfirmPassword(text);
   }
 
+  // fix later
   function handleDateChange(dateString: string) {
     const parsedDate = new Date(dateString);
     if (!isNaN(parsedDate.getTime())) {
@@ -72,8 +106,7 @@ export default function SignUpScreen() {
           password={password}
           confirmPassword={confirmPassword}
           dateOfBirth={dateOfBirth} // String
-          error={error || ""} // Pass error, default to empty string if null
-          errorType={errorType} // Pass error type
+          error={error} // Pass error, default to empty string if null
           setFirstName={handleFirstNameChange}
           setLastName={handleLastNameChange}
           setEmail={handleEmailChange}

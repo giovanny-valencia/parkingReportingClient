@@ -59,7 +59,7 @@ function renderDefaultField({ label, value, onChangeText }: InputFieldProps) {
         value={value} // value of the input field
         onChangeText={onChangeText} // Pass the function directly
         keyboardType={keyboardTypes[label]} // keyboardType based on label
-        secureTextEntry={label === InputType.password} // secureTextEntry for password
+        secureTextEntry={label === InputType.password || label === InputType.confirmPassword} // secureTextEntry for password
         autoCapitalize={label === InputType.password ? "none" : "words"} // autoCapitalize for non-password fields
       />
     </>
@@ -69,7 +69,7 @@ function renderDefaultField({ label, value, onChangeText }: InputFieldProps) {
 function renderDateField({ label, value, onChangeText }: InputFieldProps) {
   const [showPicker, setShowPicker] = useState(false);
 
-  // Use DateTimePickerEvent instead of Event
+  // Use DateTimePickerEvent instead of Event, ***fix later
   const onDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     setShowPicker(false);
     if (selectedDate) {
