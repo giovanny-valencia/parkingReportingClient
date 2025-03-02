@@ -18,7 +18,7 @@ export default function HomeScreen() {
   const [error, setError] = useState("");
 
   const forgotPasswordPath = "/screens/homePage/forgot-password";
-  const signupPath = "/screens/homePage/signup";
+  const signupPath = "/screens/homePage/signUp";
 
   // Handle text input changes (React Native passes the text directly)
   const handleEmailChange = (text: string) => {
@@ -51,7 +51,7 @@ export default function HomeScreen() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <LoginForm 
+        <LoginForm
           email={email}
           password={password}
           error={error}

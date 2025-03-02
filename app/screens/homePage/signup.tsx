@@ -30,9 +30,11 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState(
-    new Date().toLocaleDateString("en-US")
-  ); // Default to today's date, fix later
+
+  const [month, setMonth] = useState("");
+  const [day, setDay] = useState("");
+  const [year, setYear] = useState("");
+
 
   const initialErrors: FieldError[] = Object.values(FIELD_INDICES).map(
     (index) => ({
@@ -76,24 +78,31 @@ export default function SignUpScreen() {
     setConfirmPassword(text);
   }
 
-  // fix later
-  function handleDateChange(dateString: string) {
-    const parsedDate = new Date(dateString);
-    if (!isNaN(parsedDate.getTime())) {
-      setDateOfBirth(dateString); // Keep as string
-    }
+  function handleMonthChange(month: number | string) {
+    console.log("Month changed to:", month);
+    setMonth(month.toString());
+  }
+
+  function handleDayChange(day: number | string) {
+    console.log("Day changed to:", day);
+    setDay(day.toString());
+  }
+
+  function handleYearChange(year: number | string) {
+    console.log("Year changed to:", year);
+    setYear(year.toString());
   }
 
   function handleSignUp() {
     // Add your sign-up logic here
-    console.log("Sign up attempted with:", {
+    console.log(
+      "Sign up attempted with:",
       firstName,
       lastName,
       email,
       password,
-      confirmPassword,
-      dateOfBirth,
-    });
+      confirmPassword
+    );
   }
 
   return (
@@ -105,14 +114,21 @@ export default function SignUpScreen() {
           email={email}
           password={password}
           confirmPassword={confirmPassword}
-          dateOfBirth={dateOfBirth} // String
           error={error} // Pass error, default to empty string if null
+
+          month={month}
+          day={day}
+          year={year}
+
           setFirstName={handleFirstNameChange}
           setLastName={handleLastNameChange}
           setEmail={handleEmailChange}
           setPassword={handlePasswordChange}
           setConfirmPassword={handleConfirmPasswordChange}
-          setDateOfBirth={handleDateChange}
+
+          setMonth={handleMonthChange}
+          setDay={handleDayChange}
+          setYear={handleYearChange}
         />
 
         <TouchableOpacity style={styles.signupButton} onPress={handleSignUp}>

@@ -6,7 +6,7 @@ export default function HomePageLayout() {
       <Stack>
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="forgot-password" options={{ headerShown: false }} />
-        <Stack.Screen name="signup" options={{ headerShown: false }} />
+        <Stack.Screen name="signUp" options={{ headerShown: false }} />
       </Stack>
     );
 }
