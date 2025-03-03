@@ -9,6 +9,7 @@ import {
 import { useState } from "react";
 import validateEmail from "@/app/utils/validateEmail";
 import SignUpForm from "@/app/components/compound/auth/signUpForm";
+import { router } from "expo-router";
 
 export interface FieldError {
   id: number;
@@ -38,7 +39,7 @@ export default function SignUpScreen() {
       message: "",
     })
   );
-  
+
   const [error, setError] = useState<FieldError[]>(initialErrors);
 
   function handleSetError(errorIndex: number, errorMessage: string) {
@@ -80,6 +81,10 @@ export default function SignUpScreen() {
 
   function handleSignUp() {
     // Add your sign-up logic here
+    const tempDate = new Date(date);
+
+    const fDate = tempDate.toLocaleDateString("en-US", {month: "2-digit", day: "2-digit", year: "numeric"});
+
     console.log(
       "Sign up attempted with:",
       firstName,
@@ -87,7 +92,8 @@ export default function SignUpScreen() {
       email,
       password,
       confirmPassword,
-      'DoB:', date.getMonth()+1 + "/" + date.getDate() + "/" + date.getFullYear()
+      "DoB:",
+      fDate
     );
   }
 
@@ -113,9 +119,20 @@ export default function SignUpScreen() {
         <TouchableOpacity style={styles.signupButton} onPress={handleSignUp}>
           <Text style={styles.signupButtonText}>Sign Up</Text>
         </TouchableOpacity>
+
+        <Text style={styles.label}>
+          Already have an account?{" "}
+          <Text style={styles.backLoginText} onPress={handleBack}>
+            Log in
+          </Text>
+        </Text>
       </View>
     </TouchableWithoutFeedback>
   );
+
+  function handleBack() {
+    router.back(); // Go back to the previous screen
+  }
 }
 
 /**
@@ -156,11 +173,23 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     width: "100%",
     alignItems: "center",
+    marginTop: 20,
     marginBottom: 15,
   },
   signupButtonText: {
     color: "#007AFF",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  backLoginText: {
+    fontSize: 16,
+    color: "#007AFF",
+    fontWeight: "bold",
+  },
+  label: {
+    width: "100%",
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 20,
   },
 });

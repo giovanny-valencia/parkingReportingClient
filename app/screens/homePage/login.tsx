@@ -13,7 +13,7 @@ import LoginForm from "@/app/components/compound/auth/loginForm";
 import validateEmail from "@/app/utils/validateEmail";
 
 //export default
-  export default function HomeScreen() {
+export default function HomeScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -21,7 +21,7 @@ import validateEmail from "@/app/utils/validateEmail";
   const forgotPasswordPath = "/screens/homePage/forgot-password";
   const signupPath = "/screens/homePage/signUp";
 
-  // Handle text input changes (React Native passes the text directly)
+  // Handle text input changes by validating NEW data
   const handleEmailChange = (text: string) => {
     setEmail(text);
   };
@@ -36,12 +36,18 @@ import validateEmail from "@/app/utils/validateEmail";
   };
 
   const handleLogin = () => {
-    if (email.length === 0 || password.length === 0) {
-      console.log("Email and password are required");
-    } else {
-      console.log("Login attempted with:", { email, password });
-      // Add your login logic here (e.g., API call)
+    // Validate the new email input
+    validateEmail({
+      email,
+      handleSetError: setError,
+    });
+
+    if (error.length > 0) {
+      console.log("Email error:", error);
     }
+
+    console.log("Login attempted with:", { email, password });
+    // Add your login logic here (e.g., API call)
   };
 
   const handleSignUp = () => {
@@ -129,6 +135,7 @@ const styles = StyleSheet.create({
   signupText: {
     fontSize: 16, // Match size with signupLink
     color: "#000", // Default text color
+    textAlign: "center", // Center the text
   },
   signupLink: {
     fontSize: 16, // Same size as signupText

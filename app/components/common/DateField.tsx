@@ -60,12 +60,24 @@ export default function DateField({ value, onChange }: DateFieldProps) {
       {Platform.OS === "android" && (
         <>
           <Text onPress={showDatepicker} style={styles.input}>
-            {value.getMonth()}/{value.getDate()}/{value.getFullYear()}
+            {formatDate(value)}
           </Text>
         </>
       )}
     </View>
   );
+}
+
+function formatDate(date: Date) {
+  const tempDate = new Date(date);
+
+  const fDate = tempDate.toLocaleDateString("en-US", {
+    month: "long",
+    day: "2-digit",
+    year: "numeric",
+  });
+
+  return fDate;
 }
 
 //styles
