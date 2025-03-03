@@ -12,7 +12,8 @@ import { useState } from "react";
 import LoginForm from "@/app/components/compound/auth/loginForm";
 import validateEmail from "@/app/utils/validateEmail";
 
-export default function HomeScreen() {
+//export default
+  export default function HomeScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");

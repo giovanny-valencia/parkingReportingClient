@@ -30,11 +30,7 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  const [month, setMonth] = useState("");
-  const [day, setDay] = useState("");
-  const [year, setYear] = useState("");
-
+  const [date, setDate] = useState(new Date());
 
   const initialErrors: FieldError[] = Object.values(FIELD_INDICES).map(
     (index) => ({
@@ -42,7 +38,7 @@ export default function SignUpScreen() {
       message: "",
     })
   );
-
+  
   const [error, setError] = useState<FieldError[]>(initialErrors);
 
   function handleSetError(errorIndex: number, errorMessage: string) {
@@ -56,6 +52,10 @@ export default function SignUpScreen() {
       return fieldError;
     });
     setError(updatedErrors);
+  }
+
+  function handleSetDate(date: Date) {
+    setDate(date);
   }
 
   function handleFirstNameChange(text: string) {
@@ -78,21 +78,6 @@ export default function SignUpScreen() {
     setConfirmPassword(text);
   }
 
-  function handleMonthChange(month: number | string) {
-    console.log("Month changed to:", month);
-    setMonth(month.toString());
-  }
-
-  function handleDayChange(day: number | string) {
-    console.log("Day changed to:", day);
-    setDay(day.toString());
-  }
-
-  function handleYearChange(year: number | string) {
-    console.log("Year changed to:", year);
-    setYear(year.toString());
-  }
-
   function handleSignUp() {
     // Add your sign-up logic here
     console.log(
@@ -101,7 +86,8 @@ export default function SignUpScreen() {
       lastName,
       email,
       password,
-      confirmPassword
+      confirmPassword,
+      'DoB:', date.getMonth()+1 + "/" + date.getDate() + "/" + date.getFullYear()
     );
   }
 
@@ -115,20 +101,13 @@ export default function SignUpScreen() {
           password={password}
           confirmPassword={confirmPassword}
           error={error} // Pass error, default to empty string if null
-
-          month={month}
-          day={day}
-          year={year}
-
+          date={date}
           setFirstName={handleFirstNameChange}
           setLastName={handleLastNameChange}
           setEmail={handleEmailChange}
           setPassword={handlePasswordChange}
           setConfirmPassword={handleConfirmPasswordChange}
-
-          setMonth={handleMonthChange}
-          setDay={handleDayChange}
-          setYear={handleYearChange}
+          setDate={handleSetDate}
         />
 
         <TouchableOpacity style={styles.signupButton} onPress={handleSignUp}>
