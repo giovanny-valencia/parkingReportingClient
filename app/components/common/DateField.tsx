@@ -1,11 +1,4 @@
-import {
-  Text,
-  StyleSheet,
-  View,
-  Platform,
-  useColorScheme,
-  Button,
-} from "react-native";
+import { Text, StyleSheet, View, Platform } from "react-native";
 import DateTimePicker, {
   DateTimePickerAndroid,
   DateTimePickerEvent,
@@ -15,6 +8,18 @@ import { useState } from "react";
 interface DateFieldProps {
   value: Date;
   onChange: (date: Date) => void; // Still typed to expect a Date
+}
+
+function formatDate(date: Date) {
+  const tempDate = new Date(date);
+
+  const fDate = tempDate.toLocaleDateString("en-US", {
+    month: "long",
+    day: "2-digit",
+    year: "numeric",
+  });
+
+  return fDate;
 }
 
 export default function DateField({ value, onChange }: DateFieldProps) {
@@ -66,18 +71,6 @@ export default function DateField({ value, onChange }: DateFieldProps) {
       )}
     </View>
   );
-}
-
-function formatDate(date: Date) {
-  const tempDate = new Date(date);
-
-  const fDate = tempDate.toLocaleDateString("en-US", {
-    month: "long",
-    day: "2-digit",
-    year: "numeric",
-  });
-
-  return fDate;
 }
 
 //styles

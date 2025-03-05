@@ -6,17 +6,20 @@ import {
   View,
   TouchableOpacity,
 } from "react-native";
-import { useState } from "react";
-import validateEmail from "@/app/utils/validateEmail";
+import { useState, useEffect } from "react";
 import SignUpForm from "@/app/components/compound/auth/signUpForm";
 import { router } from "expo-router";
+import validateName from "@/app/utils/validateName";
+import validateEmail from "@/app/utils/validateEmail";
+import validatePassword from "@/app/utils/validatePassword";
+import { VALIDATION_TYPE } from "@/app/utils/validatePassword";
 
 export interface FieldError {
   id: number;
   message: string;
 }
 
-const FIELD_INDICES = {
+export const FIELD_INDICES = {
   firstName: 0,
   lastName: 1,
   email: 2,
@@ -32,6 +35,7 @@ export default function SignUpScreen() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [date, setDate] = useState(new Date());
+  const [validationTriggered, setValidationTriggered] = useState(false); // Track validation start
 
   const initialErrors: FieldError[] = Object.values(FIELD_INDICES).map(
     (index) => ({
@@ -42,60 +46,108 @@ export default function SignUpScreen() {
 
   const [error, setError] = useState<FieldError[]>(initialErrors);
 
-  function handleSetError(errorIndex: number, errorMessage: string) {
-    const updatedErrors = error.map((fieldError) => {
-      if (fieldError.id === errorIndex) {
-        return {
-          ...fieldError,
-          message: errorMessage,
-        };
-      }
-      return fieldError;
-    });
-    setError(updatedErrors);
-  }
-
-  function handleSetDate(date: Date) {
-    setDate(date);
-  }
-
-  function handleFirstNameChange(text: string) {
-    setFirstName(text);
-  }
-
-  function handleLastNameChange(text: string) {
-    setLastName(text);
-  }
-
-  function handleEmailChange(text: string) {
-    setEmail(text);
-  }
-
-  function handlePasswordChange(text: string) {
-    setPassword(text);
-  }
-
-  function handleConfirmPasswordChange(text: string) {
-    setConfirmPassword(text);
-  }
+  //temp
+  const tempDate = new Date(date);
+  const fDate = tempDate.toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric",
+  });
+  //temp
 
   function handleSignUp() {
-    // Add your sign-up logic here
-    const tempDate = new Date(date);
+    validateSignUp();
 
-    const fDate = tempDate.toLocaleDateString("en-US", {month: "2-digit", day: "2-digit", year: "numeric"});
+    signUpTest(firstName, lastName, email, password, confirmPassword, fDate);
+  }
 
-    console.log(
-      "Sign up attempted with:",
-      firstName,
-      lastName,
-      email,
-      password,
-      confirmPassword,
-      "DoB:",
-      fDate
+  function validateSignUp() {
+    //first name
+    validateName({
+      name: firstName,
+      handleSetError: handleSetError,
+      errorIndex: FIELD_INDICES.firstName,
+    });
+
+    //last name
+    validateName({
+      name: lastName,
+      handleSetError: handleSetError,
+      errorIndex: FIELD_INDICES.lastName,
+    });
+
+    //email
+    validateEmail({
+      email: email,
+      handleSetError: handleSetError,
+      errorIndex: FIELD_INDICES.email,
+    });
+
+    //password
+    validatePassword({
+      type: VALIDATION_TYPE.SIGNUP,
+      password: password,
+      handleSetError: handleSetError,
+      errorIndex: FIELD_INDICES.password,
+    });
+
+    //confirm password
+    if (password !== confirmPassword) {
+      handleSetError(FIELD_INDICES.confirmPassword, "Passwords do not match");
+    } else {
+      handleSetError(FIELD_INDICES.confirmPassword, "");
+    }
+
+    //date of birth
+    if (!dobOver18()) {
+      handleSetError(FIELD_INDICES.dateOfBirth, "Must be over 18 years old");
+    } else {
+      handleSetError(FIELD_INDICES.dateOfBirth, "");
+    }
+
+    setValidationTriggered(true);
+  }
+
+  function handleSetError(errorIndex: number, errorMessage: string) {
+    setError((prevErrors) =>
+      prevErrors.map((error) =>
+        error.id === errorIndex ? { ...error, message: errorMessage } : error
+      )
     );
   }
+
+  // not changing DOB so I didn't bother making it into a util file
+  function dobOver18() {
+    const today = new Date();
+    const dob = new Date(date);
+    const age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    const dayDiff = today.getDate() - dob.getDate();
+
+    if (age > 18) {
+      return true;
+    }
+
+    if (age === 18) {
+      if (monthDiff > 0) {
+        return true;
+      }
+      if (monthDiff === 0 && dayDiff >= 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  useEffect(() => {
+    if (!validationTriggered) return;
+
+    console.log("Errors after validation:", error);
+
+    if (error.every((field) => field.message.length === 0)) {
+      console.log("All fields are valid");
+    }
+  }, [error, validationTriggered]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -108,12 +160,12 @@ export default function SignUpScreen() {
           confirmPassword={confirmPassword}
           error={error} // Pass error, default to empty string if null
           date={date}
-          setFirstName={handleFirstNameChange}
-          setLastName={handleLastNameChange}
-          setEmail={handleEmailChange}
-          setPassword={handlePasswordChange}
-          setConfirmPassword={handleConfirmPasswordChange}
-          setDate={handleSetDate}
+          setFirstName={setFirstName}
+          setLastName={setLastName}
+          setEmail={setEmail}
+          setPassword={setPassword}
+          setConfirmPassword={setConfirmPassword}
+          setDate={setDate}
         />
 
         <TouchableOpacity style={styles.signupButton} onPress={handleSignUp}>
@@ -122,17 +174,13 @@ export default function SignUpScreen() {
 
         <Text style={styles.label}>
           Already have an account?{" "}
-          <Text style={styles.backLoginText} onPress={handleBack}>
+          <Text style={styles.backLoginText} onPress={() => router.back()}>
             Log in
           </Text>
         </Text>
       </View>
     </TouchableWithoutFeedback>
   );
-
-  function handleBack() {
-    router.back(); // Go back to the previous screen
-  }
 }
 
 /**
@@ -193,3 +241,23 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
+
+function signUpTest(
+  firstName: string,
+  lastName: string,
+  email: string,
+  password: string,
+  confirmPassword: string,
+  fDate: string
+) {
+  console.log(
+    "Sign up attempted with:",
+    firstName,
+    lastName,
+    email,
+    password,
+    confirmPassword,
+    "DoB:",
+    fDate
+  );
+}

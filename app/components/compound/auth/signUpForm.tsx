@@ -11,6 +11,7 @@ import { InputType } from "../../common/inputField";
 import { FieldError } from "../../../screens/homePage/signUp";
 import { useState } from "react";
 import DateField from "@/app/components/common/DateField";
+import { FIELD_INDICES } from "../../../screens/homePage/signUp";
 
 interface SignUpFormProps {
   firstName: string;
@@ -54,36 +55,64 @@ export default function SignUpForm({
         value={firstName}
         onChangeText={setFirstName}
       />
+      {error[FIELD_INDICES.firstName].message.length > 0 && (
+        <Text style={styles.error}>
+          {error[FIELD_INDICES.firstName].message}
+        </Text>
+      )}
 
       <InputField
         label={InputType.lastName}
         value={lastName}
         onChangeText={setLastName}
       />
+      {error[FIELD_INDICES.lastName].message.length > 0 && (
+        <Text style={styles.error}>
+          {error[FIELD_INDICES.lastName].message}
+        </Text>
+      )}
 
       <InputField
         label={InputType.email}
         value={email}
         onChangeText={setEmail}
       />
+      {error[FIELD_INDICES.email].message.length > 0 && (
+        <Text style={styles.error}>{error[FIELD_INDICES.email].message}</Text>
+      )}
 
       <InputField
         label={InputType.password}
         value={password}
         onChangeText={setPassword}
       />
+      {error[FIELD_INDICES.password].message.length > 0 && (
+        <Text style={styles.error}>
+          {error[FIELD_INDICES.password].message}
+        </Text>
+      )}
 
       <InputField
         label={InputType.confirmPassword}
         value={confirmPassword}
         onChangeText={setConfirmPassword}
       />
+      {error[FIELD_INDICES.confirmPassword].message.length > 0 && (
+        <Text style={styles.error}>
+          {error[FIELD_INDICES.confirmPassword].message}
+        </Text>
+      )}
 
       <Text style={styles.label}>Date of Birth:</Text>
       <DateField
         value={date}
         onChange={(selectedDate) => setDate(selectedDate)}
       />
+      {error[FIELD_INDICES.dateOfBirth].message.length > 0 && (
+        <Text style={styles.error}>
+          {error[FIELD_INDICES.dateOfBirth].message}
+        </Text>
+      )}
     </View>
   );
 }

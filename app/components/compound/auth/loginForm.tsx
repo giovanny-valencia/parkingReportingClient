@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import InputField from "../../common/inputField";
 import { InputType } from "../../common/inputField";
+import { errorIndex } from "@/app/screens/homePage/login";
 
 interface LoginFormProps {
   email: string;
   password: string;
-  error: string;
+  error: errorIndex[];
   setEmail: (email: string) => void;
   setPassword: (password: string) => void;
-  // setError: (error: string) => void;
 }
 
 export default function LoginForm({
@@ -17,8 +17,10 @@ export default function LoginForm({
   error,
   setEmail,
   setPassword,
-}: // setError,
-LoginFormProps) {
+}: LoginFormProps) {
+  const emailIndex = 0;
+  const passwordIndex = 1;
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>LOGIN</Text>
@@ -29,13 +31,19 @@ LoginFormProps) {
         onChangeText={setEmail}
       />
 
-      {error && error.length > 0 && <Text style={styles.error}>{error}</Text>}
+      {error[emailIndex].message.length > 0 && (
+        <Text style={styles.error}>{error[emailIndex].message}</Text>
+      )}
 
       <InputField
         label={InputType.password}
         value={password}
         onChangeText={setPassword}
       />
+
+      {error[passwordIndex].message.length > 0 && (
+        <Text style={styles.error}>{error[passwordIndex].message}</Text>
+      )}
     </View>
   );
 }

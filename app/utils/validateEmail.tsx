@@ -1,25 +1,22 @@
 interface emailProps {
   email: string;
-  handleSetError: (error: string) => void;
+  handleSetError: (id: number, error: string) => void;
+  errorIndex: number;
 }
-
-export default function validateEmail({
-  email,
-  handleSetError,
-}: emailProps): boolean {
+export default function validateEmail({ email, handleSetError, errorIndex }: emailProps) {
   // Check if email is empty
   if (email.length === 0) {
-    handleSetError("Email is required");
-    return false;
+    handleSetError(errorIndex, "Email is required");
+    return;
   }
 
   // Check if email is valid
   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (!regex.test(email)) {
-    handleSetError("Invalid email");
-    return false;
+    handleSetError(errorIndex, "Invalid email");
+    return;
   }
 
-  handleSetError("");
-  return true;
+  handleSetError(errorIndex, "");
+  return;
 }
