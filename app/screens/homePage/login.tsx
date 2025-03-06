@@ -95,6 +95,11 @@ export default function HomeScreen() {
 
       // If the login is successful, navigate to the home screen
 
+      // if regular user -> navigate to user home screen
+      router.push("/screens/user/userHome");
+
+      // if officer -> navigate to officer home screen
+
       // Otherwise, show an error message
     }
 
