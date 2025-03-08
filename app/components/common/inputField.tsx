@@ -21,6 +21,7 @@ export enum InputType {
   lastName = "Last Name",
   phoneNumber = "Phone Number",
   confirmPassword = "Confirm Password",
+  licensePlate = "Confirm License Plate",
 }
 
 export interface InputFieldProps {
@@ -36,6 +37,7 @@ const renderers: Record<InputType, (props: InputFieldProps) => JSX.Element> = {
   [InputType.lastName]: renderDefaultField,
   [InputType.phoneNumber]: renderDefaultField,
   [InputType.confirmPassword]: renderDefaultField,
+  [InputType.licensePlate]: renderDefaultField,
 };
 
 const keyboardTypes: Record<InputType, KeyboardTypeOptions> = {
@@ -45,6 +47,7 @@ const keyboardTypes: Record<InputType, KeyboardTypeOptions> = {
   [InputType.lastName]: "default",
   [InputType.phoneNumber]: "phone-pad",
   [InputType.confirmPassword]: "default",
+  [InputType.licensePlate]: "default",
 };
 
 function renderDefaultField({ label, value, onChangeText }: InputFieldProps) {

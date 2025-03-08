@@ -7,43 +7,41 @@
  * Usage: clickable buttons
  */
 
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  StyleProp,
+  ViewStyle,
+  TextStyle,
+  ImageStyle,
+} from "react-native";
 
 interface ActionImageButtonProps {
-  image: string;
-  text: string;
+  image: any;
+  text?: string;
   onClick: () => void;
+  containerStyle: StyleProp<ViewStyle>;
+  imageStyle: StyleProp<ImageStyle>;
+  textStyle: StyleProp<TextStyle>;
 }
 
 export default function ActionImageButton({
   image,
   text,
   onClick,
+  containerStyle,
+  imageStyle,
+  textStyle,
 }: ActionImageButtonProps): JSX.Element {
   return (
-    <TouchableOpacity onPress={() => onClick}>
-      <View style={styles.container}>
-        {image.length > 0 && (
-          <Image style={styles.image} source={{ uri: image }} />
-        )}
-        {text.length > 0 && <Text style={styles.text}>{text}</Text>}
+    <TouchableOpacity onPress={() => onClick()}>
+      <View style={containerStyle}>
+        {image && <Image style={imageStyle} source={image} />}
+        {text && text.length > 0 && <Text style={textStyle}>{text}</Text>}
       </View>
     </TouchableOpacity>
   );
 }
-
-// styles
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  image: {
-    width: 50,
-    height: 50,
-  },
-  text: {
-    fontSize: 20,
-  },
-});

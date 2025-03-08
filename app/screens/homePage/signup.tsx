@@ -7,26 +7,16 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useState, useEffect } from "react";
-import SignUpForm from "@/app/components/compound/auth/signUpForm";
+import SignUpForm from "@/app/components/compound/auth/SignUpView";
 import { router } from "expo-router";
 import validateName from "@/app/utils/validateName";
 import validateEmail from "@/app/utils/validateEmail";
 import validatePassword from "@/app/utils/validatePassword";
 import { VALIDATION_TYPE } from "@/app/utils/validatePassword";
-
-export interface FieldError {
-  id: number;
-  message: string;
-}
-
-export const FIELD_INDICES = {
-  firstName: 0,
-  lastName: 1,
-  email: 2,
-  password: 3,
-  confirmPassword: 4,
-  dateOfBirth: 5,
-} as const;
+import {
+  FIELD_INDICES,
+  FieldError,
+} from "@/app/constants/_fieldErrorConstants";
 
 export default function SignUpScreen() {
   const [firstName, setFirstName] = useState("");

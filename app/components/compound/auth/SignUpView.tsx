@@ -6,12 +6,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import InputField from "../../common/inputField";
-import { InputType } from "../../common/inputField";
-import { FieldError } from "../../../screens/homePage/signUp";
+import InputField from "../../common/InputField";
+import { InputType } from "../../common/InputField";
 import { useState } from "react";
 import DateField from "@/app/components/common/DateField";
-import { FIELD_INDICES } from "../../../screens/homePage/signUp";
+import {
+  FIELD_INDICES,
+  FieldError,
+} from "../../../constants/_fieldErrorConstants";
 
 interface SignUpFormProps {
   firstName: string;

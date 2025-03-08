@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { router, useRouter } from "expo-router"; // Import useRouter
 import { useState, useEffect } from "react";
-import LoginForm from "@/app/components/compound/auth/loginForm";
+import LoginForm from "@/app/components/compound/auth/LoginView";
 import validateEmail from "@/app/utils/validateEmail";
 import validatePassword from "@/app/utils/validatePassword";
 import { VALIDATION_TYPE } from "@/app/utils/validatePassword";
@@ -96,7 +96,7 @@ export default function HomeScreen() {
       // If the login is successful, navigate to the home screen
 
       // if regular user -> navigate to user home screen
-      router.push("/screens/user/userHome");
+      router.replace("/screens/user/userHome");
 
       // if officer -> navigate to officer home screen
 

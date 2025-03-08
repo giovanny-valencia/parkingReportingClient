@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
-import InputField from "../../common/inputField";
-import { InputType } from "../../common/inputField";
+import InputField from "../../common/InputField";
+import { InputType } from "../../common/InputField";
 import { errorIndex } from "@/app/screens/homePage/login";
 
 interface LoginFormProps {
