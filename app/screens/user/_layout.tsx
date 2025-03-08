@@ -4,7 +4,7 @@ import { Stack } from "expo-router";
 export default function HomePageLayout() {
   return (
     <Stack>
-      <Stack.Screen name="userHome" options={{ headerShown: false }} />
+      <Stack.Screen name="homePage" options={{ headerShown: false }} />
       <Stack.Screen name="reportPage" options={{ headerShown: false }} />
     </Stack>
   );

@@ -21,15 +21,11 @@ export interface errorIndex {
 const handleForgotPassword = () => {
   console.log("Forgot password pressed");
 
-  const forgotPasswordPath = "/screens/homePage/forgot-password";
-
-  router.push(forgotPasswordPath); // transition to the forgot password screen
+  router.push("./forgotPasswordPage"); // transition to the forgot password screen
 };
 
 const handleSignUp = () => {
-  const signupPath = "/screens/homePage/signUp";
-
-  router.push(signupPath); // Navigate to the sign-up screen
+  router.push("./signUpPage"); // Navigate to the sign-up screen
 };
 
 export default function HomeScreen() {
@@ -96,7 +92,7 @@ export default function HomeScreen() {
       // If the login is successful, navigate to the home screen
 
       // if regular user -> navigate to user home screen
-      router.replace("/screens/user/userHome");
+      router.replace("../user/homePage");
 
       // if officer -> navigate to officer home screen
 
