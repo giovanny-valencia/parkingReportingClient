@@ -1,5 +1,5 @@
 /**
- * Constant image information
+ * Constant image information, avoids circular dependency
  */
 
 export const IMAGE_TYPES = {
@@ -16,4 +16,7 @@ export interface ImageContent {
   type: ImageType;
 }
 
-//export default function ts() { return;}
+// making expo happy
+export default function ts() {
+  return;
+}

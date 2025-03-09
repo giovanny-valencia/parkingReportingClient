@@ -14,20 +14,40 @@ import { useState } from "react";
  */
 
 export default function ReportPage() {
-  // creates the image state array, size of 6 images, first id (0): license plate, remaining (1-5): violations
-  const [reportImages, setReportImages] = useState<ImageContent[]>(() =>
-    Array.from({ length: 6 }, (_, index) => ({
-      id: index++,
+  const [licensePlate, setLicensePlate] = useState("");
+  const [violation, setViolation] = useState("");
+  const [licensePlateImage, setLicensePlateImage] = useState<ImageContent>({
+    id: 0,
+    uri: "",
+    type: IMAGE_TYPES.licensePlate,
+  });
+  const MAX_LENGTH_VIOLATION = 256;
+  // creates the image state array, size of 5 images, (1-5): violations images
+  const [SupportingImages, setSupportingImages] = useState<ImageContent[]>(() =>
+    Array.from({ length: 5 }, (_, index) => ({
+      id: index + 1,
       uri: "",
-      type: index === 0 ? IMAGE_TYPES.licensePlate : IMAGE_TYPES.violation,
+      type: IMAGE_TYPES.violation,
     }))
   );
 
-  reportImages.map( (i) => console.log(i.id, i.type));
+  SupportingImages.map((i) => console.log(i.id, i.type));
 
   return (
     <View style={styles.container}>
-      <ReportView></ReportView>
+      <ReportView
+        licensePlateImage={licensePlateImage}
+        setLicensePlateImage={setLicensePlateImage}
+
+        SupportingImages={SupportingImages}
+        setSupportingImages={setSupportingImages}
+        
+        licensePlate={licensePlate}
+        setLicensePlate={setLicensePlate}
+        violation={violation}
+        setViolation={setViolation}
+        maxLengthViolation={MAX_LENGTH_VIOLATION}
+      ></ReportView>
     </View>
   );
 }
