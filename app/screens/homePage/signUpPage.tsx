@@ -5,6 +5,7 @@ import {
   Keyboard,
   View,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { useState, useEffect } from "react";
 import SignUpForm from "@/app/components/compound/auth/SignUpView";
@@ -84,6 +85,8 @@ export default function SignUpScreen() {
     //confirm password
     if (password !== confirmPassword) {
       handleSetError(FIELD_INDICES.confirmPassword, "Passwords do not match");
+    } else if (confirmPassword.length === 0) {
+      handleSetError(FIELD_INDICES.confirmPassword, "Password is required");
     } else {
       handleSetError(FIELD_INDICES.confirmPassword, "");
     }
@@ -140,7 +143,10 @@ export default function SignUpScreen() {
   }, [error, validationTriggered]);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <ScrollView
+      contentContainerStyle={styles.scrollContainer}
+      keyboardShouldPersistTaps="handled"
+    >
       <View style={styles.container}>
         <SignUpForm
           firstName={firstName}
@@ -169,7 +175,7 @@ export default function SignUpScreen() {
           </Text>
         </Text>
       </View>
-    </TouchableWithoutFeedback>
+    </ScrollView>
   );
 }
 
@@ -187,21 +193,14 @@ export default function SignUpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
+    width: "80%",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    alignSelf: "center",
   },
-  title: {
-    textAlign: "center",
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 28,
-  },
-  error: {
-    color: "red",
-    fontSize: 12,
-    marginBottom: 16,
+  scrollContainer: {
+    flexGrow: 1, // Allows ScrollView content to grow and be scrollable
+    paddingVertical: 20, // Optional: Adds padding to top and bottom
   },
   signupButton: {
     borderWidth: 2,
@@ -225,10 +224,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   label: {
+    textAlign: "center",
     width: "100%",
     fontSize: 16,
-    textAlign: "center",
-    marginTop: 20,
+    alignSelf: "flex-start",
+    marginBottom: 5,
   },
 });
 

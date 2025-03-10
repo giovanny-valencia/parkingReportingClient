@@ -5,10 +5,11 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
 } from "react-native";
 import { router, useRouter } from "expo-router"; // Import useRouter
 import { useState, useEffect } from "react";
-import LoginForm from "@/app/components/compound/auth/LoginView";
+import LoginView from "@/app/components/compound/auth/LoginView";
 import validateEmail from "@/app/utils/validateEmail";
 import validatePassword from "@/app/utils/validatePassword";
 import { VALIDATION_TYPE } from "@/app/utils/validatePassword";
@@ -104,9 +105,12 @@ export default function HomeScreen() {
   }, [error, validationTriggered]);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
       <View style={styles.container}>
-        <LoginForm
+        <LoginView
           email={email}
           password={password}
           error={error}
@@ -129,7 +133,7 @@ export default function HomeScreen() {
           </Text>
         </View>
       </View>
-    </TouchableWithoutFeedback>
+    </ScrollView>
   );
 }
 

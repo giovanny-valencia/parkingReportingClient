@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    marginBottom: 50,
+    marginBottom: 5,
   },
   input: {
     width: "100%",

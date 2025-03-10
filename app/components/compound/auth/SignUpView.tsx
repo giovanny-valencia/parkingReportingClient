@@ -6,8 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import InputField from "../../common/InputField";
-import { InputType } from "../../common/InputField";
+import AnimatedInput from "../../common/AnimatedInput";
 import { useState } from "react";
 import DateField from "@/app/components/common/DateField";
 import {
@@ -52,58 +51,74 @@ export default function SignUpForm({
     <View style={styles.container}>
       <Text style={styles.title}>Register Your Account</Text>
 
-      <InputField
-        label={InputType.firstName}
-        value={firstName}
-        onChangeText={setFirstName}
-      />
-      {error[FIELD_INDICES.firstName].message.length > 0 && (
-        <Text style={styles.error}>
-          {error[FIELD_INDICES.firstName].message}
-        </Text>
-      )}
+      <View style={styles.inputFieldsAndErrorMessage}>
+        <AnimatedInput
+          placeholder="First Name"
+          value={firstName}
+          onChangeText={setFirstName}
+        />
+        {error[FIELD_INDICES.firstName].message.length > 0 && (
+          <Text style={styles.error}>
+            {error[FIELD_INDICES.firstName].message}
+          </Text>
+        )}
+      </View>
 
-      <InputField
-        label={InputType.lastName}
-        value={lastName}
-        onChangeText={setLastName}
-      />
-      {error[FIELD_INDICES.lastName].message.length > 0 && (
-        <Text style={styles.error}>
-          {error[FIELD_INDICES.lastName].message}
-        </Text>
-      )}
+      <View style={styles.inputFieldsAndErrorMessage}>
+        <AnimatedInput
+          placeholder="Last Name"
+          value={lastName}
+          onChangeText={setLastName}
+        />
+        {error[FIELD_INDICES.lastName].message.length > 0 && (
+          <Text style={styles.error}>
+            {error[FIELD_INDICES.lastName].message}
+          </Text>
+        )}
+      </View>
 
-      <InputField
-        label={InputType.email}
-        value={email}
-        onChangeText={setEmail}
-      />
-      {error[FIELD_INDICES.email].message.length > 0 && (
-        <Text style={styles.error}>{error[FIELD_INDICES.email].message}</Text>
-      )}
+      <View style={styles.inputFieldsAndErrorMessage}>
+        <AnimatedInput
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        {error[FIELD_INDICES.email].message.length > 0 && (
+          <Text style={styles.error}>{error[FIELD_INDICES.email].message}</Text>
+        )}
+      </View>
 
-      <InputField
-        label={InputType.password}
-        value={password}
-        onChangeText={setPassword}
-      />
-      {error[FIELD_INDICES.password].message.length > 0 && (
-        <Text style={styles.error}>
-          {error[FIELD_INDICES.password].message}
-        </Text>
-      )}
+      <View style={styles.inputFieldsAndErrorMessage}>
+        <AnimatedInput
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={true}
+          autoCapitalize="none"
+        />
+        {error[FIELD_INDICES.password].message.length > 0 && (
+          <Text style={styles.error}>
+            {error[FIELD_INDICES.password].message}
+          </Text>
+        )}
+      </View>
 
-      <InputField
-        label={InputType.confirmPassword}
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-      />
-      {error[FIELD_INDICES.confirmPassword].message.length > 0 && (
-        <Text style={styles.error}>
-          {error[FIELD_INDICES.confirmPassword].message}
-        </Text>
-      )}
+      <View style={styles.inputFieldsAndErrorMessage}>
+        <AnimatedInput
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry={true}
+          autoCapitalize="none"
+        />
+        {error[FIELD_INDICES.confirmPassword].message.length > 0 && (
+          <Text style={styles.error}>
+            {error[FIELD_INDICES.confirmPassword].message}
+          </Text>
+        )}
+      </View>
 
       <Text style={styles.label}>Date of Birth:</Text>
       <DateField
@@ -133,13 +148,22 @@ const styles = StyleSheet.create({
   error: {
     color: "red",
     fontSize: 12,
-    marginBottom: 16,
   },
   label: {
     width: "100%",
     fontSize: 16,
     alignSelf: "flex-start",
     marginBottom: 5,
+  },
+  datePicker: {
+    width: "100%",
+    height: 40,
+    borderWidth: 1,
+    borderColor: "black",
+    padding: 10,
+    marginBottom: 15,
+    borderRadius: 5,
+    justifyContent: "center",
   },
   input: {
     width: "100%",
@@ -149,5 +173,10 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 15,
     borderRadius: 5,
+  },
+  inputFieldsAndErrorMessage: {
+    width: "100%",
+    backgroundColor: "#F5F5F5",
+    marginBottom: 16,
   },
 });

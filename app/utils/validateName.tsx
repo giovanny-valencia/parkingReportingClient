@@ -22,7 +22,12 @@ export default function validateName({
 }: Fields) {
   // Check if name is empty
   if (name.length === 0) {
-    handleSetError(errorIndex, "Field is required");
+    let message = "First name is required";
+    if (errorIndex === 1) {
+      message = "Last name is required";
+    }
+
+    handleSetError(errorIndex, message);
     return;
   }
 
