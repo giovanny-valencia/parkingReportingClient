@@ -2,6 +2,16 @@ import ReportView from "@/app/components/compound/userForms/ReportView";
 import { View, Text, StyleSheet } from "react-native";
 import { IMAGE_TYPES, ImageContent } from "@/app/constants/imageContent";
 import { useState } from "react";
+import {
+  requestLocationPermission,
+  checkLocationPermission,
+} from "@/app/utils/locationUtils";
+import {
+  requestCameraPermission,
+  checkCameraPermission,
+} from "@/app/utils/cameraUtils";
+import { router } from "expo-router";
+
 /**
  * The logic for the report page.
  *
@@ -12,6 +22,33 @@ import { useState } from "react";
  *
  * @returns
  */
+
+const handleLocationAccess = async () => {
+  // check if location permission is granted
+  const initialStatus = await checkLocationPermission();
+
+  console.log("IS: ", initialStatus);
+
+  if (initialStatus) {
+    return true;
+  }
+
+  // otherwise request it
+  const { granted } = await requestLocationPermission({
+    explainMessage: "goCite needs your location to provide this feature.",
+  });
+  console.log("GOT: ", granted);
+
+  // if granted, return true
+  if (granted) {
+    return true;
+  }
+
+  console.log("when is this called? val: ", granted);
+
+  // otherwise return false
+  return false;
+};
 
 export default function ReportPage() {
   const [licensePlate, setLicensePlate] = useState("");
@@ -33,15 +70,21 @@ export default function ReportPage() {
 
   SupportingImages.map((i) => console.log(i.id, i.type));
 
+  // check for location access
+  handleLocationAccess().then((granted) => {
+    if (!granted) {
+      router.back();
+    }
+  });
+  console.log("left caller");
+
   return (
     <View style={styles.container}>
       <ReportView
         licensePlateImage={licensePlateImage}
         setLicensePlateImage={setLicensePlateImage}
-
         SupportingImages={SupportingImages}
         setSupportingImages={setSupportingImages}
-        
         licensePlate={licensePlate}
         setLicensePlate={setLicensePlate}
         violation={violation}

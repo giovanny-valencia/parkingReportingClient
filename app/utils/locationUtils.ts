@@ -6,36 +6,45 @@ interface LocationPermissionOptions {
 }
 
 // Request location
-export const requestLocationPermission = async (options: LocationPermissionOptions = {}) => {
-  
-  const { explainMessage = "goCite needs your location to provide this feature." } = options;
+export const requestLocationPermission = async (
+  message: LocationPermissionOptions = {}
+): Promise<{ granted: boolean }> => {
+  const {
+    explainMessage = "goCite needs your location to provide this feature.",
+  } = message;
 
-  // check current location permission
-  const { status: initialStatus } = await Location.requestForegroundPermissionsAsync();
-
+  // Check current location permission, avoid prompting if already granted
+  const { status: initialStatus } =
+    await Location.getForegroundPermissionsAsync();
   if (initialStatus === "granted") {
     return { granted: true };
   }
 
-  // Request permission if undetermined
+  // Request permission if undetermined (first time prompt)
   if (initialStatus === "undetermined") {
     const { status } = await Location.requestForegroundPermissionsAsync();
-
     if (status === "granted") {
       return { granted: true };
     }
   }
 
-  // Permission denied
+  // Denying the first prompt needs we need to explain to user that it's required to continue
   return new Promise((resolve) => {
     Alert.alert(
       "Location Permission Required",
       explainMessage,
       [
         { text: "Cancel", onPress: () => resolve({ granted: false }) },
-        { text: "Settings", onPress: () => Linking.openSettings() },
+        {
+          text: "Settings",
+          onPress: () => {
+            Linking.openSettings(), resolve({ granted: false });
+          },
+        },
       ],
-      { onDismiss: () => resolve({ granted: false }) } // handle dismiss required -- return to home or error screen
+      {
+        onDismiss: () => resolve({ granted: false }), // dismiss handled in caller
+      }
     );
   });
 };
