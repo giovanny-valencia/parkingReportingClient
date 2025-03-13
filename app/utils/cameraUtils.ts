@@ -10,9 +10,9 @@ interface CameraPermissionOptions {
  * @param options - Configuration options for the permission request
  * @returns Promise resolving to { granted: true } if allowed, { granted: false } if denied
  */
-export async function requestCameraPermission(
+export default async function requestCameraPermission(
   options: CameraPermissionOptions = {}
-) {
+): Promise<{ granted: boolean }> {
   const {
     explainMessage = "goCite needs your camera to provide this feature.",
   } = options;
@@ -23,12 +23,10 @@ export async function requestCameraPermission(
     return { granted: true };
   }
 
-  // Request permission if undetermined
-  if (initialStatus === "undetermined") {
-    const { status } = await Camera.requestCameraPermissionsAsync();
-    if (status === "granted") {
-      return { granted: true };
-    }
+  // if not granted, either denied or undetermined, request permission
+  const { status } = await Camera.requestCameraPermissionsAsync();
+  if (status === "granted") {
+    return { granted: true };
   }
 
   // Permission denied
@@ -38,7 +36,12 @@ export async function requestCameraPermission(
       explainMessage,
       [
         { text: "Cancel", onPress: () => resolve({ granted: false }) },
-        { text: "Settings", onPress: () => Linking.openSettings() },
+        {
+          text: "Settings",
+          onPress: () => {
+            Linking.openSettings(), resolve({ granted: false });
+          },
+        },
       ],
       { onDismiss: () => resolve({ granted: false }) } // handle dismiss required -- return to home or error screen
     );
@@ -52,8 +55,4 @@ export async function requestCameraPermission(
 export async function checkCameraPermission() {
   const { status } = await Camera.getCameraPermissionsAsync();
   return status === "granted";
-}
-
-export default function ts() {
-  return;
 }

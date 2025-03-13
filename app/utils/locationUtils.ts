@@ -6,29 +6,27 @@ interface LocationPermissionOptions {
 }
 
 // Request location
-export const requestLocationPermission = async (
+export default async function requestLocationPermission(
   message: LocationPermissionOptions = {}
-): Promise<{ granted: boolean }> => {
+): Promise<{ granted: boolean }> {
   const {
     explainMessage = "goCite needs your location to provide this feature.",
   } = message;
 
-  // Check current location permission, avoid prompting if already granted
+  // Check current location permission status
   const { status: initialStatus } =
     await Location.getForegroundPermissionsAsync();
   if (initialStatus === "granted") {
     return { granted: true };
   }
 
-  // Request permission if undetermined (first time prompt)
-  if (initialStatus === "undetermined") {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status === "granted") {
-      return { granted: true };
-    }
+  // if not granted, either denied or undetermined, request permission
+  const { status } = await Location.requestForegroundPermissionsAsync();
+  if (status === "granted") {
+    return { granted: true };
   }
 
-  // Denying the first prompt needs we need to explain to user that it's required to continue
+  // Permission denied, alert user it's necessary to proceed
   return new Promise((resolve) => {
     Alert.alert(
       "Location Permission Required",
@@ -42,19 +40,13 @@ export const requestLocationPermission = async (
           },
         },
       ],
-      {
-        onDismiss: () => resolve({ granted: false }), // dismiss handled in caller
-      }
+      { onDismiss: () => resolve({ granted: false }) }
     );
   });
-};
+}
 
 // Check if location permission is granted without prompting
 export const checkLocationPermission = async () => {
   const { status } = await Location.getForegroundPermissionsAsync();
   return status === "granted";
 };
-
-export default function ts() {
-  return;
-}

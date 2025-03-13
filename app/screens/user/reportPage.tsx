@@ -2,17 +2,11 @@ import ReportView from "@/app/components/compound/userForms/ReportView";
 import { View, Text, StyleSheet } from "react-native";
 import { IMAGE_TYPES, ImageContent } from "@/app/constants/imageContent";
 import { useState } from "react";
-import {
-  requestLocationPermission,
-  checkLocationPermission,
-} from "@/app/utils/locationUtils";
-import {
-  requestCameraPermission,
-  checkCameraPermission,
-} from "@/app/utils/cameraUtils";
+import requestLocationPermission from "@/app/utils/locationUtils";
+import requestCameraPermission from "@/app/utils/cameraUtils";
 import { router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import { useEffect } from "react";
 
 /**
  * The logic for the report page.
@@ -25,39 +19,45 @@ import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
  * @returns
  */
 
-const handleLocationAccess = async () => {
+const handleLocationAccess = async (): Promise<boolean> => {
   // check if location permission is granted
-  const initialStatus = await checkLocationPermission();
-
-  console.log("IS: ", initialStatus);
-
-  if (initialStatus) {
-    return true;
-  }
-
-  // otherwise request it
   const { granted } = await requestLocationPermission({
-    explainMessage: "goCite needs your location to provide this feature.",
+    explainMessage: "goCite needs your location to create a report.",
   });
-  console.log("GOT: ", granted);
-
-  // if granted, return true
   if (granted) {
+    console.log("Location permission granted.");
     return true;
+  } else {
+    console.log("Location permission denied.");
+    return false;
   }
-
-  console.log("when is this called? val: ", granted);
-
-  // otherwise return false
-  return false;
 };
 
-const getJurisdiction = async () => {
-  const response = await fetch(
-    "https://mocki.io/v1/95c8a670-bccc-4b50-a90a-53eab10558a4 "
-  );
-  return await response.json();
+const handleCameraAccess = async (): Promise<boolean> => {
+  // check if camera permission is granted
+  const { granted } = await requestCameraPermission({
+    explainMessage:
+      "goCite needs access to your camera to take live photos for the report.",
+  });
+  if (granted) {
+    console.log("Camera permission granted.");
+    return true;
+  } else {
+    console.log("Camera permission denied.");
+    return false;
+  }
 };
+
+const navigateBackOrHome = () => {
+  router.canGoBack() ? router.back() : router.replace("/screens/user/homePage");
+};
+
+// const getJurisdiction = async () => {
+//   const response = await fetch(
+//     "https://mocki.io/v1/95c8a670-bccc-4b50-a90a-53eab10558a4 "
+//   );
+//   return await response.json();
+// };
 
 export default function ReportPage() {
   const [licensePlate, setLicensePlate] = useState("");
@@ -69,7 +69,7 @@ export default function ReportPage() {
   });
   const MAX_LENGTH_VIOLATION = 256;
   // creates the image state array, size of 5 images, (1-5): violations images
-  const [SupportingImages, setSupportingImages] = useState<ImageContent[]>(() =>
+  const [supportingImages, setSupportingImages] = useState<ImageContent[]>(() =>
     Array.from({ length: 5 }, (_, index) => ({
       id: index + 1,
       uri: "",
@@ -77,35 +77,27 @@ export default function ReportPage() {
     }))
   );
 
-  const query = useQuery({
-    queryKey: ["state"],
-    queryFn: getJurisdiction,
-  });
+  useEffect(() => {
+    const checkPermissions = async () => {
+      const locationGranted = await handleLocationAccess();
+      if (!locationGranted) {
+        return navigateBackOrHome();
+      }
 
-  // for testing, delete later
-  SupportingImages.map((i) => console.log(i.id, i.type));
-
-  // check for location access
-  handleLocationAccess().then((granted) => {
-    if (!granted) {
-      router.back();
-    }
-  });
-  console.log("left caller");
+      const cameraGranted = await handleCameraAccess();
+      if (!cameraGranted) {
+        return navigateBackOrHome();
+      }
+    };
+    checkPermissions();
+  }, []);
 
   return (
     <View style={styles.container}>
-      <View>
-        <Text style={styles.text}>
-          test:
-          {JSON.stringify(query.data) || "loading"}
-        </Text>
-      </View>
-
       <ReportView
         licensePlateImage={licensePlateImage}
         setLicensePlateImage={setLicensePlateImage}
-        SupportingImages={SupportingImages}
+        SupportingImages={supportingImages}
         setSupportingImages={setSupportingImages}
         licensePlate={licensePlate}
         setLicensePlate={setLicensePlate}
