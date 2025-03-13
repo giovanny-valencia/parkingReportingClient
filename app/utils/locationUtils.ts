@@ -54,3 +54,7 @@ export const checkLocationPermission = async () => {
   const { status } = await Location.getForegroundPermissionsAsync();
   return status === "granted";
 };
+
+export default function ts() {
+  return;
+}

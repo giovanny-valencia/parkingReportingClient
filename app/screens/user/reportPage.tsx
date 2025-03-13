@@ -11,6 +11,8 @@ import {
   checkCameraPermission,
 } from "@/app/utils/cameraUtils";
 import { router } from "expo-router";
+import { useQuery } from "@tanstack/react-query";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 /**
  * The logic for the report page.
@@ -50,6 +52,13 @@ const handleLocationAccess = async () => {
   return false;
 };
 
+const getJurisdiction = async () => {
+  const response = await fetch(
+    "https://mocki.io/v1/95c8a670-bccc-4b50-a90a-53eab10558a4 "
+  );
+  return await response.json();
+};
+
 export default function ReportPage() {
   const [licensePlate, setLicensePlate] = useState("");
   const [violation, setViolation] = useState("");
@@ -68,6 +77,12 @@ export default function ReportPage() {
     }))
   );
 
+  const query = useQuery({
+    queryKey: ["state"],
+    queryFn: getJurisdiction,
+  });
+
+  // for testing, delete later
   SupportingImages.map((i) => console.log(i.id, i.type));
 
   // check for location access
@@ -80,6 +95,13 @@ export default function ReportPage() {
 
   return (
     <View style={styles.container}>
+      <View>
+        <Text style={styles.text}>
+          test:
+          {JSON.stringify(query.data) || "loading"}
+        </Text>
+      </View>
+
       <ReportView
         licensePlateImage={licensePlateImage}
         setLicensePlateImage={setLicensePlateImage}

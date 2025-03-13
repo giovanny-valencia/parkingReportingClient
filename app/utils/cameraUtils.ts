@@ -10,7 +10,8 @@ interface CameraPermissionOptions {
  * @param options - Configuration options for the permission request
  * @returns Promise resolving to { granted: true } if allowed, { granted: false } if denied
  */
-export async function requestCameraPermission(  options: CameraPermissionOptions = {}
+export async function requestCameraPermission(
+  options: CameraPermissionOptions = {}
 ) {
   const {
     explainMessage = "goCite needs your camera to provide this feature.",
@@ -51,4 +52,8 @@ export async function requestCameraPermission(  options: CameraPermissionOptions
 export async function checkCameraPermission() {
   const { status } = await Camera.getCameraPermissionsAsync();
   return status === "granted";
+}
+
+export default function ts() {
+  return;
 }

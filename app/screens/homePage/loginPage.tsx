@@ -3,8 +3,6 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  TouchableWithoutFeedback,
-  Keyboard,
   ScrollView,
 } from "react-native";
 import { router, useRouter } from "expo-router"; // Import useRouter
@@ -13,9 +11,6 @@ import LoginView from "@/app/components/compound/auth/LoginView";
 import validateEmail from "@/app/utils/validateEmail";
 import validatePassword from "@/app/utils/validatePassword";
 import { VALIDATION_TYPE } from "@/app/utils/validatePassword";
-import { QueryClient } from "react-query";
-
-const queryClient = new QueryClient();
 
 export interface errorIndex {
   id: number;
