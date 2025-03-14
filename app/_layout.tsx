@@ -3,7 +3,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 
-// include screens folder stacks here as well, to disable headerShown. See line 8
+/**
+ * The root layout for the app.
+ * 
+ * wraps the entire app in a query client provider, so that we can use react-query to fetch data from the backend.
+ * 
+ * @returns root layout for the app, stack navigator
+ */
 export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>

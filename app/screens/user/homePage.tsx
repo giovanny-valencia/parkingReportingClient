@@ -6,7 +6,7 @@ import { router } from "expo-router";
 function handleReportButtonClick() {
   console.log("Report Clicked!");
   // Navigate to the report page
-  router.push("./reportPage"); // Relative, works within user/ stack
+  router.push("/screens/user/reportPage"); // Relative, works within user/ stack
 }
 
 function handleSettingsButtonClick() {

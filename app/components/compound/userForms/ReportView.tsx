@@ -7,15 +7,12 @@
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
   TouchableOpacity,
 } from "react-native";
-import AnimatedInput from "../../common/AnimatedInput";
-import { useState } from "react";
 import { IMAGE_TYPES, ImageContent } from "@/app/constants/imageContent";
 import ImagesView from "./ImagesView";
 

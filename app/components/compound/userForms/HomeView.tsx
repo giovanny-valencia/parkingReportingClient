@@ -52,6 +52,9 @@ export default function UserHomeLayout({
 const styles = StyleSheet.create({
   Container: {
     flex: 1,
+    alignContent: "center", // Centers Report horizontally
+    justifyContent: "center", // Centers Report vertically
+
     position: "relative", // For absolute positioning of Settings
   },
   CenterWrapper: {

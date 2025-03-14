@@ -1,12 +1,14 @@
 import ReportView from "@/app/components/compound/userForms/ReportView";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import { IMAGE_TYPES, ImageContent } from "@/app/constants/imageContent";
 import { useState } from "react";
 import requestLocationPermission from "@/app/utils/locationUtils";
 import requestCameraPermission from "@/app/utils/cameraUtils";
+import * as Location from "expo-location";
 import { router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { City, State } from "@/app/constants/jurisdiction";
 
 /**
  * The logic for the report page.
@@ -52,14 +54,20 @@ const navigateBackOrHome = () => {
   router.canGoBack() ? router.back() : router.replace("/screens/user/homePage");
 };
 
-// const getJurisdiction = async () => {
-//   const response = await fetch(
-//     "https://mocki.io/v1/95c8a670-bccc-4b50-a90a-53eab10558a4 "
-//   );
-//   return await response.json();
-// };
+const getJurisdiction = async () => {
+  const response = await fetch(
+    "https://mocki.io/v1/95c8a670-bccc-4b50-a90a-53eab10558a4 "
+  );
+  if (!response.ok) {
+    throw new Error(`Failed to fetch: ${response.status}`);
+  }
+  return await response.json();
+};
 
 export default function ReportPage() {
+  const [isPermissionValidated, setIsPermissionValidated] = useState(false);
+  const [state, setState] = useState("NJ");
+  const [city, setCity] = useState("Jersey City");
   const [licensePlate, setLicensePlate] = useState("");
   const [violation, setViolation] = useState("");
   const [licensePlateImage, setLicensePlateImage] = useState<ImageContent>({
@@ -77,6 +85,11 @@ export default function ReportPage() {
     }))
   );
 
+  // const { data } = useQuery({
+  //   queryKey: ["allJurisdictions", state, city],
+  //   queryFn: () => getJurisdiction(state),
+  // });
+
   useEffect(() => {
     const checkPermissions = async () => {
       const locationGranted = await handleLocationAccess();
@@ -88,9 +101,29 @@ export default function ReportPage() {
       if (!cameraGranted) {
         return navigateBackOrHome();
       }
+      setIsPermissionValidated(true);
+      console.log("Permissions validated.");
     };
     checkPermissions();
   }, []);
+
+  useEffect(() => {
+    console.log("isPermissionValidated: ", isPermissionValidated);
+    if (!isPermissionValidated) return;
+
+    // grab the users current location
+    const getUserLocation = async () => {
+      console.log("fetching jurisdiction...");
+      let currentLocation = await Location.getCurrentPositionAsync({});
+      console.log("fuck?")
+      console.log("raw: ", currentLocation);
+
+      const { latitude, longitude } = currentLocation.coords;
+
+      console.log("lat: ", latitude, "long: ", longitude);
+    };
+    getUserLocation();
+  }, [isPermissionValidated]);
 
   return (
     <View style={styles.container}>

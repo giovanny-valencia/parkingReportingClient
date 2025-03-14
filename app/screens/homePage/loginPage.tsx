@@ -91,7 +91,7 @@ export default function HomeScreen() {
       // If the login is successful, navigate to the home screen
 
       // if regular user -> navigate to user home screen
-      router.replace("../user/homePage");
+      router.replace("/screens/user/homePage");
 
       // if officer -> navigate to officer home screen
 
