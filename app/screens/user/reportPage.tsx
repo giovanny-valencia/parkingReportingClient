@@ -9,11 +9,10 @@ import { LocationGeocodedAddress } from "expo-location";
 import { router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { City, State } from "@/app/constants/jurisdiction";
-import { Platform } from "react-native";
-import { getStateAbbreviation } from "@/app/utils/stateAbbreviation";
 import { createAddress } from "@/app/utils/addressUtils";
 import AddressFields from "@/app/constants/AddressFields";
+import Jurisdiction from "@/app/constants/jurisdiction";
+
 /**
  * The logic for the report page.
  *
@@ -24,6 +23,8 @@ import AddressFields from "@/app/constants/AddressFields";
  *
  * @returns
  */
+
+const SIX_HOURS = 1000 * 60 * 60 * 6;
 
 const handleLocationAccess = async (): Promise<boolean> => {
   // check if location permission is granted
@@ -60,18 +61,27 @@ const navigateBackOrHome = () => {
 
 const getJurisdiction = async () => {
   const response = await fetch(
-    "https://mocki.io/v1/95c8a670-bccc-4b50-a90a-53eab10558a4 "
+    "https://mocki.io/v1/bbb27acd-5b97-4477-9f79-3495b028025a "
   );
   if (!response.ok) {
     throw new Error(`Failed to fetch: ${response.status}`);
   }
-  return await response.json();
+  const json: Jurisdiction[] = await response.json();
+  if (!json) {
+    throw new Error("No data found");
+  }
+
+  // create a map of jurisdiction data for quick lookup
+  return new Map(
+    json.map((item: Jurisdiction) => [
+      `${item.stateInitials}${item.city}`,
+      item,
+    ])
+  );
 };
 
 export default function ReportPage() {
   const [isPermissionValidated, setIsPermissionValidated] = useState(false);
-  const [state, setState] = useState("NJ");
-  const [city, setCity] = useState("Jersey City");
   const [licensePlate, setLicensePlate] = useState("");
   const [violation, setViolation] = useState("");
   const [licensePlateImage, setLicensePlateImage] = useState<ImageContent>({
@@ -88,8 +98,65 @@ export default function ReportPage() {
       type: IMAGE_TYPES.violation,
     }))
   );
-
+  const [validatedAddress, setValidatedAddress] = useState(false);
   const [addressState, setAddress] = useState(AddressFields);
+
+  /**
+   * fetches the jurisdiction data from the backend and caches it for 6 hours.
+   *
+   * monitor this, idea is to do the heavy lifting of fetching everything once then cache it for 6 hours using a set for O(1) lookup time.
+   * this is to avoid fetching the data every time the user opens the app, which can be slow and inefficient.
+   *
+   * If this re-fetches earlier than intended, defeats the purpose of caching.. Again, monitor this.
+   * If this is done correctly, this should not refetch whatsoever for 6 hours.
+   *
+   * add refetchOnMount: false ?
+   */
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["jurisdiction"],
+    queryFn: getJurisdiction,
+    staleTime: SIX_HOURS, // 6 hours before refetching
+    gcTime: SIX_HOURS, // 6 hours before garbage collection
+    refetchOnWindowFocus: false, // do not refetch on window focus
+    refetchOnReconnect: false, // do not refetch on reconnect
+  });
+
+  const getJurisdictionByCode = (
+    state: string,
+    city: string
+  ): Jurisdiction | false => {
+    const key = `${state}${city}`;
+
+    console.log("key: ", key);
+
+    console.log(data);
+
+    return data?.get(key) ?? false;
+  };
+
+  const userInSupportedLocation = () => {
+    console.log("_______________________________");
+
+    if (!validatedAddress) return;
+
+    const state = addressState.state;
+    const city = addressState.city;
+
+    console.log("state: ", state);
+    console.log("city: ", city);
+
+    const jurisdiction = getJurisdictionByCode(state, city);
+
+    console.log("jurisdiction: ", jurisdiction);
+    console.log("_______________________________");
+    if (!jurisdiction) {
+      Alert.alert(
+        "Unsupported Location",
+        "Your location is not supported. Please try again later.",
+        [{ text: "OK", onPress: () => navigateBackOrHome() }]
+      );
+    }
+  };
 
   const updateAddress = (
     location: LocationGeocodedAddress[],
@@ -107,7 +174,7 @@ export default function ReportPage() {
         ...prevAddress,
         ...newAddress,
       }));
-
+      setValidatedAddress(true);
       console.log("Address updated:", newAddress);
     } else {
       Alert.alert(
@@ -165,6 +232,10 @@ export default function ReportPage() {
     };
     getUserLocation();
   }, [isPermissionValidated]);
+
+  useEffect(() => {
+    userInSupportedLocation();
+  }, [validatedAddress]);
 
   return (
     <View style={styles.container}>
