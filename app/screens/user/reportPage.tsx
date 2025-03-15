@@ -1,15 +1,19 @@
 import ReportView from "@/app/components/compound/userForms/ReportView";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Alert } from "react-native";
 import { IMAGE_TYPES, ImageContent } from "@/app/constants/imageContent";
 import { useState } from "react";
 import requestLocationPermission from "@/app/utils/locationUtils";
 import requestCameraPermission from "@/app/utils/cameraUtils";
 import * as Location from "expo-location";
+import { LocationGeocodedAddress } from "expo-location";
 import { router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { City, State } from "@/app/constants/jurisdiction";
-
+import { Platform } from "react-native";
+import { getStateAbbreviation } from "@/app/utils/stateAbbreviation";
+import { createAddress } from "@/app/utils/addressUtils";
+import AddressFields from "@/app/constants/AddressFields";
 /**
  * The logic for the report page.
  *
@@ -85,10 +89,34 @@ export default function ReportPage() {
     }))
   );
 
-  // const { data } = useQuery({
-  //   queryKey: ["allJurisdictions", state, city],
-  //   queryFn: () => getJurisdiction(state),
-  // });
+  const [addressState, setAddress] = useState(AddressFields);
+
+  const updateAddress = (
+    location: LocationGeocodedAddress[],
+    latitude: number,
+    longitude: number
+  ) => {
+    const newAddress = createAddress({
+      location: location,
+      latitude: latitude,
+      longitude: longitude,
+    }) as typeof AddressFields;
+
+    if (newAddress) {
+      setAddress((prevAddress) => ({
+        ...prevAddress,
+        ...newAddress,
+      }));
+
+      console.log("Address updated:", newAddress);
+    } else {
+      Alert.alert(
+        "Error",
+        "Unable to retrieve address. Please try again later.",
+        [{ text: "OK", onPress: () => navigateBackOrHome() }]
+      );
+    }
+  };
 
   useEffect(() => {
     const checkPermissions = async () => {
@@ -108,19 +136,32 @@ export default function ReportPage() {
   }, []);
 
   useEffect(() => {
-    console.log("isPermissionValidated: ", isPermissionValidated);
     if (!isPermissionValidated) return;
 
     // grab the users current location
     const getUserLocation = async () => {
-      console.log("fetching jurisdiction...");
-      let currentLocation = await Location.getCurrentPositionAsync({});
-      console.log("fuck?")
-      console.log("raw: ", currentLocation);
+      try {
+        let currentLocation = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.High,
+          timeInterval: 3000,
+        });
 
-      const { latitude, longitude } = currentLocation.coords;
+        const { latitude, longitude } = currentLocation.coords;
 
-      console.log("lat: ", latitude, "long: ", longitude);
+        // convert to actual location
+        const location = await Location.reverseGeocodeAsync({
+          latitude,
+          longitude,
+        });
+
+        updateAddress(location, latitude, longitude);
+      } catch (error) {
+        Alert.alert(
+          "Error Getting Location",
+          "Couldn’t retrieve your current location. Returning to home screen.",
+          [{ text: "Ok", onPress: () => navigateBackOrHome() }]
+        );
+      }
     };
     getUserLocation();
   }, [isPermissionValidated]);
