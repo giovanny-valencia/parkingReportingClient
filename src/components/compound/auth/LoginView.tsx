@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 import AnimatedInput from "../../common/AnimatedInput";
-import { errorIndex } from "@/app/screens/homePage/loginPage";
+import { FieldError } from "@/src/constants/FieldErrorConstants";
 
 interface LoginFormProps {
   email: string;
   password: string;
-  error: errorIndex[];
+  error: FieldError[];
   setEmail: (email: string) => void;
   setPassword: (password: string) => void;
 }

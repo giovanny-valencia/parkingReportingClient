@@ -1,4 +1,4 @@
-import { IMAGE_TYPES, ImageContent } from "@/app/constants/imageContent";
+import { IMAGE_TYPES, ImageContent } from "@/src/constants/imageContent";
 import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
 
 interface props {
@@ -8,7 +8,7 @@ interface props {
 }
 
 export default function ImagesView({ type, reportImages, handler }: props) {
-  const addImageIcon = require("../../../../assets/images/buttonImages/addImageIcon.png");
+  const addImageIcon = require("@/src/assets/images/buttonImages/addImageIcon.png");
 
   if (type === IMAGE_TYPES.licensePlate) {
     return (

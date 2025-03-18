@@ -1,5 +1,6 @@
 {
   "expo": {
+    "entryPoint": "src/app/_layout.tsx",
     "name": "parkingClient",
     "slug": "parkingClient",
     "version": "1.0.0",

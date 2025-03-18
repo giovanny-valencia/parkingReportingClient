@@ -1,17 +1,17 @@
-import ReportView from "@/app/components/compound/userForms/ReportView";
+import ReportView from "../../../components/compound/userForms/ReportView";
 import { View, StyleSheet, Text, Alert } from "react-native";
-import { IMAGE_TYPES, ImageContent } from "@/app/constants/imageContent";
+import { IMAGE_TYPES, ImageContent } from "@/src/constants/imageContent";
 import { useState } from "react";
-import requestLocationPermission from "@/app/utils/locationUtils";
-import requestCameraPermission from "@/app/utils/cameraUtils";
+import requestLocationPermission from "@/src/utils/locationUtils";
+import requestCameraPermission from "@/src/utils/cameraUtils";
 import * as Location from "expo-location";
 import { LocationGeocodedAddress } from "expo-location";
 import { router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { createAddress } from "@/app/utils/addressUtils";
-import AddressFields from "@/app/constants/AddressFields";
-import Jurisdiction from "@/app/constants/jurisdiction";
+import { createAddress } from "@/src/utils/addressUtils";
+import AddressFields from "@/src/constants/AddressFields";
+import { Jurisdiction } from "@/src/constants/Jurisdiction";
 
 /**
  * The logic for the report page.
@@ -56,10 +56,11 @@ const handleCameraAccess = async (): Promise<boolean> => {
 };
 
 const navigateBackOrHome = () => {
-  router.canGoBack() ? router.back() : router.replace("/screens/user/homePage");
+  router.canGoBack() ? router.back() : router.replace("/screens/user/HomePage");
 };
 
 const getJurisdiction = async () => {
+  //  await new Promise((resolve) => setTimeout(resolve, 3000)); // 3 second delay
   const response = await fetch(
     "https://mocki.io/v1/bbb27acd-5b97-4477-9f79-3495b028025a "
   );
@@ -135,20 +136,14 @@ export default function ReportPage() {
   };
 
   const userInSupportedLocation = () => {
-    console.log("_______________________________");
-
     if (!validatedAddress) return;
 
     const state = addressState.state;
     const city = addressState.city;
 
-    console.log("state: ", state);
-    console.log("city: ", city);
-
     const jurisdiction = getJurisdictionByCode(state, city);
 
     console.log("jurisdiction: ", jurisdiction);
-    console.log("_______________________________");
     if (!jurisdiction) {
       Alert.alert(
         "Unsupported Location",
@@ -225,7 +220,7 @@ export default function ReportPage() {
       } catch (error) {
         Alert.alert(
           "Error Getting Location",
-          "Couldn’t retrieve your current location. Returning to home screen.",
+          "Could not retrieve your current location. Returning to home screen.",
           [{ text: "Ok", onPress: () => navigateBackOrHome() }]
         );
       }
@@ -234,15 +229,24 @@ export default function ReportPage() {
   }, [isPermissionValidated]);
 
   useEffect(() => {
+    if (isLoading) return;
     userInSupportedLocation();
-  }, [validatedAddress]);
+  }, [validatedAddress, isLoading]);
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.text}>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <ReportView
         licensePlateImage={licensePlateImage}
         setLicensePlateImage={setLicensePlateImage}
-        SupportingImages={supportingImages}
+        supportingImages={supportingImages}
         setSupportingImages={setSupportingImages}
         licensePlate={licensePlate}
         setLicensePlate={setLicensePlate}

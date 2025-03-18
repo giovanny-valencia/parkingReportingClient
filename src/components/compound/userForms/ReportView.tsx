@@ -13,15 +13,15 @@ import {
   Keyboard,
   TouchableOpacity,
 } from "react-native";
-import { IMAGE_TYPES, ImageContent } from "@/app/constants/imageContent";
+import { IMAGE_TYPES, ImageContent } from "@/src/constants/imageContent";
 import ImagesView from "./ImagesView";
 
-const addImageIcon = require("../../../../assets/images/buttonImages/addImageIcon.png");
+const addImageIcon = require("@/src/assets/images/buttonImages/addImageIcon.png");
 
 interface ReportViewProps {
   licensePlateImage: ImageContent;
   setLicensePlateImage: (image: ImageContent) => void;
-  SupportingImages: ImageContent[];
+  supportingImages: ImageContent[];
   setSupportingImages: (images: ImageContent[]) => void;
   licensePlate: string;
   setLicensePlate: (licensePlate: string) => void;
@@ -33,7 +33,7 @@ interface ReportViewProps {
 export default function ReportView({
   licensePlateImage,
   setLicensePlateImage,
-  SupportingImages,
+  supportingImages: SupportingImages,
   setSupportingImages,
   licensePlate,
   setLicensePlate,

@@ -8,16 +8,13 @@ import {
   ScrollView,
 } from "react-native";
 import { useState, useEffect } from "react";
-import SignUpForm from "@/app/components/compound/auth/SignUpView";
+import SignUpForm from "@/src/components/compound/auth/SignUpView";
 import { router } from "expo-router";
-import validateName from "@/app/utils/validateName";
-import validateEmail from "@/app/utils/validateEmail";
-import validatePassword from "@/app/utils/validatePassword";
-import { VALIDATION_TYPE } from "@/app/utils/validatePassword";
-import {
-  FIELD_INDICES,
-  FieldError,
-} from "@/app/constants/_fieldErrorConstants";
+import validateName from "@/src/utils/validateName";
+import validateEmail from "@/src/utils/validateEmail";
+import validatePassword from "@/src/utils/validatePassword";
+import { VALIDATION_TYPE } from "@/src/utils/validatePassword";
+import { FIELD_INDICES, FieldError } from "@/src/constants/FieldErrorConstants";
 
 export default function SignUpScreen() {
   const [firstName, setFirstName] = useState("");

@@ -8,11 +8,8 @@ import {
 } from "react-native";
 import AnimatedInput from "../../common/AnimatedInput";
 import { useState } from "react";
-import DateField from "@/app/components/common/DateField";
-import {
-  FIELD_INDICES,
-  FieldError,
-} from "../../../constants/_fieldErrorConstants";
+import DateField from "@/src/components/common/DateField";
+import { FIELD_INDICES, FieldError } from "@/src/constants/FieldErrorConstants";
 
 interface SignUpFormProps {
   firstName: string;

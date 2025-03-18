@@ -1,6 +1,6 @@
 import { LocationGeocodedAddress } from "expo-location";
 import { getStateAbbreviation } from "./stateAbbreviation";
-import AddressFields from "@/app/constants/addressFields";
+import AddressFields from "@/src/constants/AddressFields";
 
 interface props {
   location: LocationGeocodedAddress[];

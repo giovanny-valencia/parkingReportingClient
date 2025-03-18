@@ -17,10 +17,10 @@ interface UserHomeLayoutProps {
   onSettingsClick: () => void;
 }
 
-const cameraIcon = require("../../../../assets/images/buttonImages/cameraIcon.png");
-const settingsIcon = require("../../../../assets/images/buttonImages/settingsIcon.png");
+const cameraIcon = require("@/src/assets/images/buttonImages/cameraIcon.png");
+const settingsIcon = require("@/src/assets/images/buttonImages/settingsIcon.png");
 
-export default function UserHomeLayout({
+export default function HomeView({
   onReportClick,
   onSettingsClick,
 }: UserHomeLayoutProps) {

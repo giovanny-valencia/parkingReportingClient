@@ -7,10 +7,10 @@ import {
 } from "react-native";
 import { router, useRouter } from "expo-router"; // Import useRouter
 import { useState, useEffect } from "react";
-import LoginView from "@/app/components/compound/auth/LoginView";
-import validateEmail from "@/app/utils/validateEmail";
-import validatePassword from "@/app/utils/validatePassword";
-import { VALIDATION_TYPE } from "@/app/utils/validatePassword";
+import LoginView from "@/src/components/compound/auth/LoginView";
+import validateEmail from "@/src/utils/validateEmail";
+import validatePassword from "@/src/utils/validatePassword";
+import { VALIDATION_TYPE } from "@/src/utils/validatePassword";
 
 export interface errorIndex {
   id: number;
@@ -20,11 +20,11 @@ export interface errorIndex {
 const handleForgotPassword = () => {
   console.log("Forgot password pressed");
 
-  router.push("./forgotPasswordPage"); // transition to the forgot password screen
+  router.push("./ForgotPasswordPage"); // transition to the forgot password screen
 };
 
 const handleSignUp = () => {
-  router.push("./signUpPage"); // Navigate to the sign-up screen
+  router.push("./SignUpPage"); // Navigate to the sign-up screen
 };
 
 export default function HomeScreen() {
@@ -91,7 +91,7 @@ export default function HomeScreen() {
       // If the login is successful, navigate to the home screen
 
       // if regular user -> navigate to user home screen
-      router.replace("/screens/user/homePage");
+      router.replace("/screens/user/HomePage");
 
       // if officer -> navigate to officer home screen
 

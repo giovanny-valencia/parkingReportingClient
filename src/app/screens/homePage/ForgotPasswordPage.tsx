@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { router, useRouter } from "expo-router"; // Import useRouter
 
 function handleBack() {
@@ -13,11 +13,10 @@ export default function ForgotPasswordScreen() {
       </Text>
       <Text></Text>
       <Text style={styles.text}> "passwordReset@placeHolder.com "</Text>
-      <View style={styles.button}>
-        <Text onPress={handleBack} style={styles.boxText}>
-          Back
-        </Text>
-      </View>
+
+      <TouchableOpacity onPress={handleBack} style={styles.button}>
+        <Text style={styles.boxText}>Back</Text>
+      </TouchableOpacity>
     </View>
   );
 }
