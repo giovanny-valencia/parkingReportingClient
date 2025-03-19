@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
-import HomeView from "@/src/components/compound/userForms/HomeView";
+import HomeView from "@components/compound/userForms/HomeView";
 import { useState } from "react";
 import { router } from "expo-router";
 

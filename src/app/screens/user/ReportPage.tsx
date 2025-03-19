@@ -1,17 +1,17 @@
-import ReportView from "../../../components/compound/userForms/ReportView";
+import ReportView from "@components/compound/userForms/ReportView";
 import { View, StyleSheet, Text, Alert } from "react-native";
-import { IMAGE_TYPES, ImageContent } from "@/src/constants/imageContent";
+import { IMAGE_TYPES, ImageContent } from "@constants/imageContent";
 import { useState } from "react";
-import requestLocationPermission from "@/src/utils/locationUtils";
-import requestCameraPermission from "@/src/utils/cameraUtils";
+import requestLocationPermission from "@utils/locationUtils";
+import requestCameraPermission from "@utils/cameraUtils";
 import * as Location from "expo-location";
 import { LocationGeocodedAddress } from "expo-location";
 import { router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { createAddress } from "@/src/utils/addressUtils";
-import AddressFields from "@/src/constants/AddressFields";
-import { Jurisdiction } from "@/src/constants/Jurisdiction";
+import { createAddress } from "@utils/addressUtils";
+import AddressFields from "@constants/AddressFields";
+import { Jurisdiction } from "@constants/Jurisdiction";
 
 /**
  * The logic for the report page.

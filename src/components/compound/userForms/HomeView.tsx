@@ -10,15 +10,15 @@
  */
 
 import { View, StyleSheet } from "react-native";
-import ActionImageButton from "../../common/ActionImageButton";
+import ActionImageButton from "@components/common/ActionImageButton";
 
 interface UserHomeLayoutProps {
   onReportClick: () => void;
   onSettingsClick: () => void;
 }
 
-const cameraIcon = require("@/src/assets/images/buttonImages/cameraIcon.png");
-const settingsIcon = require("@/src/assets/images/buttonImages/settingsIcon.png");
+const cameraIcon = require("@assets/images/buttonImages/cameraIcon.png");
+const settingsIcon = require("@assets/images/buttonImages/settingsIcon.png");
 
 export default function HomeView({
   onReportClick,

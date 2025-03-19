@@ -13,10 +13,10 @@ import {
   Keyboard,
   TouchableOpacity,
 } from "react-native";
-import { IMAGE_TYPES, ImageContent } from "@/src/constants/imageContent";
+import { IMAGE_TYPES, ImageContent } from "@constants/imageContent";
 import ImagesView from "./ImagesView";
 
-const addImageIcon = require("@/src/assets/images/buttonImages/addImageIcon.png");
+const addImageIcon = require("@assets/images/buttonImages/addImageIcon.png");
 
 interface ReportViewProps {
   licensePlateImage: ImageContent;

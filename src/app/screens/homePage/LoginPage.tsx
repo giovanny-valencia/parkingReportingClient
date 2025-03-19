@@ -7,10 +7,10 @@ import {
 } from "react-native";
 import { router, useRouter } from "expo-router"; // Import useRouter
 import { useState, useEffect } from "react";
-import LoginView from "@/src/components/compound/auth/LoginView";
-import validateEmail from "@/src/utils/validateEmail";
-import validatePassword from "@/src/utils/validatePassword";
-import { VALIDATION_TYPE } from "@/src/utils/validatePassword";
+import LoginView from "@components/compound/auth/LoginView";
+import validateEmail from "@utils/validateEmail";
+import validatePassword from "@utils/validatePassword";
+import { VALIDATION_TYPE } from "@utils/validatePassword";
 
 export interface errorIndex {
   id: number;

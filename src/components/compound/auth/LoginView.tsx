@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, ScrollView } from "react-native";
-import AnimatedInput from "../../common/AnimatedInput";
-import { FieldError } from "@/src/constants/FieldErrorConstants";
+import AnimatedInput from "@components/common/AnimatedInput";
+import { FieldError } from "@constants/FieldErrorConstants";
 
 interface LoginFormProps {
   email: string;

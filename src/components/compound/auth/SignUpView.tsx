@@ -6,10 +6,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import AnimatedInput from "../../common/AnimatedInput";
+import AnimatedInput from "@components/common/AnimatedInput";
 import { useState } from "react";
-import DateField from "@/src/components/common/DateField";
-import { FIELD_INDICES, FieldError } from "@/src/constants/FieldErrorConstants";
+import DateField from "@components/common/DateField";
+import { FIELD_INDICES, FieldError } from "@constants/FieldErrorConstants";
 
 interface SignUpFormProps {
   firstName: string;
