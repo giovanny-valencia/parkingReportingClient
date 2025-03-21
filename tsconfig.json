@@ -8,8 +8,9 @@
       "@assets/*": ["assets/*"],
       "@components/*": ["components/*"],
       "@constants/*": ["constants/*"],
-      "@utils/*": ["utils/*"]
-      // "@/*": ["./*"]
+      "@utils/*": ["utils/*"],
+      "@hooks/*": ["hooks/*"],
+      "@queries/*": ["queries/*"],
     }
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
