@@ -1,15 +1,8 @@
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import AnimatedInput from "@components/common/AnimatedInput";
 import { useState } from "react";
 import DateField from "@components/common/DateField";
-import { FIELD_INDICES, FieldError } from "@constants/FieldErrorConstants";
+import { FIELD_INDICES, FieldError } from "@constants/signUpFieldError";
 
 interface SignUpFormProps {
   firstName: string;

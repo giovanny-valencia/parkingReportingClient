@@ -7,7 +7,7 @@ interface Fields {
   longitude: number;
 }
 
-const AddressFields: Fields = {
+const addressFields: Fields = {
   city: "",
   state: "",
   streetAddress: "",
@@ -16,4 +16,4 @@ const AddressFields: Fields = {
   longitude: 0,
 };
 
-export default AddressFields;
+export default addressFields;

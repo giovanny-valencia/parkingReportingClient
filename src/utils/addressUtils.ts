@@ -1,6 +1,6 @@
 import { LocationGeocodedAddress } from "expo-location";
 import { getStateAbbreviation } from "./stateAbbreviation";
-import AddressFields from "@constants/AddressFields";
+import addressFields from "@constants/addressFields";
 
 interface props {
   location: LocationGeocodedAddress[];
@@ -15,7 +15,7 @@ interface props {
  * @param {LocationGeocodedAddress[]} props.location - Raw geocoded data from {@link Location.reverseGeocodeAsync}
  * @param {number} props.latitude - Latitude coordinate
  * @param {number} props.longitude - Longitude coordinate
- * @returns {typeof AddressFields | null} Normalized address object or null if required fields are missing
+ * @returns {typeof addressFields | null} Normalized address object or null if required fields are missing
  */
 export const createAddress = ({ location, latitude, longitude }: props) => {
   console.log("createAddress called");
@@ -45,7 +45,7 @@ export const createAddress = ({ location, latitude, longitude }: props) => {
     return null;
   }
 
-  const address: typeof AddressFields = {
+  const address: typeof addressFields = {
     city: city,
     state: state,
     streetAddress: streetAddress,

@@ -1,7 +1,7 @@
 /**
  * UI for the report Page
  *
- * Displays the images, License plate input, dropdown violation selection, and the submit button.
+ * Displays the images, License plate input, dropdown violation selection, and the next button.
  */
 
 import {
@@ -10,108 +10,108 @@ import {
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
-  Keyboard,
-  TouchableOpacity,
 } from "react-native";
 import { IMAGE_TYPES, ImageContent } from "@constants/imageContent";
 import ImagesView from "./ImagesView";
+import { FIELD_INDICES, FieldError } from "@constants/userReportFieldErrors";
+import { stateAbbreviations } from "@utils/stateAbbreviation";
+import DropDownSelection from "@components/common/DropDownSelection";
+import { useState } from "react";
 
-const addImageIcon = require("@assets/images/buttonImages/addImageIcon.png");
+// creates the states selection array
+const stateOptions = Object.entries(stateAbbreviations).map(([name, abbr]) => ({
+  label: name
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" "),
+  value: abbr,
+}));
 
 interface ReportViewProps {
   licensePlateImage: ImageContent;
   setLicensePlateImage: (image: ImageContent) => void;
-  supportingImages: ImageContent[];
-  setSupportingImages: (images: ImageContent[]) => void;
+
+  plateStateInitials: string;
+  setPlateStateInitials: (state: string) => void;
+
   licensePlate: string;
   setLicensePlate: (licensePlate: string) => void;
-  violation: string;
-  setViolation: (violation: string) => void;
-  maxLengthViolation: number;
+
+  errors: FieldError[];
+  handleNext: () => void;
 }
 
 export default function ReportView({
   licensePlateImage,
   setLicensePlateImage,
-  supportingImages: SupportingImages,
-  setSupportingImages,
+
+  plateStateInitials,
+  setPlateStateInitials,
+
   licensePlate,
   setLicensePlate,
-  violation,
-  setViolation,
-  maxLengthViolation,
+
+  errors,
+  handleNext,
 }: ReportViewProps) {
+  
+    const [open, setOpen] = useState(false);
+  
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.container}>
-        <View>
-          <Text style={styles.imageTitles}>License Plate Image </Text>
-          <Text style={styles.text}>(Required)</Text>
+    <View style={styles.container}>
+      <Text style={styles.imageTitles}>License Plate Image </Text>
+      <ImagesView
+        type={IMAGE_TYPES.licensePlate}
+        reportImages={[licensePlateImage]}
+        handler={() => {
+          console.log("clicked: ", licensePlateImage.id);
+        }}
+      />
 
-          <View style={styles.imageContainer}>
-            <ImagesView
-              type={IMAGE_TYPES.licensePlate}
-              reportImages={[licensePlateImage]}
-              handler={() => {
-                console.log("clicked: " + licensePlateImage.id);
-              }}
-            />
-          </View>
+      {errors[FIELD_INDICES.licensePlateImage].message.length > 0 && (
+        <Text style={styles.error}>
+          {errors[FIELD_INDICES.licensePlateImage].message}
+        </Text>
+      )}
+
+      <Text style={styles.imageTitles}>Confirm License Plate Details</Text>
+
+      <View style={styles.licenseDetailsBox}>
+        <View style={styles.dropDownContainer}>
+          <DropDownSelection
+            data={stateOptions}
+            placeholder="Select State"
+            value={plateStateInitials}
+            onChange={setPlateStateInitials}
+          />
         </View>
 
-        <View>
-          <Text style={styles.imageTitles}>Supporting Violation Images</Text>
-          <Text style={styles.text}>(At least 1 required)</Text>
-          <View style={styles.imageContainer}>
-            <ImagesView
-              type={IMAGE_TYPES.violation}
-              reportImages={SupportingImages}
-              handler={() => {
-                console.log("clicked: " + "idk");
-              }}
-            />
-          </View>
-        </View>
-
-        <View style={styles.textInputContainer}>
-          <Text style={styles.textTitles}>Confirm License Plate:</Text>
-          <TextInput
-            placeholder="Enter License Plate..."
-            value={licensePlate}
-            onChangeText={setLicensePlate}
-            style={styles.licensePlateInput}
-          />
-
-          <Text style={styles.textTitles}>Violation Type:</Text>
-          <TextInput
-            placeholder="Enter violation details..."
-            value={violation}
-            onChangeText={setViolation}
-            style={styles.reportInput}
-            maxLength={maxLengthViolation}
-            multiline={true}
-            textAlignVertical="top" // Ensures text starts at the top of the TextInput
-          />
-          <Text
-            style={
-              violation.length === maxLengthViolation
-                ? styles.maxViolationReached
-                : {}
-            }
-          >
-            {violation.length}/256
+        {errors[FIELD_INDICES.licensePlateStateSelection].message.length >
+          0 && (
+          <Text style={styles.error}>
+            {errors[FIELD_INDICES.licensePlateStateSelection].message}
           </Text>
-        </View>
+        )}
 
-        <TouchableOpacity
-          onPress={() => {
-            console.log("submit Selected");
-          }}
-        >
-          <Text style={styles.submitButton}>Submit</Text>
-        </TouchableOpacity>
+        <View style={styles.marginSpace}></View>
+
+        <TextInput
+          placeholder="Enter Plate Number..."
+          placeholderTextColor="black"
+          value={licensePlate}
+          onChangeText={(text) => setLicensePlate(text.replace(/\s/g, ""))}
+          autoCapitalize="characters"
+          autoCorrect={false}
+          style={styles.licensePlateInput}
+          maxLength={10}
+        />
       </View>
-    </TouchableWithoutFeedback>
+      {errors[FIELD_INDICES.licensePlateTextInput].message.length > 0 && (
+        <Text style={styles.error}>
+          {errors[FIELD_INDICES.licensePlateTextInput].message}
+        </Text>
+      )}
+    </View>
   );
 }
 
@@ -125,67 +125,40 @@ const styles = StyleSheet.create({
   imageTitles: {
     fontSize: 20,
     fontWeight: "bold",
-  },
-  textTitles: {
-    fontSize: 16,
-    width: "100%",
-    alignSelf: "flex-start",
-    marginBottom: 5,
-  },
-  text: {
-    width: "100%",
-    fontSize: 16,
     alignSelf: "center",
-    marginBottom: 5,
   },
-  imageContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  LpImage: {
-    width: 50,
-    height: 50,
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  submitButton: {
-    backgroundColor: "skyblue",
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 20,
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-    borderColor: "black",
-    borderWidth: 1,
-  },
-  textInputContainer: {
-    width: "50%",
-    marginTop: 20,
-  },
+
   licensePlateInput: {
     borderWidth: 1,
     height: 40,
     marginBottom: 10,
-    width: "100%",
+    width: 175,
     borderColor: "black",
     padding: 10,
     borderRadius: 5,
+    backgroundColor: "white",
+    alignSelf: "center",
   },
-  reportInput: {
-    height: 80,
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
+  error: {
     width: "100%",
-    borderColor: "black",
-    padding: 10,
-    borderRadius: 5,
-  },
-  maxViolationReached: {
+    textAlign: "center", // Center for consistency
     color: "red",
+    fontSize: 12,
+    marginTop: 5,
+    padding: 5,
+    borderRadius: 4,
+  },
+  dropDownContainer: {
+    width: 175,
+    alignSelf: "center",
+    marginVertical: 10,
+  },
+  marginSpace: {
+    marginBottom: 20,
+  },
+
+  licenseDetailsBox: {
+    width: 200,
+    alignSelf: "center",
   },
 });

@@ -26,6 +26,8 @@ export default function HomeView({
 }: UserHomeLayoutProps) {
   return (
     <View style={styles.Container}>
+      <View style={styles.header}></View>
+
       <View style={styles.CenterWrapper}>
         <ActionImageButton
           image={cameraIcon}
@@ -57,6 +59,7 @@ const styles = StyleSheet.create({
 
     position: "relative", // For absolute positioning of Settings
   },
+
   CenterWrapper: {
     flex: 1,
     justifyContent: "center", // Centers Report vertically
@@ -100,5 +103,10 @@ const styles = StyleSheet.create({
   SettingsImage: {
     width: 50,
     height: 50,
+  },
+  header: {
+    height: 60,
+    width: "100%",
+    backgroundColor: "black",
   },
 });

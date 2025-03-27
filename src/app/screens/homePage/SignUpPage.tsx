@@ -1,8 +1,6 @@
 import {
   StyleSheet,
   Text,
-  TouchableWithoutFeedback,
-  Keyboard,
   View,
   TouchableOpacity,
   ScrollView,
@@ -14,7 +12,7 @@ import validateName from "@utils/validateName";
 import validateEmail from "@utils/validateEmail";
 import validatePassword from "@utils/validatePassword";
 import { VALIDATION_TYPE } from "@utils/validatePassword";
-import { FIELD_INDICES, FieldError } from "@constants/FieldErrorConstants";
+import { FIELD_INDICES, FieldError } from "@constants/signUpFieldError";
 
 export default function SignUpScreen() {
   const [firstName, setFirstName] = useState("");

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Jurisdiction } from "@constants/Jurisdiction";
+import { Jurisdiction } from "@constants/jurisdiction";
 import { Alert } from "react-native";
 
 const SIX_HOURS = 1000 * 60 * 60 * 6;
@@ -34,8 +34,8 @@ export const useGetJurisdiction = () => {
 
       return createMap(jurisdictions);
     },
-    staleTime: 0,
-    gcTime: 0,
+    staleTime: SIX_HOURS,
+    gcTime: SIX_HOURS,
   });
 };
 

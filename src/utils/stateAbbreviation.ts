@@ -1,4 +1,4 @@
-const stateAbbreviations: { [key: string]: string } = {
+export const stateAbbreviations: { [key: string]: string } = {
   alabama: "AL",
   alaska: "AK",
   arizona: "AZ",

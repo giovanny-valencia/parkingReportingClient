@@ -21,7 +21,7 @@ export interface FieldError {
 
 export type FieldIndexKey = keyof typeof FIELD_INDICES;
 
-// expo wouldn't stop complaining about a missing default function
-export default function ts() {
-  return;
-}
+// // expo wouldn't stop complaining about a missing default function
+// export default function ts() {
+//   return;
+// }

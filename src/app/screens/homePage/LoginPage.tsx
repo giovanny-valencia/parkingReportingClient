@@ -4,6 +4,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { router, useRouter } from "expo-router"; // Import useRouter
 import { useState, useEffect } from "react";
@@ -103,40 +105,51 @@ export default function HomeScreen() {
   }, [error, validationTriggered]);
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"
+    <KeyboardAvoidingView
+      style={styles.keyboardContainer}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
-      <View style={styles.container}>
-        <LoginView
-          email={email}
-          password={password}
-          error={error}
-          setEmail={setEmail}
-          setPassword={setPassword}
-        />
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.container}>
+          <LoginView
+            email={email}
+            password={password}
+            error={error}
+            setEmail={setEmail}
+            setPassword={setPassword}
+          />
 
-        <Text style={styles.forgotPassword} onPress={handleForgotPassword}>
-          Forgot Password?
-        </Text>
-
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
-
-        <View style={styles.signupContainer}>
-          <Text style={styles.signupText}>Need an account? </Text>
-          <Text style={styles.signupLink} onPress={handleSignUp}>
-            Sign up
+          <Text style={styles.forgotPassword} onPress={handleForgotPassword}>
+            Forgot Password?
           </Text>
+
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+            <Text style={styles.loginButtonText}>Login</Text>
+          </TouchableOpacity>
+
+          <View style={styles.signupContainer}>
+            <Text style={styles.signupText}>Need an account? </Text>
+            <Text style={styles.signupLink} onPress={handleSignUp}>
+              Sign up
+            </Text>
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 // Styles for the HomeScreen component
 const styles = StyleSheet.create({
+  keyboardContainer: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: "#F5F5F5",
+  },
   container: {
     flex: 1,
     width: "100%",
