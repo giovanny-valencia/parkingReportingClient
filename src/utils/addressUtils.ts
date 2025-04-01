@@ -18,8 +18,6 @@ interface props {
  * @returns {typeof addressFields | null} Normalized address object or null if required fields are missing
  */
 export const createAddress = ({ location, latitude, longitude }: props) => {
-  console.log("createAddress called");
-
   const city = location[0].city || "";
   const state =
     location[0].region?.length === 2

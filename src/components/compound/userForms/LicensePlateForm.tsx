@@ -1,22 +1,15 @@
 /**
- * UI for the report Page
  *
- * Displays the images, License plate input, dropdown violation selection, and the next button.
  */
 
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { View, Text, StyleSheet, TextInput } from "react-native";
 import { IMAGE_TYPES, ImageContent } from "@constants/imageContent";
 import ImagesView from "./ImagesView";
-import { FIELD_INDICES, FieldError } from "@constants/userReportFieldErrors";
+import { ErrorIndex, ErrorField } from "@constants/userReportFieldErrors";
 import { stateAbbreviations } from "@utils/stateAbbreviation";
 import DropDownSelection from "@components/common/DropDownSelection";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useVehicleFormValidation } from "@hooks/screens/user/ReportPage/useVehicleFormValidation";
 
 // creates the states selection array
 const stateOptions = Object.entries(stateAbbreviations).map(([name, abbr]) => ({
@@ -27,50 +20,67 @@ const stateOptions = Object.entries(stateAbbreviations).map(([name, abbr]) => ({
   value: abbr,
 }));
 
-interface ReportViewProps {
-  licensePlateImage: ImageContent;
+interface Params {
+  plateImage: ImageContent;
   setLicensePlateImage: (image: ImageContent) => void;
 
   plateStateInitials: string;
   setPlateStateInitials: (state: string) => void;
 
-  licensePlate: string;
-  setLicensePlate: (licensePlate: string) => void;
+  plateNumber: string;
+  setPlateNumber: (licensePlate: string) => void;
 
-  errors: FieldError[];
-  handleNext: () => void;
+  errors: ErrorField[];
+  setErrors: (index: number, errMessage: string) => void;
+
+  buttonClick: string;
+  setButtonClick: (button: string) => void;
 }
 
-export default function ReportView({
-  licensePlateImage,
+export default function LicensePlateForm({
+  plateImage,
   setLicensePlateImage,
 
   plateStateInitials,
   setPlateStateInitials,
 
-  licensePlate,
-  setLicensePlate,
+  plateNumber,
+  setPlateNumber,
 
   errors,
-  handleNext,
-}: ReportViewProps) {
-  
-    const [open, setOpen] = useState(false);
-  
+  setErrors,
+
+  buttonClick,
+  setButtonClick,
+}: Params) {
+  const res = useVehicleFormValidation({
+    shouldValidate: buttonClick === "next",
+    // buttonClick,
+    //setButtonClick,
+    setErrors,
+    plateImage,
+    plateStateInitials,
+    plateNumber,
+  });
+
+  useEffect(() => {
+    console.log(res);
+  });
+
   return (
     <View style={styles.container}>
       <Text style={styles.imageTitles}>License Plate Image </Text>
       <ImagesView
         type={IMAGE_TYPES.licensePlate}
-        reportImages={[licensePlateImage]}
+        reportImages={[plateImage]}
         handler={() => {
-          console.log("clicked: ", licensePlateImage.id);
+          console.log("clicked: ", plateImage.id);
         }}
       />
 
-      {errors[FIELD_INDICES.licensePlateImage].message.length > 0 && (
+      {errors[ErrorIndex.licensePlateImage].message.length > 0 && (
         <Text style={styles.error}>
-          {errors[FIELD_INDICES.licensePlateImage].message}
+          {errors[ErrorIndex.licensePlateImage].message}
         </Text>
       )}
 
@@ -86,10 +96,9 @@ export default function ReportView({
           />
         </View>
 
-        {errors[FIELD_INDICES.licensePlateStateSelection].message.length >
-          0 && (
+        {errors[ErrorIndex.licensePlateStateSelection].message.length > 0 && (
           <Text style={styles.error}>
-            {errors[FIELD_INDICES.licensePlateStateSelection].message}
+            {errors[ErrorIndex.licensePlateStateSelection].message}
           </Text>
         )}
 
@@ -98,17 +107,17 @@ export default function ReportView({
         <TextInput
           placeholder="Enter Plate Number..."
           placeholderTextColor="black"
-          value={licensePlate}
-          onChangeText={(text) => setLicensePlate(text.replace(/\s/g, ""))}
+          value={plateNumber}
+          onChangeText={(text) => setPlateNumber(text.replace(/\s/g, ""))}
           autoCapitalize="characters"
           autoCorrect={false}
           style={styles.licensePlateInput}
           maxLength={10}
         />
       </View>
-      {errors[FIELD_INDICES.licensePlateTextInput].message.length > 0 && (
+      {errors[ErrorIndex.licensePlateTextInput].message.length > 0 && (
         <Text style={styles.error}>
-          {errors[FIELD_INDICES.licensePlateTextInput].message}
+          {errors[ErrorIndex.licensePlateTextInput].message}
         </Text>
       )}
     </View>
@@ -121,6 +130,7 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "skyblue",
   },
   imageTitles: {
     fontSize: 20,
@@ -160,5 +170,11 @@ const styles = StyleSheet.create({
   licenseDetailsBox: {
     width: 200,
     alignSelf: "center",
+  },
+
+  footerSpace: {
+    marginTop: 20,
+    marginBottom: 20,
+    backgroundColor: "green",
   },
 });

@@ -1,4 +1,4 @@
-import ReportView from "@components/compound/userForms/ReportView";
+import LicensePlateForm from "@components/compound/userForms/LicensePlateForm";
 import {
   View,
   StyleSheet,
@@ -6,7 +6,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
-  StatusBar,
+  Keyboard,
 } from "react-native";
 import { IMAGE_TYPES, ImageContent } from "@constants/imageContent";
 import { useState } from "react";
@@ -18,33 +18,42 @@ import { useGetCurrentLocation } from "@queries/useGetCurrentLocation";
 import { useGetJurisdiction } from "@queries/useGetJurisdiction";
 import { Alert } from "react-native";
 import { ScrollView } from "moti";
-import { FIELD_INDICES, FieldError } from "@constants/userReportFieldErrors";
+import { ErrorIndex, ErrorField } from "@constants/userReportFieldErrors";
+
+/**
+ * This is the localized data for the entire user Report process and manages the currentStep of the process as well as the
+ * buttonPresses. On the submit button, it sends the validated data to the backend server.
+ *
+ * On submit, displays a thank you to user for making the report. Might wait for a backend server callback to see
+ * if the report was accepted (unique) and display a sorry message if it wasn't.
+ */
 
 const navigateBackOrHome = () => {
   router.canGoBack() ? router.back() : router.replace("/screens/user/HomePage");
 };
 
 export default function ReportPage() {
-  const MAX_LENGTH_VIOLATION = 256;
-  const [step, setStep] = useState(1);
-  const [plateStateInitials, setPlateStateInitials] = useState("");
-  const [licensePlate, setLicensePlate] = useState("");
-  const [violation, setViolation] = useState("");
-  const [licensePlateImage, setLicensePlateImage] = useState<ImageContent>({
+  // Transition states
+  const [currentStep, setStep] = useState(1);
+  const [buttonClick, setButtonClick] = useState("");
+
+  // LicensePlateForm data
+  const [plateState, setPlateState] = useState("");
+  const [plateNumber, setPlateNumber] = useState("");
+  const [plateImage, setPlateImage] = useState<ImageContent>({
     id: 0,
     uri: "",
     type: IMAGE_TYPES.licensePlate,
   });
 
   // creates the error array
-  const initialErrors: FieldError[] = Object.values(FIELD_INDICES).map(
+  const initialErrors: ErrorField[] = Object.values(ErrorIndex).map(
     (index) => ({
       id: index,
       message: "",
     })
   );
-
-  const [error, setError] = useState<FieldError[]>(initialErrors);
+  const [error, setError] = useState<ErrorField[]>(initialErrors);
 
   function handleSetError(errorIndex: number, errorMessage: string) {
     setError((prevErrors) =>
@@ -62,23 +71,21 @@ export default function ReportPage() {
       type: IMAGE_TYPES.violation,
     }))
   );
+  const [violation, setViolation] = useState("");
 
-  // hooks
+  // Location hooks
   const { data: isLocationGranted, isLoading: initialLoad } =
     useCheckLocationPermission();
-  console.log("1 PG: ", isLocationGranted);
 
   const { data: isRequestGranted, isLoading: requestLoad } =
     useRequestLocationPermission({
       enabled: isLocationGranted === false,
       contextMessage: "goCite needs your location to create a report",
     });
-  console.log("2 RG: ", isRequestGranted);
 
   const { data: isLoc } = useGetCurrentLocation(
     isLocationGranted === true || isRequestGranted === true
   );
-  console.log("3 Loc: ", isLoc);
 
   const { data: jurisdictionMap, error: jurisdictionError } =
     useGetJurisdiction();
@@ -96,16 +103,12 @@ export default function ReportPage() {
 
   useEffect(() => {
     if (isRequestGranted === false || jurisdictionError) {
-      console.log("bye");
       navigateBackOrHome();
     } else if (isLoc && jurisdictionMap) {
       const state = isLoc.state.toUpperCase();
       const city = isLoc.city.toUpperCase().trim().replace(/\s+/g, "-");
       const key = `${state}-${city}`;
       const isLocationSupported = jurisdictionMap.get(key);
-
-      console.log("m: ", isLocationSupported);
-      console.log("key: ", key);
 
       if (!isLocationSupported) {
         let message =
@@ -118,61 +121,22 @@ export default function ReportPage() {
     }
   }, [isRequestGranted, jurisdictionError, isLoc, jurisdictionMap]);
 
-  const handleNext = () => {
-    console.log("Next func!");
-
-    console.log("LPS: ", plateStateInitials);
-
-    if (!licensePlateImage.uri) {
-      handleSetError(
-        FIELD_INDICES.licensePlateImage,
-        "License Plate Photo Required"
-      );
-    } else {
-      handleSetError(FIELD_INDICES.licensePlateImage, "");
+  // hack to keep footer from moving up (android issue in current implementation)
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  useEffect(() => {
+    if (Platform.OS === "android") {
+      const keyboardDidShow = Keyboard.addListener("keyboardDidShow", () => {
+        setKeyboardVisible(true);
+      });
+      const keyboardDidHide = Keyboard.addListener("keyboardDidHide", () => {
+        setKeyboardVisible(false);
+      });
+      return () => {
+        keyboardDidShow.remove();
+        keyboardDidHide.remove();
+      };
     }
-
-    if (!plateStateInitials) {
-      handleSetError(
-        FIELD_INDICES.licensePlateStateSelection,
-        "License Plate State Required"
-      );
-    } else {
-      handleSetError(FIELD_INDICES.licensePlateStateSelection, "");
-    }
-
-    // skipping the API check for now, just if it's empty rn.
-    if (!licensePlate) {
-      handleSetError(
-        FIELD_INDICES.licensePlateTextInput,
-        "License Plate Field Required"
-      );
-    }
-
-    if (!supportingImages[0].uri) {
-      handleSetError(
-        FIELD_INDICES.supportingImage,
-        "At Least 1 Violation Image Required"
-      );
-    } else {
-      handleSetError(FIELD_INDICES.supportingImage, "");
-    }
-
-    if (!violation) {
-      handleSetError(
-        FIELD_INDICES.violationDetails,
-        "Violation Information Required"
-      );
-    } else {
-      handleSetError(FIELD_INDICES.violationDetails, "");
-    }
-
-    return;
-  };
-
-  const handleBack = () => {};
-
-  const handleSubmit = () => {};
+  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -186,40 +150,55 @@ export default function ReportPage() {
         contentContainerStyle={styles.container}
         keyboardShouldPersistTaps="handled"
       >
-        {step === 1 && (
+        {currentStep === 1 && (
           <View style={styles.container}>
-            <ReportView
-              licensePlateImage={licensePlateImage}
-              setLicensePlateImage={setLicensePlateImage}
-              plateStateInitials={plateStateInitials}
-              setPlateStateInitials={setPlateStateInitials}
-              licensePlate={licensePlate}
-              setLicensePlate={setLicensePlate}
+            <LicensePlateForm
+              plateImage={plateImage}
+              setLicensePlateImage={setPlateImage}
+              plateStateInitials={plateState}
+              setPlateStateInitials={setPlateState}
+              plateNumber={plateNumber}
+              setPlateNumber={setPlateNumber}
               errors={error}
-              handleNext={handleNext}
-            ></ReportView>
+              setErrors={handleSetError}
+              buttonClick={buttonClick}
+              setButtonClick={setButtonClick}
+            ></LicensePlateForm>
           </View>
         )}
 
-        {step === 2 && (
+        {currentStep === 2 && (
           <View style={styles.container}>
-            <h1>Step 2 </h1>
+            <Text>Step 2 </Text>
+          </View>
+        )}
+
+        {currentStep === 3 && (
+          <View style={styles.container}>
+            <Text>Step 3 </Text>
           </View>
         )}
       </ScrollView>
-      <View style={styles.footer}>
-        <View>
-          <TouchableOpacity>
-            <Text style={styles.backButton}>Back</Text>
-          </TouchableOpacity>
-        </View>
 
-        <View>
-          <TouchableOpacity>
-            <Text style={styles.nextButton}>Next</Text>
-          </TouchableOpacity>
+      {!isKeyboardVisible && (
+        <View style={styles.footer}>
+          <View>
+            <TouchableOpacity onPress={() => console.log("back")}>
+              <Text style={styles.backButton}>
+                {currentStep === 1 ? "Home" : "Back"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View>
+            <TouchableOpacity onPressOut={() => setButtonClick("next")}>
+              <Text style={styles.nextButton}>
+                {currentStep === 3 ? "Submit" : "Next"}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      )}
     </KeyboardAvoidingView>
   );
 }
@@ -260,6 +239,8 @@ const styles = StyleSheet.create({
     bottom: "5%",
     left: "15%",
     right: "15%",
+
+    backgroundColor: "red",
   },
   backButton: {
     backgroundColor: "white",

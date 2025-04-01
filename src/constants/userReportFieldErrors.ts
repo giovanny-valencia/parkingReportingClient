@@ -5,7 +5,7 @@
  * which gets sent to the ReportView and GeoAddressPicker UI components
  */
 
-export const FIELD_INDICES = {
+export const ErrorIndex = {
   licensePlateImage: 0,
   licensePlateStateSelection: 1,
   licensePlateTextInput: 2,
@@ -14,9 +14,9 @@ export const FIELD_INDICES = {
   addressPicker: 5,
 } as const;
 
-export interface FieldError {
+export interface ErrorField {
   id: number;
   message: string;
 }
 
-export type FieldIndexKey = keyof typeof FIELD_INDICES;
+export type FieldIndexKey = keyof typeof ErrorIndex;

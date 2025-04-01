@@ -1,6 +1,3 @@
-import { FIELD_INDICES, FieldError } from "@constants/userReportFieldErrors";
+import { ErrorIndex, ErrorField } from "@constants/userReportFieldErrors";
 
-export default function AddressView() {
-
-    
-}
+export default function AddressView() {}
