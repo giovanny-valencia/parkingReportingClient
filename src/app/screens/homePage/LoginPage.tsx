@@ -1,14 +1,7 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
-import { router, useRouter } from "expo-router"; // Import useRouter
-import { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { router } from "expo-router"; // Import useRouter
+import { useState, useEffect, useRef } from "react";
 import LoginView from "@components/compound/auth/LoginView";
 import validateEmail from "@utils/validateEmail";
 import validatePassword from "@utils/validatePassword";
@@ -105,68 +98,47 @@ export default function HomeScreen() {
   }, [error, validationTriggered]);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.keyboardContainer}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-    >
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
+    <View style={styles.scrollView}>
+      <KeyboardAwareScrollView
+        scrollEnabled={true}
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: "center", // Center vertically
+        }}
       >
-        <View style={styles.container}>
-          <LoginView
-            email={email}
-            password={password}
-            error={error}
-            setEmail={setEmail}
-            setPassword={setPassword}
-          />
+        <View style={styles.screen}>
+          <View style={styles.loginView}>
+            <LoginView
+              email={email}
+              password={password}
+              error={error}
+              setEmail={setEmail}
+              setPassword={setPassword}
+            />
 
-          <Text style={styles.forgotPassword} onPress={handleForgotPassword}>
-            Forgot Password?
-          </Text>
-
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.loginButtonText}>Login</Text>
-          </TouchableOpacity>
-
-          <View style={styles.signupContainer}>
-            <Text style={styles.signupText}>Need an account? </Text>
-            <Text style={styles.signupLink} onPress={handleSignUp}>
-              Sign up
+            <Text style={styles.forgotPassword} onPress={handleForgotPassword}>
+              Forgot Password?
             </Text>
+
+            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+              <Text style={styles.loginButtonText}>Login</Text>
+            </TouchableOpacity>
+
+            <View style={styles.signupContainer}>
+              <Text style={styles.signupText}>Need an account? </Text>
+              <Text style={styles.signupLink} onPress={handleSignUp}>
+                Sign up
+              </Text>
+            </View>
           </View>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
+    </View>
   );
 }
 
 // Styles for the HomeScreen component
 const styles = StyleSheet.create({
-  keyboardContainer: {
-    flex: 1,
-    width: "100%",
-    backgroundColor: "#F5F5F5",
-  },
-  container: {
-    flex: 1,
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    alignSelf: "flex-start",
-    marginBottom: 5,
-  },
   loginButton: {
     borderWidth: 2,
     borderColor: "#007AFF",
@@ -193,6 +165,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 15, // Space above the row
     alignItems: "center", // Vertically center the text and link
+
+    marginBottom: 150,
   },
   signupText: {
     fontSize: 16, // Match size with signupLink
@@ -203,5 +177,25 @@ const styles = StyleSheet.create({
     fontSize: 16, // Same size as signupText
     color: "#007AFF", // Blue link color (iOS-like)
     fontWeight: "bold", // Optional: make it stand out
+  },
+
+  screen: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "#F5F5F5",
+    marginTop: 40,
+    marginBottom: 40,
+  },
+
+  loginView: {
+    width: "80%",
+    marginTop: 20,
+    alignSelf: "center",
+    backgroundColor: "#F5F5F5",
+  },
+
+  scrollView: {
+    flex: 1, // Fill the entire screen
+    backgroundColor: "black",
   },
 });

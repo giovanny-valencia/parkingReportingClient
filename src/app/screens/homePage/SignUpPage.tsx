@@ -4,6 +4,7 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  Platform,
 } from "react-native";
 import { useState, useEffect } from "react";
 import SignUpForm from "@components/compound/auth/SignUpView";
@@ -13,6 +14,7 @@ import validateEmail from "@utils/validateEmail";
 import validatePassword from "@utils/validatePassword";
 import { VALIDATION_TYPE } from "@utils/validatePassword";
 import { FIELD_INDICES, FieldError } from "@constants/signUpFieldError";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function SignUpScreen() {
   const [firstName, setFirstName] = useState("");
@@ -138,39 +140,46 @@ export default function SignUpScreen() {
   }, [error, validationTriggered]);
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.scrollContainer}
-      keyboardShouldPersistTaps="handled"
-    >
-      <View style={styles.container}>
-        <SignUpForm
-          firstName={firstName}
-          lastName={lastName}
-          email={email}
-          password={password}
-          confirmPassword={confirmPassword}
-          error={error} // Pass error, default to empty string if null
-          date={date}
-          setFirstName={setFirstName}
-          setLastName={setLastName}
-          setEmail={setEmail}
-          setPassword={setPassword}
-          setConfirmPassword={setConfirmPassword}
-          setDate={setDate}
-        />
+    <View style={styles.scrollView}>
+      <KeyboardAwareScrollView
+        scrollEnabled={true}
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: "center", // Center vertically
+          alignItems: "center", // Center horizontally
+        }}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.screen}>
+          <SignUpForm
+            firstName={firstName}
+            lastName={lastName}
+            email={email}
+            password={password}
+            confirmPassword={confirmPassword}
+            error={error} // Pass error, default to empty string if null
+            date={date}
+            setFirstName={setFirstName}
+            setLastName={setLastName}
+            setEmail={setEmail}
+            setPassword={setPassword}
+            setConfirmPassword={setConfirmPassword}
+            setDate={setDate}
+          />
 
-        <TouchableOpacity style={styles.signupButton} onPress={handleSignUp}>
-          <Text style={styles.signupButtonText}>Sign Up</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.signupButton} onPress={handleSignUp}>
+            <Text style={styles.signupButtonText}>Sign Up</Text>
+          </TouchableOpacity>
 
-        <Text style={styles.label}>
-          Already have an account?{" "}
-          <Text style={styles.backLoginText} onPress={() => router.back()}>
-            Log in
+          <Text style={styles.label}>
+            Already have an account?{" "}
+            <Text style={styles.backLoginText} onPress={() => router.back()}>
+              Log in
+            </Text>
           </Text>
-        </Text>
-      </View>
-    </ScrollView>
+        </View>
+      </KeyboardAwareScrollView>
+    </View>
   );
 }
 
@@ -186,17 +195,17 @@ export default function SignUpScreen() {
 
 // Styles
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: "80%",
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
+  scrollView: {
+    flex: 1, // Fill the entire screen
+    backgroundColor: "black",
   },
-  scrollContainer: {
-    flexGrow: 1, // Allows ScrollView content to grow and be scrollable
-    paddingVertical: 20, // Optional: Adds padding to top and bottom
+
+  screen: {
+    width: "100%",
+    padding: 70, // Add padding for better spacing
+    backgroundColor: "#F5F5F5",
   },
+
   signupButton: {
     borderWidth: 2,
     borderColor: "#007AFF",

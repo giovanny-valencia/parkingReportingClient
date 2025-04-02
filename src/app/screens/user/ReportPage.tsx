@@ -121,22 +121,7 @@ export default function ReportPage() {
     }
   }, [isRequestGranted, jurisdictionError, isLoc, jurisdictionMap]);
 
-  // hack to keep footer from moving up (android issue in current implementation)
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-  useEffect(() => {
-    if (Platform.OS === "android") {
-      const keyboardDidShow = Keyboard.addListener("keyboardDidShow", () => {
-        setKeyboardVisible(true);
-      });
-      const keyboardDidHide = Keyboard.addListener("keyboardDidHide", () => {
-        setKeyboardVisible(false);
-      });
-      return () => {
-        keyboardDidShow.remove();
-        keyboardDidHide.remove();
-      };
-    }
-  }, []);
+  
 
   return (
     <KeyboardAvoidingView
@@ -180,28 +165,28 @@ export default function ReportPage() {
         )}
       </ScrollView>
 
-      {!isKeyboardVisible && (
-        <View style={styles.footer}>
-          <View>
-            <TouchableOpacity onPress={() => console.log("back")}>
-              <Text style={styles.backButton}>
-                {currentStep === 1 ? "Home" : "Back"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View>
-            <TouchableOpacity onPressOut={() => setButtonClick("next")}>
-              <Text style={styles.nextButton}>
-                {currentStep === 3 ? "Submit" : "Next"}
-              </Text>
-            </TouchableOpacity>
-          </View>
+      <View style={styles.footer}>
+        <View>
+          <TouchableOpacity onPress={() => console.log("back")}>
+            <Text style={styles.backButton}>
+              {currentStep === 1 ? "Home" : "Back"}
+            </Text>
+          </TouchableOpacity>
         </View>
-      )}
+
+        <View>
+          <TouchableOpacity onPressOut={() => setButtonClick("next")}>
+            <Text style={styles.nextButton}>
+              {currentStep === 3 ? "Submit" : "Next"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </KeyboardAvoidingView>
   );
 }
+
+
 
 // styles
 const styles = StyleSheet.create({
