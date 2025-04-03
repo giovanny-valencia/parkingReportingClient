@@ -15,6 +15,7 @@ import validatePassword from "@utils/validatePassword";
 import { VALIDATION_TYPE } from "@utils/validatePassword";
 import { FIELD_INDICES, FieldError } from "@constants/signUpFieldError";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SignUpScreen() {
   const [firstName, setFirstName] = useState("");
@@ -140,7 +141,7 @@ export default function SignUpScreen() {
   }, [error, validationTriggered]);
 
   return (
-    <View style={styles.scrollView}>
+    <>
       <KeyboardAwareScrollView
         scrollEnabled={true}
         contentContainerStyle={{
@@ -179,7 +180,7 @@ export default function SignUpScreen() {
           </Text>
         </View>
       </KeyboardAwareScrollView>
-    </View>
+    </>
   );
 }
 
@@ -195,14 +196,9 @@ export default function SignUpScreen() {
 
 // Styles
 const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1, // Fill the entire screen
-    backgroundColor: "black",
-  },
-
   screen: {
-    width: "100%",
-    padding: 70, // Add padding for better spacing
+    width: "90%",
+    //padding: 70, // Add padding for better spacing
     backgroundColor: "#F5F5F5",
   },
 

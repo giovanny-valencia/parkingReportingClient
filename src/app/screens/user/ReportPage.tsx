@@ -7,6 +7,7 @@ import {
   Platform,
   TouchableOpacity,
   Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { IMAGE_TYPES, ImageContent } from "@constants/imageContent";
 import { useState } from "react";
@@ -18,6 +19,7 @@ import { useGetCurrentLocation } from "@queries/useGetCurrentLocation";
 import { useGetJurisdiction } from "@queries/useGetJurisdiction";
 import { Alert } from "react-native";
 import { ScrollView } from "moti";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { ErrorIndex, ErrorField } from "@constants/userReportFieldErrors";
 
 /**
@@ -121,132 +123,105 @@ export default function ReportPage() {
     }
   }, [isRequestGranted, jurisdictionError, isLoc, jurisdictionMap]);
 
-  
-
   return (
-    <KeyboardAvoidingView
-      style={styles.keyboardContainer}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-    >
-      <View style={styles.header}></View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "skyblue" }}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={"padding"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+        >
+          <View style={styles.fullScreen}>
+            {currentStep === 1 && (
+              // <View style={styles.container}>
+              <LicensePlateForm
+                plateImage={plateImage}
+                setLicensePlateImage={setPlateImage}
+                plateStateInitials={plateState}
+                setPlateStateInitials={setPlateState}
+                plateNumber={plateNumber}
+                setPlateNumber={setPlateNumber}
+                errors={error}
+                setErrors={handleSetError}
+                buttonClick={buttonClick}
+                setButtonClick={setButtonClick}
+              ></LicensePlateForm>
+              // </View>
+            )}
 
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
-      >
-        {currentStep === 1 && (
-          <View style={styles.container}>
-            <LicensePlateForm
-              plateImage={plateImage}
-              setLicensePlateImage={setPlateImage}
-              plateStateInitials={plateState}
-              setPlateStateInitials={setPlateState}
-              plateNumber={plateNumber}
-              setPlateNumber={setPlateNumber}
-              errors={error}
-              setErrors={handleSetError}
-              buttonClick={buttonClick}
-              setButtonClick={setButtonClick}
-            ></LicensePlateForm>
+            {currentStep === 2 && <Text>Step 2 </Text>}
+
+            {currentStep === 3 && <Text>Step 3 </Text>}
           </View>
-        )}
 
-        {currentStep === 2 && (
-          <View style={styles.container}>
-            <Text>Step 2 </Text>
+          <View style={styles.buttonsArea}>
+            <TouchableOpacity onPress={() => console.log("back")}>
+              <Text style={styles.backButton}>
+                {currentStep === 1 ? "Home" : "Back"}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPressOut={() => setButtonClick("next")}>
+              <Text style={styles.nextButton}>
+                {currentStep === 3 ? "Submit" : "Next"}
+              </Text>
+            </TouchableOpacity>
           </View>
-        )}
-
-        {currentStep === 3 && (
-          <View style={styles.container}>
-            <Text>Step 3 </Text>
-          </View>
-        )}
-      </ScrollView>
-
-      <View style={styles.footer}>
-        <View>
-          <TouchableOpacity onPress={() => console.log("back")}>
-            <Text style={styles.backButton}>
-              {currentStep === 1 ? "Home" : "Back"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View>
-          <TouchableOpacity onPressOut={() => setButtonClick("next")}>
-            <Text style={styles.nextButton}>
-              {currentStep === 3 ? "Submit" : "Next"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    </SafeAreaView>
   );
 }
 
-
-
 // styles
 const styles = StyleSheet.create({
-  keyboardContainer: {
-    flex: 1,
-    width: "100%",
-    backgroundColor: "#F5F5F5",
-  },
-  container: {
+  fullScreen: {
     flex: 1,
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-  },
-  text: {
-    fontSize: 20,
-    textAlign: "center",
-    margin: 10,
+    backgroundColor: "skyblue",
   },
 
-  header: {
-    height: 60,
-    width: "100%",
-    backgroundColor: "black",
-  },
-
-  footer: {
-    alignContent: "center",
-    marginBottom: 20,
+  buttonsArea: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 20,
-
+    justifyContent: "space-between", // Evenly distribute buttons
+    alignItems: "center",
+    paddingHorizontal: "10%", // Percentage-based padding
+    paddingVertical: 10,
     position: "absolute",
     bottom: "5%",
-    left: "15%",
-    right: "15%",
-
-    backgroundColor: "red",
+    width: "100%",
+    backgroundColor: "transparent",
   },
   backButton: {
-    backgroundColor: "white",
-    padding: 10,
-    borderRadius: 5,
-    fontSize: 25,
+    backgroundColor: "#FFFFFF", // White
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 15, // Softer curve
+    fontSize: 18, // Slightly smaller
     fontWeight: "bold",
     textAlign: "center",
-    borderColor: "black",
-    borderWidth: 1,
-    color: "skyblue",
+    color: "#007AFF", // Blue text to match theme
+    shadowColor: "#000", // Subtle shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3, // Android shadow
   },
   nextButton: {
-    backgroundColor: "skyblue",
-    padding: 10,
-    borderRadius: 5,
-    fontSize: 25,
+    backgroundColor: "#007AFF", // Blue
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 15, // Match backButton
+    fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
-    borderColor: "black",
-    borderWidth: 1,
-    color: "white",
+    color: "#FFFFFF", // White text
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
 });

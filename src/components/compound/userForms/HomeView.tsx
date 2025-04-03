@@ -11,6 +11,7 @@
 
 import { View, StyleSheet } from "react-native";
 import ActionImageButton from "@components/common/ActionImageButton";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface UserHomeLayoutProps {
   onReportClick: () => void;
@@ -25,28 +26,28 @@ export default function HomeView({
   onSettingsClick,
 }: UserHomeLayoutProps) {
   return (
-    <View style={styles.Container}>
-      <View style={styles.header}></View>
+    <>
+      <SafeAreaView style={styles.Container}>
+        <View style={styles.CenterWrapper}>
+          <ActionImageButton
+            image={cameraIcon}
+            text={"Report"}
+            onClick={onReportClick}
+            containerStyle={styles.ReportContainer}
+            imageStyle={styles.ReportImage}
+            textStyle={styles.ReportText}
+          />
+        </View>
 
-      <View style={styles.CenterWrapper}>
         <ActionImageButton
-          image={cameraIcon}
-          text={"Report"}
-          onClick={onReportClick}
-          containerStyle={styles.ReportContainer}
-          imageStyle={styles.ReportImage}
+          image={settingsIcon}
+          onClick={onSettingsClick}
+          containerStyle={styles.SettingsContainer}
+          imageStyle={styles.SettingsImage}
           textStyle={styles.ReportText}
         />
-      </View>
-
-      <ActionImageButton
-        image={settingsIcon}
-        onClick={onSettingsClick}
-        containerStyle={styles.SettingsContainer}
-        imageStyle={styles.SettingsImage}
-        textStyle={styles.ReportText}
-      />
-    </View>
+      </SafeAreaView>
+    </>
   );
 }
 
@@ -57,7 +58,8 @@ const styles = StyleSheet.create({
     alignContent: "center", // Centers Report horizontally
     justifyContent: "center", // Centers Report vertically
 
-    position: "relative", // For absolute positioning of Settings
+    //position: "relative", // For absolute positioning of Settings
+    // backgroundColor: "green",
   },
 
   CenterWrapper: {
@@ -103,10 +105,5 @@ const styles = StyleSheet.create({
   SettingsImage: {
     width: 50,
     height: 50,
-  },
-  header: {
-    height: 60,
-    width: "100%",
-    backgroundColor: "black",
   },
 });

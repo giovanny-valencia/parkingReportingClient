@@ -1,5 +1,7 @@
 import { Stack } from "expo-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { StyleSheet } from "react-native";
+import { View } from "moti";
 
 const queryClient = new QueryClient();
 
@@ -13,7 +15,24 @@ const queryClient = new QueryClient();
 export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Stack screenOptions={{ headerShown: false }} />
+      <>
+        <View style={styles.header}></View>
+        <Stack screenOptions={{ headerShown: false }} />
+        <View style={styles.footer}></View>
+      </>
     </QueryClientProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    height: 60,
+    width: "100%",
+    backgroundColor: "black",
+  },
+  footer: {
+    height: 60,
+    width: "100%",
+    backgroundColor: "black",
+  },
+});

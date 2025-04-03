@@ -64,7 +64,8 @@ export default function LicensePlateForm({
   });
 
   useEffect(() => {
-    console.log(res);
+    console.log("res: ", res);
+    setButtonClick("");
   });
 
   return (
@@ -77,7 +78,6 @@ export default function LicensePlateForm({
           console.log("clicked: ", plateImage.id);
         }}
       />
-
       {errors[ErrorIndex.licensePlateImage].message.length > 0 && (
         <Text style={styles.error}>
           {errors[ErrorIndex.licensePlateImage].message}
@@ -95,14 +95,11 @@ export default function LicensePlateForm({
             onChange={setPlateStateInitials}
           />
         </View>
-
         {errors[ErrorIndex.licensePlateStateSelection].message.length > 0 && (
           <Text style={styles.error}>
             {errors[ErrorIndex.licensePlateStateSelection].message}
           </Text>
         )}
-
-        <View style={styles.marginSpace}></View>
 
         <TextInput
           placeholder="Enter Plate Number..."
@@ -127,15 +124,24 @@ export default function LicensePlateForm({
 //styles
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    width: "80%",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "skyblue",
+    backgroundColor: "#F5F5F5",
+    //backgroundColor: "skyblue",
+
+    shadowColor: "#000", // Shadow for iOS
+    shadowOffset: { width: 0, height: 4 }, // Shadow direction
+    shadowOpacity: 0.3, // Shadow visibility
+    shadowRadius: 6, // Shadow blur
+    elevation: 8, // Shadow for Android
+    borderRadius: 30,
   },
   imageTitles: {
     fontSize: 20,
     fontWeight: "bold",
     alignSelf: "center",
+    marginTop: 20,
   },
 
   licensePlateInput: {
@@ -163,18 +169,10 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginVertical: 10,
   },
-  marginSpace: {
-    marginBottom: 20,
-  },
 
   licenseDetailsBox: {
     width: 200,
     alignSelf: "center",
-  },
-
-  footerSpace: {
-    marginTop: 20,
     marginBottom: 20,
-    backgroundColor: "green",
   },
 });

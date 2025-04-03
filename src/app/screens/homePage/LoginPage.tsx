@@ -1,11 +1,20 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback,
+  Platform,
+} from "react-native";
 import { router } from "expo-router"; // Import useRouter
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import LoginView from "@components/compound/auth/LoginView";
 import validateEmail from "@utils/validateEmail";
 import validatePassword from "@utils/validatePassword";
 import { VALIDATION_TYPE } from "@utils/validatePassword";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export interface errorIndex {
   id: number;
@@ -98,59 +107,72 @@ export default function HomeScreen() {
   }, [error, validationTriggered]);
 
   return (
-    <View style={styles.scrollView}>
-      <KeyboardAwareScrollView
-        scrollEnabled={true}
-        contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: "center", // Center vertically
-        }}
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        // Need to rework LoginView to use any of this
+        //behavior={Platform.OS === "ios" ? "padding" : undefined}
+        //keyboardVerticalOffset={100}
       >
-        <View style={styles.screen}>
-          <View style={styles.loginView}>
-            <LoginView
-              email={email}
-              password={password}
-              error={error}
-              setEmail={setEmail}
-              setPassword={setPassword}
-            />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.screen}>
+            <View style={styles.loginMenuArea}>
+              <View style={styles.loginView}>
+                <LoginView
+                  email={email}
+                  password={password}
+                  error={error}
+                  setEmail={setEmail}
+                  setPassword={setPassword}
+                />
 
-            <Text style={styles.forgotPassword} onPress={handleForgotPassword}>
-              Forgot Password?
-            </Text>
+                <Text
+                  style={styles.forgotPassword}
+                  onPress={handleForgotPassword}
+                >
+                  Forgot Password?
+                </Text>
 
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-              <Text style={styles.loginButtonText}>Login</Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={handleLogin}
+                >
+                  <Text style={styles.loginButtonText}>Login</Text>
+                </TouchableOpacity>
 
-            <View style={styles.signupContainer}>
-              <Text style={styles.signupText}>Need an account? </Text>
-              <Text style={styles.signupLink} onPress={handleSignUp}>
-                Sign up
-              </Text>
+                <View style={styles.signupContainer}>
+                  <Text style={styles.signupText}>Need an account? </Text>
+                  <Text style={styles.signupLink} onPress={handleSignUp}>
+                    Sign up
+                  </Text>
+                </View>
+              </View>
             </View>
           </View>
-        </View>
-      </KeyboardAwareScrollView>
-    </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 // Styles for the HomeScreen component
 const styles = StyleSheet.create({
+  container: {
+    flex: 1, // Fill the entire screen
+    backgroundColor: "skyblue",
+  },
+
   loginButton: {
-    borderWidth: 2,
-    borderColor: "#007AFF",
+    backgroundColor: "#007AFF", // Filled blue
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 8,
+    borderRadius: 15,
     width: "100%",
     alignItems: "center",
     marginBottom: 15,
   },
   loginButtonText: {
-    color: "#007AFF", // Blue text to match outline
+    color: "#FFFFFF", // White text on blue
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -165,6 +187,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 15, // Space above the row
     alignItems: "center", // Vertically center the text and link
+    alignSelf: "center",
 
     marginBottom: 150,
   },
@@ -179,12 +202,22 @@ const styles = StyleSheet.create({
     fontWeight: "bold", // Optional: make it stand out
   },
 
-  screen: {
+  loginMenuArea: {
     flex: 1,
+    width: "80%",
+    alignSelf: "center",
     justifyContent: "center",
     backgroundColor: "#F5F5F5",
-    marginTop: 40,
-    marginBottom: 40,
+
+    marginTop: 30,
+    marginBottom: 30,
+    shadowColor: "#000", // Shadow for iOS
+    shadowOffset: { width: 0, height: 4 }, // Shadow direction
+    shadowOpacity: 0.3, // Shadow visibility
+    shadowRadius: 6, // Shadow blur
+    elevation: 8, // Shadow for Android
+    borderRadius: 30,
+    //padding: 20,
   },
 
   loginView: {
@@ -194,8 +227,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F5F5",
   },
 
-  scrollView: {
+  screen: {
     flex: 1, // Fill the entire screen
-    backgroundColor: "black",
   },
 });
