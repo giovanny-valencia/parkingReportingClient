@@ -1,7 +1,3 @@
-/**
- *
- */
-
 import { View, Text, StyleSheet, TextInput } from "react-native";
 import { IMAGE_TYPES, ImageContent } from "@constants/imageContent";
 import ImagesView from "./ImagesView";
@@ -35,6 +31,8 @@ interface Params {
 
   buttonClick: string;
   setButtonClick: (button: string) => void;
+
+  setStep: (nextStep: number) => void;
 }
 
 export default function LicensePlateForm({
@@ -52,11 +50,11 @@ export default function LicensePlateForm({
 
   buttonClick,
   setButtonClick,
+
+  setStep,
 }: Params) {
   const res = useVehicleFormValidation({
     shouldValidate: buttonClick === "next",
-    // buttonClick,
-    //setButtonClick,
     setErrors,
     plateImage,
     plateStateInitials,
@@ -65,12 +63,18 @@ export default function LicensePlateForm({
 
   useEffect(() => {
     console.log("res: ", res);
+    if (res) {
+      console.log("incr");
+
+      setStep(2);
+    }
     setButtonClick("");
   });
 
   return (
     <View style={styles.container}>
       <Text style={styles.imageTitles}>License Plate Image </Text>
+
       <ImagesView
         type={IMAGE_TYPES.licensePlate}
         reportImages={[plateImage]}
@@ -94,29 +98,32 @@ export default function LicensePlateForm({
             value={plateStateInitials}
             onChange={setPlateStateInitials}
           />
-        </View>
-        {errors[ErrorIndex.licensePlateStateSelection].message.length > 0 && (
-          <Text style={styles.error}>
-            {errors[ErrorIndex.licensePlateStateSelection].message}
-          </Text>
-        )}
 
-        <TextInput
-          placeholder="Enter Plate Number..."
-          placeholderTextColor="black"
-          value={plateNumber}
-          onChangeText={(text) => setPlateNumber(text.replace(/\s/g, ""))}
-          autoCapitalize="characters"
-          autoCorrect={false}
-          style={styles.licensePlateInput}
-          maxLength={10}
-        />
+          {errors[ErrorIndex.licensePlateStateSelection].message.length > 0 && (
+            <Text style={styles.error}>
+              {errors[ErrorIndex.licensePlateStateSelection].message}
+            </Text>
+          )}
+        </View>
+
+        <View style={styles.test}>
+          <TextInput
+            placeholder="Enter Plate Number..."
+            placeholderTextColor="black"
+            value={plateNumber}
+            onChangeText={(text) => setPlateNumber(text.replace(/\s/g, ""))}
+            autoCapitalize="characters"
+            autoCorrect={false}
+            style={styles.licensePlateInput}
+            maxLength={10}
+          />
+          {errors[ErrorIndex.licensePlateTextInput].message.length > 0 && (
+            <Text style={styles.error}>
+              {errors[ErrorIndex.licensePlateTextInput].message}
+            </Text>
+          )}
+        </View>
       </View>
-      {errors[ErrorIndex.licensePlateTextInput].message.length > 0 && (
-        <Text style={styles.error}>
-          {errors[ErrorIndex.licensePlateTextInput].message}
-        </Text>
-      )}
     </View>
   );
 }
@@ -128,8 +135,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#F5F5F5",
-    //backgroundColor: "skyblue",
-
     shadowColor: "#000", // Shadow for iOS
     shadowOffset: { width: 0, height: 4 }, // Shadow direction
     shadowOpacity: 0.3, // Shadow visibility
@@ -142,12 +147,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     alignSelf: "center",
     marginTop: 20,
+    marginBottom: 20, // double checking later
   },
 
   licensePlateInput: {
     borderWidth: 1,
     height: 40,
-    marginBottom: 10,
     width: 175,
     borderColor: "black",
     padding: 10,
@@ -165,14 +170,20 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   dropDownContainer: {
-    width: 175,
-    alignSelf: "center",
-    marginVertical: 10,
+    width: "100%",
+    alignItems: "center", // Center children horizontally
+    justifyContent: "center", // Center children vertically
+    //backgroundColor: "green",
   },
 
   licenseDetailsBox: {
-    width: 200,
+    width: "100%",
     alignSelf: "center",
-    marginBottom: 20,
+    justifyContent: "center",
+    //backgroundColor: "blue",
+  },
+
+  test: {
+    padding: 20,
   },
 });

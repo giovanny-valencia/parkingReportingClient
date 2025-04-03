@@ -18,7 +18,6 @@ import { useRequestLocationPermission } from "@queries/useRequestPermissions";
 import { useGetCurrentLocation } from "@queries/useGetCurrentLocation";
 import { useGetJurisdiction } from "@queries/useGetJurisdiction";
 import { Alert } from "react-native";
-import { ScrollView } from "moti";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ErrorIndex, ErrorField } from "@constants/userReportFieldErrors";
 
@@ -38,6 +37,19 @@ export default function ReportPage() {
   // Transition states
   const [currentStep, setStep] = useState(1);
   const [buttonClick, setButtonClick] = useState("");
+
+  const handleBackClick = () => {
+    if (currentStep === 1) {
+      Alert.alert(
+        "Discard Changes?",
+        "Are you sure you want to go home? All report data will be lost.",
+        [
+          { text: "No", style: "cancel" },
+          { text: "Yes", onPress: () => navigateBackOrHome() },
+        ]
+      );
+    } else setStep(currentStep - 1);
+  };
 
   // LicensePlateForm data
   const [plateState, setPlateState] = useState("");
@@ -133,7 +145,6 @@ export default function ReportPage() {
         >
           <View style={styles.fullScreen}>
             {currentStep === 1 && (
-              // <View style={styles.container}>
               <LicensePlateForm
                 plateImage={plateImage}
                 setLicensePlateImage={setPlateImage}
@@ -145,8 +156,8 @@ export default function ReportPage() {
                 setErrors={handleSetError}
                 buttonClick={buttonClick}
                 setButtonClick={setButtonClick}
+                setStep={setStep}
               ></LicensePlateForm>
-              // </View>
             )}
 
             {currentStep === 2 && <Text>Step 2 </Text>}
@@ -155,7 +166,7 @@ export default function ReportPage() {
           </View>
 
           <View style={styles.buttonsArea}>
-            <TouchableOpacity onPress={() => console.log("back")}>
+            <TouchableOpacity onPress={handleBackClick}>
               <Text style={styles.backButton}>
                 {currentStep === 1 ? "Home" : "Back"}
               </Text>

@@ -12,6 +12,7 @@ interface DropDownPickerProps {
   data: Item[];
   value: string | null;
   onChange: (value: any) => void; // Callback to update parent
+  //style?: any;
 }
 
 export default function DropDownSelection({
@@ -32,8 +33,13 @@ export default function DropDownSelection({
       setOpen={setOpen}
       setValue={onChange} // Parent handles value updates
       setItems={setItems}
-      dropDownContainerStyle={{ maxHeight: 150 }} // Limit dropdown height
+      dropDownContainerStyle={{
+        maxHeight: 125,
+        maxWidth: 175,
+        alignSelf: "center",
+      }} // Limit dropdown height
       listMode="SCROLLVIEW"
+      style={{ width: 175, alignSelf: "center" }} //todo: pass styles component for reusability
     />
   );
 }
