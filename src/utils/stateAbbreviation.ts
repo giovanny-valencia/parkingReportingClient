@@ -52,6 +52,49 @@ export const stateAbbreviations: { [key: string]: string } = {
 };
 
 /**
+ * Converts a state name to title case (e.g., "new jersey" becomes "New Jersey").
+ * @param stateName The input state name string.
+ * @returns The state name in title case.
+ */
+export const toTitleCaseStateName = (
+  stateName: string | null | undefined
+): string => {
+  if (!stateName) {
+    return "";
+  }
+
+  return stateName
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
+/**
+ * Converts a state abbreviation (e.g., "NJ") to its full name (e.g., "New Jersey").
+ * @param abbreviation The two-letter abbreviation of the state.
+ * @returns The full name of the state, or undefined if not found.
+ */
+export const getFullStateName = (
+  abbreviation: string | null | undefined
+): string | undefined => {
+  if (!abbreviation || typeof abbreviation !== "string") {
+    return undefined;
+  }
+
+  const normalizedAbbreviation = abbreviation.toUpperCase().trim();
+
+  // Reverse lookup: find the key (full name) based on the value (abbreviation)
+  for (const fullName in stateAbbreviations) {
+    if (stateAbbreviations[fullName] === normalizedAbbreviation) {
+      return toTitleCaseStateName(fullName);
+    }
+  }
+
+  return undefined; // Return undefined if the abbreviation is not found
+};
+
+/**
  * Converts a full U.S. state name to its two-letter abbreviation.
  * @param fullStateName The full name of the state (e.g., "New Jersey")
  * @returns The two-letter abbreviation (e.g., "NJ") or undefined if not found

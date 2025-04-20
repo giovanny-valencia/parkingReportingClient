@@ -12,7 +12,7 @@ interface props {
  * Creates a normalized address from raw geocoded location data.
  *
  * @param {props} props - Parameters for address creation
- * @param {LocationGeocodedAddress[]} props.location - Raw geocoded data from {@link Location.reverseGeocodeAsync}
+ * @param {LocationGeocodedAddress[]} props.location - Raw geocoded data from {@link reverseGeocodeAsync}
  * @param {number} props.latitude - Latitude coordinate
  * @param {number} props.longitude - Longitude coordinate
  * @returns {typeof addressFields | null} Normalized address object or null if required fields are missing
@@ -28,28 +28,13 @@ export const createAddress = ({ location, latitude, longitude }: props) => {
   const street = location[0].street || "";
   const streetAddress = `${streetNumber} ${street}`; // removed: ${city}, ${state} ${zipcode}. These can be inferred from other data fields
 
-  /**
-   * Unsure if this is too strict.
-   *
-   * City, required
-   * State, required
-   * Street address is made up of specifically the street. Removing for now.
-   * removed zip code requirement for now as well.
-   * Street, definitely needed. I think? Removing for now, can be pinned with long/lat
-   * including lat/long because if those are missing something clearly went wrong
-   *
-   */
-  if (!city || !state || !latitude || !longitude) {
-    return null;
-  }
-
   const address: typeof addressFields = {
+    // latitude: latitude,
+    //longitude: longitude,
     city: city,
     state: state,
     streetAddress: streetAddress,
     zipCode: zipcode,
-    latitude: latitude,
-    longitude: longitude,
   };
 
   return address;

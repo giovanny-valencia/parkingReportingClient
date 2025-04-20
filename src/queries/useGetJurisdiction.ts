@@ -16,17 +16,17 @@ export const useGetJurisdiction = () => {
     queryKey: ["getJurisdiction"],
     queryFn: async () => {
       const response = await fetch(
-        "https://mocki.io/v1/bbb27acd-5b97-4477-9f79-3495b028025a"
+        "https://mocki.io/v1/e3d587f7-a23f-4e48-9d0b-a8ef2d8137c7"
       );
       if (!response.ok) {
-        await showFetchErrorAlert("Retry or come back later");
-        throw new Error(`Failed to fetch: ${response.status}`);
+        // await showFetchErrorAlert("Retry or come back later");
+        throw new Error(`Failed to fetch, retry or come back later`);
       }
       const data = await response.json();
       if (!data || !Array.isArray(data)) {
-        await showFetchErrorAlert(
-          "Failed to retrieve supported areas, contact support or try again later"
-        );
+        // await showFetchErrorAlert(
+        //   "Failed to retrieve supported areas, contact support or try again later"
+        // );
         throw new Error("No valid jurisdiction data found");
       }
 

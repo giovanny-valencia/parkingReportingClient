@@ -3,8 +3,6 @@ import {
   Text,
   View,
   TouchableOpacity,
-  ScrollView,
-  Platform,
 } from "react-native";
 import { useState, useEffect } from "react";
 import SignUpForm from "@components/compound/auth/SignUpView";
@@ -15,7 +13,6 @@ import validatePassword from "@utils/validatePassword";
 import { VALIDATION_TYPE } from "@utils/validatePassword";
 import { FIELD_INDICES, FieldError } from "@constants/signUpFieldError";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SignUpScreen() {
   const [firstName, setFirstName] = useState("");

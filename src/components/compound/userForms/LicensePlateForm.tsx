@@ -4,8 +4,10 @@ import ImagesView from "./ImagesView";
 import { ErrorIndex, ErrorField } from "@constants/userReportFieldErrors";
 import { stateAbbreviations } from "@utils/stateAbbreviation";
 import DropDownSelection from "@components/common/DropDownSelection";
-import { useEffect, useState } from "react";
-import { useVehicleFormValidation } from "@hooks/screens/user/ReportPage/useVehicleFormValidation";
+import { useEffect } from "react";
+import { useVehicleFormValidation } from "@hooks/screens/user/ReportPage/LicensePlateForm/useVehicleFormValidation";
+import { router } from "expo-router";
+import { useLicensePlateStore } from "@store/report/licensePlateStore";
 
 // creates the states selection array
 const stateOptions = Object.entries(stateAbbreviations).map(([name, abbr]) => ({
@@ -17,27 +19,22 @@ const stateOptions = Object.entries(stateAbbreviations).map(([name, abbr]) => ({
 }));
 
 interface Params {
-  plateImage: ImageContent;
-  setLicensePlateImage: (image: ImageContent) => void;
-
+  // plateImage: ImageContent;
+  // setLicensePlateImage: (image: ImageContent) => void;
   plateStateInitials: string;
   setPlateStateInitials: (state: string) => void;
-
   plateNumber: string;
   setPlateNumber: (licensePlate: string) => void;
-
   errors: ErrorField[];
   setErrors: (index: number, errMessage: string) => void;
-
   buttonClick: string;
   setButtonClick: (button: string) => void;
-
   setStep: (nextStep: number) => void;
 }
 
 export default function LicensePlateForm({
-  plateImage,
-  setLicensePlateImage,
+  // plateImage,
+  // setLicensePlateImage,
 
   plateStateInitials,
   setPlateStateInitials,
@@ -53,6 +50,9 @@ export default function LicensePlateForm({
 
   setStep,
 }: Params) {
+  const plateImage = useLicensePlateStore((state) => state.images);
+  const setPlateImage = useLicensePlateStore((state) => state.setImage);
+
   const res = useVehicleFormValidation({
     shouldValidate: buttonClick === "next",
     setErrors,
@@ -62,7 +62,7 @@ export default function LicensePlateForm({
   });
 
   useEffect(() => {
-    console.log("res: ", res);
+    //console.log("step 1 res: ", res);
     if (res) {
       console.log("incr");
 
@@ -73,22 +73,17 @@ export default function LicensePlateForm({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.imageTitles}>License Plate Image </Text>
+      <Text style={styles.titles}>License Plate Image </Text>
 
-      <ImagesView
-        type={IMAGE_TYPES.licensePlate}
-        reportImages={[plateImage]}
-        handler={() => {
-          console.log("clicked: ", plateImage.id);
-        }}
-      />
+      <ImagesView images={plateImage} />
+
       {errors[ErrorIndex.licensePlateImage].message.length > 0 && (
         <Text style={styles.error}>
           {errors[ErrorIndex.licensePlateImage].message}
         </Text>
       )}
 
-      <Text style={styles.imageTitles}>Confirm License Plate Details</Text>
+      <Text style={styles.titles}>Confirm License Plate Details</Text>
 
       <View style={styles.licenseDetailsBox}>
         <View style={styles.dropDownContainer}>
@@ -108,7 +103,7 @@ export default function LicensePlateForm({
 
         <View style={styles.test}>
           <TextInput
-            placeholder="Enter Plate Number..."
+            placeholder="Enter plate number..."
             placeholderTextColor="black"
             value={plateNumber}
             onChangeText={(text) => setPlateNumber(text.replace(/\s/g, ""))}
@@ -142,7 +137,7 @@ const styles = StyleSheet.create({
     elevation: 8, // Shadow for Android
     borderRadius: 30,
   },
-  imageTitles: {
+  titles: {
     fontSize: 20,
     fontWeight: "bold",
     alignSelf: "center",

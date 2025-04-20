@@ -13,30 +13,32 @@ import { IMAGE_TYPES, ImageContent } from "@constants/imageContent";
 import { useState } from "react";
 import { router } from "expo-router";
 import { useEffect } from "react";
-import { useCheckLocationPermission } from "@queries/usePermissionChecks";
-import { useRequestLocationPermission } from "@queries/useRequestPermissions";
-import { useGetCurrentLocation } from "@queries/useGetCurrentLocation";
 import { useGetJurisdiction } from "@queries/useGetJurisdiction";
 import { Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ErrorIndex, ErrorField } from "@constants/userReportFieldErrors";
-
-/**
- * This is the localized data for the entire user Report process and manages the currentStep of the process as well as the
- * buttonPresses. On the submit button, it sends the validated data to the backend server.
- *
- * On submit, displays a thank you to user for making the report. Might wait for a backend server callback to see
- * if the report was accepted (unique) and display a sorry message if it wasn't.
- */
-
-const navigateBackOrHome = () => {
-  router.canGoBack() ? router.back() : router.replace("/screens/user/HomePage");
-};
+import { ViolationForm } from "@components/compound/userForms/ViolationForm";
+import { useLocationData } from "@hooks/screens/user/ReportPage/useLocationData";
+import { Fields } from "constants/addressFields";
+import { Jurisdiction } from "@constants/jurisdiction";
+import { useNavigation } from "expo-router";
+import { useLicensePlateStore } from "@store/report/licensePlateStore";
+import { useViolationImageStore } from "@store/report/violationImageStore";
 
 export default function ReportPage() {
   // Transition states
   const [currentStep, setStep] = useState(1);
   const [buttonClick, setButtonClick] = useState("");
+
+  const navigation = useNavigation();
+
+  const navigateBackOrHome = () => {
+    clearLicensePlateImages();
+    clearViolationImages();
+    router.canGoBack()
+      ? router.back()
+      : router.replace("/screens/user/HomePage");
+  };
 
   const handleBackClick = () => {
     if (currentStep === 1) {
@@ -54,11 +56,6 @@ export default function ReportPage() {
   // LicensePlateForm data
   const [plateState, setPlateState] = useState("");
   const [plateNumber, setPlateNumber] = useState("");
-  const [plateImage, setPlateImage] = useState<ImageContent>({
-    id: 0,
-    uri: "",
-    type: IMAGE_TYPES.licensePlate,
-  });
 
   // creates the error array
   const initialErrors: ErrorField[] = Object.values(ErrorIndex).map(
@@ -77,32 +74,51 @@ export default function ReportPage() {
     );
   }
 
-  // creates the image state array, size of 5 images, (1-5): violations images
-  const [supportingImages, setSupportingImages] = useState<ImageContent[]>(() =>
-    Array.from({ length: 5 }, (_, index) => ({
-      id: index + 1,
-      uri: "",
-      type: IMAGE_TYPES.violation,
-    }))
-  );
   const [violation, setViolation] = useState("");
 
   // Location hooks
-  const { data: isLocationGranted, isLoading: initialLoad } =
-    useCheckLocationPermission();
+  const {
+    isLocationGranted,
+    initialLoad,
+    isRequestGranted,
+    requestLoad,
+    latitude,
+    longitude,
+    isLoading,
+    initialLocation,
+    currentLocation,
+    convertLatLongToAddress,
+    updateLocation,
+  } = useLocationData();
 
-  const { data: isRequestGranted, isLoading: requestLoad } =
-    useRequestLocationPermission({
-      enabled: isLocationGranted === false,
-      contextMessage: "goCite needs your location to create a report",
-    });
+  const {
+    data: jurisdictionMap,
+    error: jurisdictionError,
+    isLoading: JurisdictionLoading,
+  } = useGetJurisdiction();
 
-  const { data: isLoc } = useGetCurrentLocation(
-    isLocationGranted === true || isRequestGranted === true
-  );
+  // check if location is in supported Jurisdiction
+  const isLocationSupported = (
+    address: Fields,
+    jurisdictionMap: Map<string, Jurisdiction>
+  ): boolean => {
+    const state = address.state.toUpperCase();
+    const city = address.city.toUpperCase().trim().replace(/\s+/g, "-");
+    const key = `${state}-${city}`;
 
-  const { data: jurisdictionMap, error: jurisdictionError } =
-    useGetJurisdiction();
+    // returns the jurisdiction object
+    const isLocationSupported = jurisdictionMap.get(key);
+
+    // simple boolean supported statement
+    if (!isLocationSupported) {
+      showUnsupportedLocationAlert(
+        `${address.city}, ${address.state} is not currently a supported city. Please try again later when it is.`
+      );
+
+      return false;
+    }
+    return true;
+  };
 
   const showUnsupportedLocationAlert = (message: string): Promise<void> => {
     return new Promise((resolve) => {
@@ -115,39 +131,89 @@ export default function ReportPage() {
     });
   };
 
-  useEffect(() => {
-    if (isRequestGranted === false || jurisdictionError) {
-      navigateBackOrHome();
-    } else if (isLoc && jurisdictionMap) {
-      const state = isLoc.state.toUpperCase();
-      const city = isLoc.city.toUpperCase().trim().replace(/\s+/g, "-");
-      const key = `${state}-${city}`;
-      const isLocationSupported = jurisdictionMap.get(key);
-
-      if (!isLocationSupported) {
-        let message =
-          "Your current city is not supported yet. Check back later!";
-        if (isLoc.city && isLoc.state) {
-          message = `${isLoc.city}, ${isLoc.state} is not supported yet. Check back later!`;
+  /**
+   * Displays an alert for fetch-related errors.
+   * @param {string} message - Error message to display
+   * @returns {Promise<void>} Resolves when alert is dismissed
+   */
+  const showFetchErrorAlert = (message: string): Promise<void> => {
+    return new Promise((resolve) => {
+      Alert.alert(
+        "Error Connecting to Server",
+        message,
+        [{ text: "Ok", onPress: () => resolve() }],
+        {
+          onDismiss: () => resolve(),
         }
-        showUnsupportedLocationAlert(message).then(() => navigateBackOrHome());
-      }
+      );
+    });
+  };
+
+  const clearLicensePlateImages = useLicensePlateStore(
+    (state) => state.clearImages
+  );
+  const clearViolationImages = useViolationImageStore(
+    (state) => state.clearImages
+  );
+
+  useEffect(() => {
+    clearLicensePlateImages();
+    clearViolationImages();
+  }, []);
+
+  useEffect(() => {
+    navigation.setOptions({
+      gestureEnabled: false,
+    });
+  }, [navigation]);
+
+  useEffect(() => {
+    if (jurisdictionError) {
+      showFetchErrorAlert(jurisdictionError.message);
+      navigateBackOrHome();
     }
-  }, [isRequestGranted, jurisdictionError, isLoc, jurisdictionMap]);
+
+    if (isRequestGranted === false) {
+      navigateBackOrHome();
+    } else if (latitude && longitude && jurisdictionMap) {
+      convertLatLongToAddress(latitude, longitude).then((address) => {
+        if (address) {
+          // console.log("location: ", address);
+
+          const res = isLocationSupported(address, jurisdictionMap);
+
+          // console.log("valid?:", res);
+        } else {
+          console.warn("Failed to convert lat/long to address");
+          navigateBackOrHome();
+        }
+      });
+    }
+  }, [
+    latitude,
+    longitude,
+    jurisdictionMap,
+    isRequestGranted,
+    jurisdictionError,
+  ]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "skyblue" }}>
+      {JurisdictionLoading ? (
+        <Text style={{ textAlign: "center" }}>Connecting to server...</Text>
+      ) : (
+        ""
+      )}
+
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={"padding"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 100}
         >
           <View style={styles.fullScreen}>
             {currentStep === 1 && (
               <LicensePlateForm
-                plateImage={plateImage}
-                setLicensePlateImage={setPlateImage}
                 plateStateInitials={plateState}
                 setPlateStateInitials={setPlateState}
                 plateNumber={plateNumber}
@@ -157,12 +223,24 @@ export default function ReportPage() {
                 buttonClick={buttonClick}
                 setButtonClick={setButtonClick}
                 setStep={setStep}
-              ></LicensePlateForm>
+              />
             )}
 
-            {currentStep === 2 && <Text>Step 2 </Text>}
+            {currentStep === 2 && (
+              <ViolationForm
+                violation={violation}
+                setViolation={setViolation}
+                errors={error}
+                setErrors={handleSetError}
+                buttonClick={buttonClick}
+                setButtonClick={setButtonClick}
+                setStep={setStep}
+              />
+            )}
 
-            {currentStep === 3 && <Text>Step 3 </Text>}
+            {/* {currentStep === 3 && isLoc !== undefined && (
+              <AddressView initialVehicleLocation={isLoc} />
+            )} */}
           </View>
 
           <View style={styles.buttonsArea}>
@@ -191,7 +269,8 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "skyblue",
+    //backgroundColor: "blue",
+    marginBottom: 10,
   },
 
   buttonsArea: {
@@ -199,7 +278,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between", // Evenly distribute buttons
     alignItems: "center",
     paddingHorizontal: "10%", // Percentage-based padding
-    paddingVertical: 10,
+    // paddingVertical: 10,
     position: "absolute",
     bottom: "5%",
     width: "100%",

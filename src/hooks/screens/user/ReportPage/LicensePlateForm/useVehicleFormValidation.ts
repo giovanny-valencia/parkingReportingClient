@@ -4,22 +4,24 @@ import { useValidateLicensePlateEntry } from "@queries/unused/useValidateLicense
 import { useEffect, useState } from "react";
 
 /**
+ * Handles the validation for the {@link LicensePlateForm}, if valid allows next step increment.
+ * Sets errors to add or clear the previous error message if resolved
  *
+ * Was a hook because it was intended to do an API look up on the plate number but that was scrapped.
  */
-
-// returns:
 
 type Params = {
   shouldValidate: boolean;
   setErrors: (index: number, message: string) => void;
-  plateImage: ImageContent;
+  plateImage: ImageContent[];
   plateStateInitials: string;
   plateNumber: string;
 };
 
-const plateImageValidation = ({ plateImage }: Pick<Params, "plateImage">) => {
-  //return plateImage?.uri.length === 0 ? "License Plate Image Required" : "";
-  return "";
+// REINSTATE THIS
+const plateImageValidation = ( image: ImageContent) => {
+  return image?.uri.length === 0 ? "License Plate Image Required" : "";
+  //return "";
 };
 
 const plateStateValidation = ({
@@ -44,8 +46,11 @@ const validationAndErrorSet = ({
 }: Pick<
   Params,
   "plateImage" | "plateStateInitials" | "plateNumber" | "setErrors"
->) => {
-  const imageError = plateImageValidation({ plateImage });
+  >) => {
+  
+  const image = plateImage[0];
+  
+  const imageError = plateImageValidation( image );
   const stateError = plateStateValidation({ plateStateInitials });
   const numberError = plateNumberValidation({ plateNumber });
 
@@ -68,7 +73,7 @@ export const useVehicleFormValidation = ({
   plateNumber,
 }: Params) => {
   const [isValid, setIsValid] = useState<boolean | null>(null);
-  console.log("SV: ", shouldValidate);
+  //console.log("SV: ", shouldValidate);
 
   useEffect(() => {
     if (shouldValidate) {
