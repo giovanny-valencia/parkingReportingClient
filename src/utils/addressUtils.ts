@@ -29,8 +29,8 @@ export const createAddress = ({ location, latitude, longitude }: props) => {
   const streetAddress = `${streetNumber} ${street}`; // removed: ${city}, ${state} ${zipcode}. These can be inferred from other data fields
 
   const address: typeof addressFields = {
-    // latitude: latitude,
-    //longitude: longitude,
+    latitude: latitude,
+    longitude: longitude,
     city: city,
     state: state,
     streetAddress: streetAddress,

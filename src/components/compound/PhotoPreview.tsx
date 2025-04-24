@@ -56,7 +56,7 @@ const PhotoPreview = ({
     console.log("discard");
   };
 
-  console.log("PP: ", width, height);
+  //console.log("PP: ", width, height);
 
   return (
     <View style={styles.container}>

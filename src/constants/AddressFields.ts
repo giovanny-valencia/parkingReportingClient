@@ -3,8 +3,8 @@ export interface Fields {
   state: string;
   streetAddress: string;
   zipCode: string | number;
-  // latitude: number;
-  //longitude: number;
+  latitude: number;
+  longitude: number;
 }
 
 const addressFields: Fields = {
@@ -12,8 +12,8 @@ const addressFields: Fields = {
   state: "",
   streetAddress: "",
   zipCode: 0,
-  // latitude: 0,
-  // longitude: 0,
+  latitude: 0,
+  longitude: 0,
 };
 
 export default addressFields;

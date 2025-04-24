@@ -13,6 +13,8 @@ import PhotoPreview from "@components/compound/PhotoPreview";
 import { useLicensePlateStore } from "@store/report/licensePlateStore";
 import { useViolationImageStore } from "@store/report/violationImageStore";
 import { useLocalSearchParams } from "expo-router";
+import { useLocationStore } from "@store/report/locationStore";
+import { getLatLongWithPermission } from "@utils/getLatLongWithPermission";
 
 const LICENSE_PLATE_ID = 0;
 
@@ -24,6 +26,8 @@ export default function CameraScreen() {
 
   const { imageId } = useLocalSearchParams();
   const id = parseInt(imageId as string);
+
+  const setLocation = useLocationStore((s) => s.setLocationByCoords);
 
   const licensePlateImages = useLicensePlateStore((s) => s.images);
   const licensePlateUpdate = useLicensePlateStore((s) => s.setImage);
@@ -58,6 +62,20 @@ export default function CameraScreen() {
       try {
         const data = await cameraRef.current.takePictureAsync();
 
+        if (id === LICENSE_PLATE_ID) {
+          console.log("getting loc");
+          const coords = await getLatLongWithPermission();
+          if (!coords) {
+            handleBack();
+            return;
+          }
+          const latitude = coords.latitude;
+          const longitude = coords.longitude;
+          console.log("lat long: ", latitude, " ", longitude);
+
+          setLocation(latitude, longitude);
+        }
+
         if (!data) {
           console.log("error taking photo");
           return;
@@ -79,10 +97,10 @@ export default function CameraScreen() {
     }
   }, [keepPhoto]);
 
-  useEffect(() => {
-    console.log("First Mount on Camera!");
-    console.log("Photo status: ", photo?.uri);
-  }, []);
+  // useEffect(() => {
+  //   console.log("First Mount on Camera!");
+  //   console.log("Photo status: ", photo?.uri);
+  // }, []);
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -103,7 +121,7 @@ export default function CameraScreen() {
   }
 
   const photo = imageArray.find((img) => img.id === id);
-  console.log("def: ", photo?.uri);
+ // console.log("def: ", photo?.uri);
 
   if (photo?.uri) {
     return PhotoPreview({

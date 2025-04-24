@@ -10,7 +10,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { IMAGE_TYPES, ImageContent } from "@constants/imageContent";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { useGetJurisdiction } from "@queries/useGetJurisdiction";
@@ -24,6 +24,7 @@ import { Jurisdiction } from "@constants/jurisdiction";
 import { useNavigation } from "expo-router";
 import { useLicensePlateStore } from "@store/report/licensePlateStore";
 import { useViolationImageStore } from "@store/report/violationImageStore";
+import { useLocationStore } from "@store/report/locationStore";
 
 export default function ReportPage() {
   // Transition states
@@ -35,9 +36,9 @@ export default function ReportPage() {
   const navigateBackOrHome = () => {
     clearLicensePlateImages();
     clearViolationImages();
-    router.canGoBack()
-      ? router.back()
-      : router.replace("/screens/user/HomePage");
+    clearLocation();
+    router.replace("/screens/user/HomePage");
+    console.log("there");
   };
 
   const handleBackClick = () => {
@@ -77,19 +78,9 @@ export default function ReportPage() {
   const [violation, setViolation] = useState("");
 
   // Location hooks
-  const {
-    isLocationGranted,
-    initialLoad,
-    isRequestGranted,
-    requestLoad,
-    latitude,
-    longitude,
-    isLoading,
-    initialLocation,
-    currentLocation,
-    convertLatLongToAddress,
-    updateLocation,
-  } = useLocationData();
+  const { isRequestGranted, currentLocation } = useLocationData();
+
+  console.log("current location: ", currentLocation);
 
   const {
     data: jurisdictionMap,
@@ -120,15 +111,8 @@ export default function ReportPage() {
     return true;
   };
 
-  const showUnsupportedLocationAlert = (message: string): Promise<void> => {
-    return new Promise((resolve) => {
-      Alert.alert(
-        "Location Not Supported",
-        message,
-        [{ text: "OK", onPress: () => resolve() }],
-        { onDismiss: () => resolve() }
-      );
-    });
+  const showUnsupportedLocationAlert = (message: string) => {
+    Alert.alert("Location Not Supported", message, [{ text: "OK" }]);
   };
 
   /**
@@ -155,10 +139,12 @@ export default function ReportPage() {
   const clearViolationImages = useViolationImageStore(
     (state) => state.clearImages
   );
+  const clearLocation = useLocationStore((state) => state.clearLocation);
 
   useEffect(() => {
     clearLicensePlateImages();
     clearViolationImages();
+    clearLocation();
   }, []);
 
   useEffect(() => {
@@ -167,35 +153,36 @@ export default function ReportPage() {
     });
   }, [navigation]);
 
+  const hasNavigatedRef = useRef(false);
   useEffect(() => {
+    if (hasNavigatedRef.current) return;
+
     if (jurisdictionError) {
       showFetchErrorAlert(jurisdictionError.message);
+      hasNavigatedRef.current = true;
       navigateBackOrHome();
     }
 
     if (isRequestGranted === false) {
+      hasNavigatedRef.current = true;
       navigateBackOrHome();
-    } else if (latitude && longitude && jurisdictionMap) {
-      convertLatLongToAddress(latitude, longitude).then((address) => {
-        if (address) {
-          // console.log("location: ", address);
+      return;
+    } else if (jurisdictionMap && currentLocation !== null) {
+      const LocationSupported = isLocationSupported(
+        currentLocation,
+        jurisdictionMap
+      );
+      console.log("res: ", LocationSupported);
 
-          const res = isLocationSupported(address, jurisdictionMap);
+      console.log("address: ", currentLocation);
 
-          // console.log("valid?:", res);
-        } else {
-          console.warn("Failed to convert lat/long to address");
-          navigateBackOrHome();
-        }
-      });
+      if (!LocationSupported) {
+        hasNavigatedRef.current = true;
+        navigateBackOrHome();
+        return;
+      }
     }
-  }, [
-    latitude,
-    longitude,
-    jurisdictionMap,
-    isRequestGranted,
-    jurisdictionError,
-  ]);
+  }, [currentLocation, jurisdictionMap, isRequestGranted, jurisdictionError]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "skyblue" }}>

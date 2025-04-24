@@ -1,10 +1,8 @@
-import { useState, useEffect } from "react";
-import * as Location from "expo-location";
+import { useEffect, useState } from "react";
 import { useCheckLocationPermission } from "@queries/usePermissionChecks";
 import { useRequestLocationPermission } from "@queries/useRequestLocationPermissions";
 import { useGetCurrentLatLong } from "@queries/useGetCurrentLatLong";
-import { createAddress } from "@utils/addressUtils";
-import addressFields from "@constants/addressFields";
+import { useLocationStore } from "@store/report/locationStore";
 
 export const useLocationData = () => {
   const { data: isLocationGranted, isLoading: initialLoad } =
@@ -16,6 +14,8 @@ export const useLocationData = () => {
       contextMessage: "goCite needs your location to create a report",
     });
 
+  const [initialLoc, setInitialLoc] = useState(false);
+
   const {
     latitude,
     longitude,
@@ -24,47 +24,21 @@ export const useLocationData = () => {
     isLocationGranted === true || isRequestGranted === true
   );
 
-  const [initialLocation, setInitialLocation] = useState<
-    typeof addressFields | null
-  >(null);
-  const [currentLocation, setCurrentLocation] = useState<
-    typeof addressFields | null
-  >(null);
+  const currentLocation = useLocationStore((s) => s.currentLocation);
+  const setLocationByCoords = useLocationStore((s) => s.setLocationByCoords);
 
-  // Set initial location
   useEffect(() => {
-    if (latitude && longitude && !latLongLoading && !initialLocation) {
-      convertLatLongToAddress(latitude, longitude).then((address) => {
-        if (address) {
-          // setInitialLocation(address);
-          setCurrentLocation(address);
-        }
-      });
+    if (
+      latitude &&
+      longitude &&
+      !latLongLoading &&
+      currentLocation === null &&
+      !initialLoc
+    ) {
+      setInitialLoc(true);
+      setLocationByCoords(latitude, longitude);
     }
-  }, [latitude, longitude, latLongLoading]);
-
-  const convertLatLongToAddress = async (
-    latitude: number,
-    longitude: number
-  ) => {
-    try {
-      const location = await Location.reverseGeocodeAsync({
-        latitude,
-        longitude,
-      });
-
-      return createAddress({ location, latitude, longitude });
-    } catch (error) {
-      //console.error("Error converting lat long to address: ", error);
-      //console.log("here");
-
-      return null;
-    }
-  };
-
-  const updateLocation = (newLocation: Partial<typeof addressFields>) => {
-    setCurrentLocation((prev) => (prev ? { ...prev, ...newLocation } : null));
-  };
+  }, [latitude, longitude, latLongLoading, currentLocation]);
 
   return {
     isLocationGranted,
@@ -74,9 +48,6 @@ export const useLocationData = () => {
     latitude,
     longitude,
     isLoading: initialLoad || requestLoad || latLongLoading,
-    initialLocation,
     currentLocation,
-    convertLatLongToAddress,
-    updateLocation,
   };
 };

@@ -11,21 +11,6 @@ interface Params {
   initialVehicleLocation: typeof addressFields; // check this
 }
 
-// const getLocation = async () => {
-//   const { coords } = await Location.getCurrentPositionAsync({
-//     accuracy: Location.Accuracy.High,
-//   });
-
-//   console.log("coords: ", coords);
-
-//   const { latitude, longitude } = coords;
-
-//   console.log("lat: ", latitude);
-//   console.log("long: ", longitude);
-
-//   return { latitude, longitude };
-// };
-
 export default function AddressView({ initialVehicleLocation }: Params) {
   const [vehicleLocation, setVehicleLocation] = useState({
     latitude: initialVehicleLocation.latitude,

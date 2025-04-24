@@ -1,5 +1,6 @@
 import * as Location from "expo-location";
 import { useQuery } from "@tanstack/react-query";
+import { Alert } from "react-native";
 
 export const useGetCurrentLatLong = (enabled: boolean) => {
   const query = useQuery({
@@ -14,42 +15,25 @@ export const useGetCurrentLatLong = (enabled: boolean) => {
           latitude: coords.latitude,
           longitude: coords.longitude,
         };
-
-        // const { latitude, longitude } = coords;
-
-        // const location = await Location.reverseGeocodeAsync({
-        //   latitude,
-        //   longitude,
-        // });
-
-        // return createAddress({
-        //   location,
-        //   latitude,
-        //   longitude,
-        // });
       } catch (error) {
-        // fallback, lower accuracy
-        const { coords } = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Balanced,
-        });
+        try {
+          // fallback, lower accuracy
+          const { coords } = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Balanced,
+          });
 
-        return {
-          latitude: coords.latitude,
-          longitude: coords.longitude,
-        };
-
-        // const { latitude, longitude } = coords;
-
-        // const location = await Location.reverseGeocodeAsync({
-        //   latitude,
-        //   longitude,
-        // });
-
-        // return createAddress({
-        //   location,
-        //   latitude,
-        //   longitude,
-        // });
+          return {
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          };
+        } catch (finalError) {
+          Alert.alert(
+            "Location Error",
+            "We couldn't get your current location. Please try again or check your device settings.",
+            [{ text: "ok" }]
+          );
+          //return null;
+        }
       }
     },
     enabled,

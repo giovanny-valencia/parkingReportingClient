@@ -10,13 +10,9 @@ interface Params {
 const validateSupportingImages = ({
   supportingImages,
 }: Pick<Params, "supportingImages">) => {
-  //console.log("SI Length: ", supportingImages[0].uri.length);
-
-//   return supportingImages[0].uri.length === 0
-//     ? "At least 1 violation image is required"
-//     : "";
-
-  return "";
+  return supportingImages[0].uri.length === 0
+    ? "At least 1 violation image is required"
+    : "";
 };
 
 const validateViolationInput = ({ violation }: Pick<Params, "violation">) => {

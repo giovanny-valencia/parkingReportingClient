@@ -2,8 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Jurisdiction } from "@constants/jurisdiction";
 import { Alert } from "react-native";
 
-const SIX_HOURS = 1000 * 60 * 60 * 6;
-
 /**
  * Query hook that returns a hashmap of supported jurisdictions.
  *
@@ -12,6 +10,8 @@ const SIX_HOURS = 1000 * 60 * 60 * 6;
  * @returns {Object} - { data: Map<string, Jurisdiction>, isLoading: boolean, error: any }
  */
 export const useGetJurisdiction = () => {
+  const SIX_HOURS = 1000 * 60 * 60 * 6;
+
   return useQuery({
     queryKey: ["getJurisdiction"],
     queryFn: async () => {
@@ -19,14 +19,10 @@ export const useGetJurisdiction = () => {
         "https://mocki.io/v1/e3d587f7-a23f-4e48-9d0b-a8ef2d8137c7"
       );
       if (!response.ok) {
-        // await showFetchErrorAlert("Retry or come back later");
         throw new Error(`Failed to fetch, retry or come back later`);
       }
       const data = await response.json();
       if (!data || !Array.isArray(data)) {
-        // await showFetchErrorAlert(
-        //   "Failed to retrieve supported areas, contact support or try again later"
-        // );
         throw new Error("No valid jurisdiction data found");
       }
 
