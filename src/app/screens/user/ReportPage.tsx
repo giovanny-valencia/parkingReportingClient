@@ -25,6 +25,7 @@ import { useNavigation } from "expo-router";
 import { useLicensePlateStore } from "@store/report/licensePlateStore";
 import { useViolationImageStore } from "@store/report/violationImageStore";
 import { useLocationStore } from "@store/report/locationStore";
+import AddressView from "@components/compound/userForms/AddressView";
 
 export default function ReportPage() {
   // Transition states
@@ -77,6 +78,8 @@ export default function ReportPage() {
 
   const [violation, setViolation] = useState("");
 
+  const [addressNotes, setAddressNotes] = useState("");
+
   // Location hooks
   const { isRequestGranted, currentLocation } = useLocationData();
 
@@ -89,6 +92,7 @@ export default function ReportPage() {
   } = useGetJurisdiction();
 
   // check if location is in supported Jurisdiction
+  // todo: refactor out, identical implementation in validateAddressForm.ts
   const isLocationSupported = (
     address: Fields,
     jurisdictionMap: Map<string, Jurisdiction>
@@ -184,6 +188,25 @@ export default function ReportPage() {
     }
   }, [currentLocation, jurisdictionMap, isRequestGranted, jurisdictionError]);
 
+  /**
+   * Gathers all report data points and sends it to the backend to process.
+   *
+   * - Current user (email, or an ID?)
+   * - License plate image
+   * - License plate number
+   * - Violation image(s)
+   * - Violation text report
+   * - vehicle location
+   * - optional location notes
+   */
+  const handleSubmit = () => {
+    console.log("Sending report data to server");
+  };
+
+  if (currentStep === 4) {
+    return <Text>Thanks!</Text>;
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "skyblue" }}>
       {JurisdictionLoading ? (
@@ -193,42 +216,45 @@ export default function ReportPage() {
       )}
 
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={"padding"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 100}
-        >
-          <View style={styles.fullScreen}>
-            {currentStep === 1 && (
-              <LicensePlateForm
-                plateStateInitials={plateState}
-                setPlateStateInitials={setPlateState}
-                plateNumber={plateNumber}
-                setPlateNumber={setPlateNumber}
-                errors={error}
-                setErrors={handleSetError}
+        <View style={styles.fullScreen}>
+          {currentStep === 1 && (
+            <LicensePlateForm
+              plateStateInitials={plateState}
+              setPlateStateInitials={setPlateState}
+              plateNumber={plateNumber}
+              setPlateNumber={setPlateNumber}
+              errors={error}
+              setErrors={handleSetError}
+              buttonClick={buttonClick}
+              setButtonClick={setButtonClick}
+              setStep={setStep}
+            />
+          )}
+
+          {currentStep === 2 && (
+            <ViolationForm
+              violation={violation}
+              setViolation={setViolation}
+              errors={error}
+              setErrors={handleSetError}
+              buttonClick={buttonClick}
+              setButtonClick={setButtonClick}
+              setStep={setStep}
+            />
+          )}
+
+          {currentStep === 3 &&
+            currentLocation !== undefined &&
+            jurisdictionMap !== undefined && (
+              <AddressView
+                jurisdictionMap={jurisdictionMap}
                 buttonClick={buttonClick}
                 setButtonClick={setButtonClick}
                 setStep={setStep}
+                addressNotes={addressNotes}
+                setAddressNotes={setAddressNotes}
               />
             )}
-
-            {currentStep === 2 && (
-              <ViolationForm
-                violation={violation}
-                setViolation={setViolation}
-                errors={error}
-                setErrors={handleSetError}
-                buttonClick={buttonClick}
-                setButtonClick={setButtonClick}
-                setStep={setStep}
-              />
-            )}
-
-            {/* {currentStep === 3 && isLoc !== undefined && (
-              <AddressView initialVehicleLocation={isLoc} />
-            )} */}
-          </View>
 
           <View style={styles.buttonsArea}>
             <TouchableOpacity onPress={handleBackClick}>
@@ -243,7 +269,7 @@ export default function ReportPage() {
               </Text>
             </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView>
+        </View>
       </TouchableWithoutFeedback>
     </SafeAreaView>
   );

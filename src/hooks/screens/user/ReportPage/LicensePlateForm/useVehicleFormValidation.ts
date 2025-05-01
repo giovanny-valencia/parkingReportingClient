@@ -1,6 +1,5 @@
 import { ImageContent } from "@constants/imageContent";
 import { ErrorIndex } from "@constants/userReportFieldErrors";
-import { useValidateLicensePlateEntry } from "@queries/unused/useValidateLicensePlateEntry";
 import { useEffect, useState } from "react";
 
 /**
@@ -18,10 +17,8 @@ type Params = {
   plateNumber: string;
 };
 
-// REINSTATE THIS
-const plateImageValidation = ( image: ImageContent) => {
+const plateImageValidation = (image: ImageContent) => {
   return image?.uri.length === 0 ? "License Plate Image Required" : "";
-  //return "";
 };
 
 const plateStateValidation = ({
@@ -46,11 +43,10 @@ const validationAndErrorSet = ({
 }: Pick<
   Params,
   "plateImage" | "plateStateInitials" | "plateNumber" | "setErrors"
-  >) => {
-  
+>) => {
   const image = plateImage[0];
-  
-  const imageError = plateImageValidation( image );
+
+  const imageError = plateImageValidation(image);
   const stateError = plateStateValidation({ plateStateInitials });
   const numberError = plateNumberValidation({ plateNumber });
 
@@ -73,7 +69,6 @@ export const useVehicleFormValidation = ({
   plateNumber,
 }: Params) => {
   const [isValid, setIsValid] = useState<boolean | null>(null);
-  //console.log("SV: ", shouldValidate);
 
   useEffect(() => {
     if (shouldValidate) {

@@ -1,5 +1,5 @@
-import { IMAGE_TYPES, ImageContent } from "@constants/imageContent";
-import { ErrorIndex, ErrorField } from "@constants/userReportFieldErrors";
+import { ImageContent } from "@constants/imageContent";
+import { ErrorIndex } from "@constants/userReportFieldErrors";
 
 interface Params {
   supportingImages: ImageContent[];

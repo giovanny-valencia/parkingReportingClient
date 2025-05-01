@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   violationTextContainer: {
-    height: 120, // Increased height to accommodate multiple lines
+    height: "auto", // Increased height to accommodate multiple lines
     borderWidth: 1,
     marginBottom: 10,
     paddingHorizontal: 10,

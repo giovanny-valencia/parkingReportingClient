@@ -61,6 +61,13 @@ export default function CameraScreen() {
     if (cameraRef.current) {
       try {
         const data = await cameraRef.current.takePictureAsync();
+        if (!data) {
+          console.log("error taking photo");
+          return;
+        }
+
+        const { uri, height, width } = data;
+        updateImage(id, uri, height, width);
 
         if (id === LICENSE_PLATE_ID) {
           console.log("getting loc");
@@ -71,19 +78,9 @@ export default function CameraScreen() {
           }
           const latitude = coords.latitude;
           const longitude = coords.longitude;
-          console.log("lat long: ", latitude, " ", longitude);
 
           setLocation(latitude, longitude);
         }
-
-        if (!data) {
-          console.log("error taking photo");
-          return;
-        }
-
-        console.log(data);
-        const { uri, height, width } = data;
-        updateImage(id, uri, height, width);
       } catch (e) {
         console.log(e);
       }
@@ -121,7 +118,7 @@ export default function CameraScreen() {
   }
 
   const photo = imageArray.find((img) => img.id === id);
- // console.log("def: ", photo?.uri);
+  // console.log("def: ", photo?.uri);
 
   if (photo?.uri) {
     return PhotoPreview({
