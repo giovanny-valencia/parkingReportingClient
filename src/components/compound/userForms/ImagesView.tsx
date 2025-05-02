@@ -51,7 +51,7 @@ export default function ImagesView({ images }: Params) {
         <TouchableOpacity key={key} onPress={() => handleImageClick(image)}>
           <Image
             source={image.uri ? { uri: image.uri } : addImageIcon}
-            style={styles.LpImage}
+            style={style.image}
           />
         </TouchableOpacity>
       );
@@ -62,12 +62,12 @@ export default function ImagesView({ images }: Params) {
     return elements;
   };
 
-  return <View style={styles.imageContainer}>{renderImages()}</View>;
+  return <View style={style.imageContainer}>{renderImages()}</View>;
 }
 
 //styles
 
-const styles = StyleSheet.create({
+const style = StyleSheet.create({
   imageContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
@@ -75,10 +75,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
   },
-  LpImage: {
+  image: {
     width: 50,
     height: 50,
     marginTop: 10,
     marginBottom: 10,
+    marginRight: 10,
   },
 });

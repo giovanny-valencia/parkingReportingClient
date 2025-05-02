@@ -1,10 +1,19 @@
-import { View, Text, StyleSheet, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  Dimensions,
+} from "react-native";
 import ImagesView from "./ImagesView";
 import { IMAGE_TYPES, ImageContent } from "@constants/imageContent";
 import { ErrorIndex, ErrorField } from "@constants/userReportFieldErrors";
 import { useEffect } from "react";
 import validateViolationForm from "utils/screens/user/ReportPage/violationForm/validateViolationForm";
 import { useViolationImageStore } from "@store/report/violationImageStore";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 /**
  * This is the Page that handles the logic and view of a report Violation
@@ -52,57 +61,61 @@ export const ViolationForm = ({
   }, [buttonClick]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Text style={styles.titles}> Supporting Violation Images </Text>
+    <KeyboardAvoidingView
+      behavior={"position"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 125 : 100}
+    >
+      <View style={style.container}>
+        <View style={style.imageContainer}>
+          <Text style={style.titles}> Supporting Violation Images </Text>
 
-        <ImagesView
-          images={supportingImages} />
-        {errors[ErrorIndex.supportingImage].message.length > 0 && (
-          <Text style={styles.error}>
-            {errors[ErrorIndex.supportingImage].message}
+          <ImagesView images={supportingImages} />
+          {errors[ErrorIndex.supportingImage].message.length > 0 && (
+            <Text style={style.error}>
+              {errors[ErrorIndex.supportingImage].message}
+            </Text>
+          )}
+        </View>
+
+        <View style={style.violationContainer}>
+          <Text style={style.titles}> Violation Description </Text>
+          <TextInput
+            value={violation}
+            onChangeText={setViolation}
+            placeholder="Enter details of violation..."
+            placeholderTextColor="black"
+            autoCapitalize="sentences"
+            autoCorrect={true}
+            style={style.violationTextContainer}
+            multiline={true}
+            maxLength={MAX_LENGTH_VIOLATION}
+            textAlignVertical="top" // Add this for android
+          />
+          {errors[ErrorIndex.violationDetails].message.length > 0 && (
+            <Text style={style.error}>
+              {errors[ErrorIndex.violationDetails].message}
+            </Text>
+          )}
+
+          <Text
+            style={[
+              style.violationCounterBase,
+              violation.length === MAX_LENGTH_VIOLATION &&
+                style.maxViolationColor,
+            ]}
+          >
+            {violation.length}/{MAX_LENGTH_VIOLATION}
           </Text>
-        )}
+        </View>
       </View>
-
-      <View style={styles.violationContainer}>
-        <Text style={styles.titles}> Violation Description </Text>
-        <TextInput
-          value={violation}
-          onChangeText={setViolation}
-          placeholder="Enter details of violation..."
-          placeholderTextColor="black"
-          autoCapitalize="sentences"
-          autoCorrect={true}
-          style={styles.violationTextContainer}
-          multiline={true}
-          maxLength={MAX_LENGTH_VIOLATION}
-          textAlignVertical="top" // Add this for android
-        />
-        {errors[ErrorIndex.violationDetails].message.length > 0 && (
-          <Text style={styles.error}>
-            {errors[ErrorIndex.violationDetails].message}
-          </Text>
-        )}
-
-        <Text
-          style={[
-            styles.violationCounterBase,
-            violation.length === MAX_LENGTH_VIOLATION &&
-              styles.maxViolationColor,
-          ]}
-        >
-          {violation.length}/{MAX_LENGTH_VIOLATION}
-        </Text>
-      </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
 //styles
-const styles = StyleSheet.create({
+const style = StyleSheet.create({
   container: {
-    width: "80%",
+    width: Dimensions.get("window").width * 0.85,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000", // Shadow for iOS
@@ -113,7 +126,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     backgroundColor: "#F5F5F5",
 
-    padding: 10,
+    padding: 20,
 
     //    backgroundColor: "#F5F5F5",
   },
@@ -143,7 +156,7 @@ const styles = StyleSheet.create({
   },
 
   textInputContainer: {
-    width: "50%",
+    //width: "80%",
     marginTop: 20,
   },
 

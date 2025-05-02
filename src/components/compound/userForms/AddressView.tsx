@@ -32,8 +32,6 @@ export default function AddressView({
   addressNotes,
   setAddressNotes,
 }: Params) {
-  const screenHeight = Dimensions.get("window").height;
-  console.log(screenHeight);
   const initialLocation = useLocationStore((state) => state.currentLocation);
   const vehicleLocation = useLocationStore((state) => state.vehicleLocation);
   const resetVehicleLocation = useLocationStore(

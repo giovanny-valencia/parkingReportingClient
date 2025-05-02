@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { IMAGE_TYPES, ImageContent } from "@constants/imageContent";
 import ImagesView from "./ImagesView";
 import { ErrorIndex, ErrorField } from "@constants/userReportFieldErrors";
@@ -8,6 +15,7 @@ import { useEffect } from "react";
 import { useVehicleFormValidation } from "@hooks/screens/user/ReportPage/LicensePlateForm/useVehicleFormValidation";
 import { router } from "expo-router";
 import { useLicensePlateStore } from "@store/report/licensePlateStore";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 // creates the states selection array
 const stateOptions = Object.entries(stateAbbreviations).map(([name, abbr]) => ({
@@ -72,61 +80,68 @@ export default function LicensePlateForm({
   });
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.titles}>License Plate Image </Text>
+    <KeyboardAvoidingView
+      behavior={"position"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 125 : 100}
+    >
+      <View style={styles.container}>
+        <Text style={styles.titles}>License Plate Image </Text>
 
-      <ImagesView images={plateImage} />
+        <ImagesView images={plateImage} />
 
-      {errors[ErrorIndex.licensePlateImage].message.length > 0 && (
-        <Text style={styles.error}>
-          {errors[ErrorIndex.licensePlateImage].message}
-        </Text>
-      )}
+        {errors[ErrorIndex.licensePlateImage].message.length > 0 && (
+          <Text style={styles.error}>
+            {errors[ErrorIndex.licensePlateImage].message}
+          </Text>
+        )}
 
-      <Text style={styles.titles}>Confirm License Plate Details</Text>
+        <Text style={styles.titles}>Confirm License Plate Details</Text>
 
-      <View style={styles.licenseDetailsBox}>
-        <View style={styles.dropDownContainer}>
-          <DropDownSelection
-            data={stateOptions}
-            placeholder="Select State"
-            value={plateStateInitials}
-            onChange={setPlateStateInitials}
-          />
+        <View style={styles.licenseDetailsBox}>
+          <View style={styles.dropDownContainer}>
+            <DropDownSelection
+              data={stateOptions}
+              placeholder="Select State"
+              value={plateStateInitials}
+              onChange={setPlateStateInitials}
+            />
 
-          {errors[ErrorIndex.licensePlateStateSelection].message.length > 0 && (
-            <Text style={styles.error}>
-              {errors[ErrorIndex.licensePlateStateSelection].message}
-            </Text>
-          )}
-        </View>
+            {errors[ErrorIndex.licensePlateStateSelection].message.length >
+              0 && (
+              <Text style={styles.error}>
+                {errors[ErrorIndex.licensePlateStateSelection].message}
+              </Text>
+            )}
+          </View>
 
-        <View style={styles.test}>
-          <TextInput
-            placeholder="Enter plate number..."
-            placeholderTextColor="black"
-            value={plateNumber}
-            onChangeText={(text) => setPlateNumber(text.replace(/\s/g, ""))}
-            autoCapitalize="characters"
-            autoCorrect={false}
-            style={styles.licensePlateInput}
-            maxLength={10}
-          />
-          {errors[ErrorIndex.licensePlateTextInput].message.length > 0 && (
-            <Text style={styles.error}>
-              {errors[ErrorIndex.licensePlateTextInput].message}
-            </Text>
-          )}
+          <View style={styles.test}>
+            <TextInput
+              placeholder="Enter plate number..."
+              placeholderTextColor="black"
+              value={plateNumber}
+              onChangeText={(text) => setPlateNumber(text.replace(/\s/g, ""))}
+              autoCapitalize="characters"
+              autoCorrect={false}
+              style={styles.licensePlateInput}
+              maxLength={10}
+            />
+            {errors[ErrorIndex.licensePlateTextInput].message.length > 0 && (
+              <Text style={styles.error}>
+                {errors[ErrorIndex.licensePlateTextInput].message}
+              </Text>
+            )}
+          </View>
         </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
 //styles
 const styles = StyleSheet.create({
   container: {
-    width: "80%",
+    // width: "80%",
+    //height: "60%",
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#F5F5F5",
@@ -136,6 +151,8 @@ const styles = StyleSheet.create({
     shadowRadius: 6, // Shadow blur
     elevation: 8, // Shadow for Android
     borderRadius: 30,
+    padding: 20,
+    //backgroundColor: "green",
   },
   titles: {
     fontSize: 20,
