@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   Alert,
   TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { getFullStateName } from "@utils/stateAbbreviation";
 import MapView, { MAP_TYPES, Marker } from "react-native-maps";
@@ -150,87 +152,88 @@ export default function AddressView({
   }
 
   return (
-    <KeyboardAwareScrollView
-      contentContainerStyle={style.container}
-      enableOnAndroid={true}
-      extraScrollHeight={100}
-      keyboardShouldPersistTaps="handled"
-      showsVerticalScrollIndicator={false}
+    <KeyboardAvoidingView
+      behavior={"position"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 50 : 20}
+      style={{ flex: 1 }}
     >
-      <Text style={style.titles}>Report Address</Text>
+      <View style={style.container}>
+        <Text style={style.titles}>Report Address</Text>
 
-      <View style={style.addressBox}>
-        {vehicleLocation?.state ? (
-          <Text>State: {getFullStateName(vehicleLocation.state)}</Text>
-        ) : (
-          <Text></Text>
-        )}
-        {vehicleLocation?.city ? (
-          <Text>City: {vehicleLocation.city}</Text>
-        ) : (
-          <Text></Text>
-        )}
-
-        {vehicleLocation?.streetAddress?.trim().length > 0 && (
-          <Text>Street: {vehicleLocation.streetAddress}</Text>
-        )}
-      </View>
-
-      <View style={style.mapContainer}>
-        <MapView
-          style={style.map}
-          region={region}
-          showsUserLocation={false}
-          mapType={MAP_TYPES.STANDARD}
-          toolbarEnabled={false}
-        >
-          {vehicleLocation && (
-            <Marker
-              coordinate={{
-                latitude: vehicleLocation.latitude,
-                longitude: vehicleLocation.longitude,
-              }}
-              title="Vehicle Location"
-              draggable={true}
-              onDragEnd={handleMarkerDraggable}
-            />
+        <View style={style.addressBox}>
+          {vehicleLocation?.state ? (
+            <Text>State: {getFullStateName(vehicleLocation.state)}</Text>
+          ) : (
+            <Text></Text>
           )}
-        </MapView>
+          {vehicleLocation?.city ? (
+            <Text>City: {vehicleLocation.city}</Text>
+          ) : (
+            <Text></Text>
+          )}
 
-        <TouchableOpacity
-          onPress={handleResetMarker}
-          style={style.resetButton}
-          activeOpacity={0.7}
+          {vehicleLocation?.streetAddress?.trim().length > 0 && (
+            <Text>Street: {vehicleLocation.streetAddress}</Text>
+          )}
+        </View>
+
+        <View style={style.mapContainer}>
+          <MapView
+            style={style.map}
+            region={region}
+            showsUserLocation={false}
+            mapType={MAP_TYPES.STANDARD}
+            toolbarEnabled={false}
+          >
+            {vehicleLocation && (
+              <Marker
+                coordinate={{
+                  latitude: vehicleLocation.latitude,
+                  longitude: vehicleLocation.longitude,
+                }}
+                title="Vehicle Location"
+                draggable={true}
+                onDragEnd={handleMarkerDraggable}
+              />
+            )}
+          </MapView>
+
+          <TouchableOpacity
+            onPress={handleResetMarker}
+            style={style.resetButton}
+            activeOpacity={0.7}
+          >
+            <Text style={style.resetButtonText}>Reset Location</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={style.notesContainer}>
+          <Text>Extra Location Info (Optional)</Text>
+          <TextInput
+            value={addressNotes}
+            onChangeText={setAddressNotes}
+            placeholder="e.g. 3rd floor of parking garage"
+            placeholderTextColor="black"
+            autoCapitalize="sentences"
+            style={style.notesTextContainer}
+            autoCorrect={true}
+            multiline={true}
+            maxLength={MAX_NOTES_LENGTH}
+            textAlignVertical="top" // Add this for android
+          />
+        </View>
+
+        <Text
+          style={[
+            style.notesCounterBase,
+            addressNotes.length === MAX_NOTES_LENGTH &&
+              style.maxNotesLengthColor,
+          ]}
         >
-          <Text style={style.resetButtonText}>Reset Location</Text>
-        </TouchableOpacity>
+          {addressNotes.length}/{MAX_NOTES_LENGTH}
+        </Text>
       </View>
-
-      <View style={style.notesContainer}>
-        <Text>Extra Location Info (Optional)</Text>
-        <TextInput
-          value={addressNotes}
-          onChangeText={setAddressNotes}
-          placeholder="e.g. 3rd floor of parking garage"
-          placeholderTextColor="black"
-          autoCapitalize="sentences"
-          style={style.notesTextContainer}
-          autoCorrect={true}
-          multiline={true}
-          maxLength={MAX_NOTES_LENGTH}
-          textAlignVertical="top" // Add this for android
-        />
-      </View>
-
-      <Text
-        style={[
-          style.notesCounterBase,
-          addressNotes.length === MAX_NOTES_LENGTH && style.maxNotesLengthColor,
-        ]}
-      >
-        {addressNotes.length}/{MAX_NOTES_LENGTH}
-      </Text>
-    </KeyboardAwareScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -238,18 +241,19 @@ const style = StyleSheet.create({
   container: {
     //flex: 1,
     //width: "100%",
-    //height: "80%",
-    minHeight: "100%",
+    //height: "100%",
+    //minHeight: "100%",
     justifyContent: "flex-start",
     alignItems: "center",
     shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 4 },
-    // shadowOpacity: 0.3,
-    // shadowRadius: 6,
-    // elevation: 8,
-    // borderRadius: 30,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+    borderRadius: 30,
     backgroundColor: "#F5F5F5",
-    paddingVertical: 20, // Add vertical padding
+    marginTop: Platform.OS === "ios" ? -30 : 5,
+    padding: 10,
     // backgroundColor: "red",
   },
   titles: {
