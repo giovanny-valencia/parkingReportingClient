@@ -15,7 +15,6 @@ import { useLocationStore } from "@store/report/locationStore";
 import { Jurisdiction } from "@constants/jurisdiction";
 import { validateAddressForm } from "@utils/screens/user/ReportPage/AddressForm/validateAddressForm";
 import { Dimensions } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 interface Params {
   jurisdictionMap: Map<string, Jurisdiction>;

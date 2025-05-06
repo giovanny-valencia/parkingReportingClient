@@ -3,13 +3,10 @@ import {
   View,
   StyleSheet,
   Text,
-  KeyboardAvoidingView,
-  Platform,
   TouchableOpacity,
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import { IMAGE_TYPES, ImageContent } from "@constants/imageContent";
 import { useRef, useState } from "react";
 import { router } from "expo-router";
 import { useEffect } from "react";

@@ -92,12 +92,13 @@ export default function HomeScreen() {
       // API call to login attempt
       console.log("Login attempted with:", { email, password });
 
-      // If the login is successful, navigate to the home screen
+      // If the login is successful, handle JWT, navigate to respective home screen
 
       // if regular user -> navigate to user home screen
-      router.replace("/screens/user/HomePage");
+      //router.replace("/screens/user/HomePage");
 
       // if officer -> navigate to officer home screen
+      router.replace("/screens/officers/MapPage");
 
       // Otherwise, show an error message
     }
