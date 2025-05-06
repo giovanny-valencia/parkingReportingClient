@@ -1,6 +1,5 @@
 {
   "expo": {
-    "entryPoint": "src/app/_layout.tsx",
     "name": "parkingClient",
     "slug": "parkingClient",
     "version": "1.0.0",
@@ -15,9 +14,9 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "src/assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff",
-        "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+        "backgroundColor": "#ffffff"
       },
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.anonymous.parkingClient"
     },

@@ -181,6 +181,7 @@ export default function AddressView({
             style={style.map}
             region={region}
             showsUserLocation={false}
+            //showsMyLocationButton={false} // recheck this
             mapType={MAP_TYPES.STANDARD}
             toolbarEnabled={false}
           >

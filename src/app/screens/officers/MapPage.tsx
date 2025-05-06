@@ -30,18 +30,25 @@ export default function MapPage() {
   const { isLocationGranted, isRequestGranted, currentLocation, isLoading } =
     useLocationData();
 
-  const [region, setRegion] = useState({
-    latitude: currentLocation?.latitude ? currentLocation.latitude : 0,
-    longitude: currentLocation?.longitude ? currentLocation.longitude : 0,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
-  });
+  const initialRegion = currentLocation
+    ? {
+        latitude: currentLocation.latitude,
+        longitude: currentLocation.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      }
+    : undefined;
+
+  console.log("loc: ", currentLocation);
+
+  console.log("long lat: ", initialRegion?.latitude, initialRegion?.longitude);
 
   return (
     <MapView
       style={style.map}
-      region={region}
+      region={initialRegion}
       showsUserLocation
+      showsMyLocationButton={false}
       mapType={MAP_TYPES.STANDARD}
       toolbarEnabled={false}
     ></MapView>
