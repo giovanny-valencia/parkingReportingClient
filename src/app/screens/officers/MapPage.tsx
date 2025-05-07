@@ -7,13 +7,34 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from "react-native";
 import MapView, { MAP_TYPES, Marker } from "react-native-maps";
 import { Polygon } from "react-native-maps";
 import { useNavigation } from "expo-router";
 import { useLocationData } from "@hooks/screens/user/ReportPage/useLocationData";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Dimensions } from "react-native";
+import * as Location from "expo-location";
+import { SafeAreaView } from "react-native-safe-area-context";
+import useGetActiveReports from "@queries/useGetActiveReports";
+
+// constants
+const ANDROID_POI_CONFIG = [
+  {
+    featureType: "poi",
+    stylers: [{ visibility: "off" }],
+  },
+  {
+    featureType: "transit",
+    stylers: [{ visibility: "off" }],
+  },
+];
+
+const POI_CONFIG = {
+  showsPointsOfInterest: Platform.OS === "ios" ? false : undefined,
+  customMapStyle: Platform.OS === "android" ? ANDROID_POI_CONFIG : undefined,
+};
 
 /**
  * The screen for the officer map view.
@@ -26,54 +47,100 @@ import { Dimensions } from "react-native";
  * Selecting "start" on the report slider will result in live navigation.
  */
 export default function MapPage() {
-  // Location hooks
-  const { isLocationGranted, isRequestGranted, currentLocation, isLoading } =
-    useLocationData();
+  // on mount location hook. todo: perhaps merge this with a location store 'get current location' functionality
+  const {
+    isLocationGranted,
+    isRequestGranted,
+    currentLocation: initialLocation,
+    isLoading,
+  } = useLocationData();
 
-  const initialRegion = currentLocation
+  const initialRegion = initialLocation
     ? {
-        latitude: currentLocation.latitude,
-        longitude: currentLocation.longitude,
+        latitude: initialLocation.latitude,
+        longitude: initialLocation.longitude,
         latitudeDelta: 0.01,
         longitudeDelta: 0.01,
       }
     : undefined;
 
-  console.log("loc: ", currentLocation);
+  const { data, isLoading: isActiveReportsLoading, isError } = useGetActiveReports();
+  
+  if (data) {
+    console.log(data);
+    
+  }
 
-  console.log("long lat: ", initialRegion?.latitude, initialRegion?.longitude);
+  const mapRef = useRef<MapView>(null);
 
+  const handleRecenter = async () => {
+    const { coords } = await Location.getCurrentPositionAsync({});
+    console.log("coords: ", coords);
+
+    mapRef.current?.animateToRegion({
+      latitude: coords.latitude,
+      longitude: coords.longitude,
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01,
+    });
+  };
+
+  // todo: implement permission not granted ui
+  const permDenied = !isLocationGranted && !isRequestGranted;
+  if (permDenied && !isLoading) {
+    console.log("perm not granted");
+    return <Text>Permissions are required to continue</Text>;
+  }
+
+  if (isLoading) {
+    console.log("loading: ", isLoading);
+
+    return <Text>Loading...</Text>;
+  }
+
+  // permission granted, loading done, display map
   return (
-    <MapView
-      style={style.map}
-      region={initialRegion}
-      showsUserLocation
-      showsMyLocationButton={false}
-      mapType={MAP_TYPES.STANDARD}
-      toolbarEnabled={false}
-    ></MapView>
+    <View style={style.container}>
+      <MapView
+        ref={mapRef}
+        style={StyleSheet.absoluteFillObject}
+        region={initialRegion}
+        showsUserLocation
+        showsMyLocationButton={false}
+        mapType={MAP_TYPES.STANDARD}
+        toolbarEnabled={false}
+        {...POI_CONFIG}
+      ></MapView>
+      <TouchableOpacity onPress={handleRecenter} style={style.recenterButton}>
+        <Image
+          source={require("@assets/images/buttonImages/recenterIcon.png")}
+          style={{
+            width: 50,
+            height: 50,
+          }}
+        />
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const style = StyleSheet.create({
   container: {
-    //flex: 1,
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
-
-    justifyContent: "flex-start",
-    alignItems: "center",
-
-    //backgroundColor: "#F5F5F5",
-    padding: 10,
-    backgroundColor: "red",
+    flex: 1,
+    backgroundColor: "black",
   },
-  map: {
-    width: "100%",
-    height: "100%",
-    alignSelf: "center",
-    justifyContent: "center",
 
-    backgroundColor: "green",
+  recenterButton: {
+    position: "absolute",
+    bottom: 25,
+    right: 15,
+    backgroundColor: "black",
+    padding: 2,
+    borderRadius: 999,
+    elevation: 5, // for Android shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
   },
 });
