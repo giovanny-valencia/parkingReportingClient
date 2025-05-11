@@ -2,6 +2,7 @@ import { IMAGE_TYPES, ImageContent } from "@constants/imageContent";
 import { router } from "expo-router";
 import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useLicensePlateStore } from "@store/report/licensePlateStore";
+import { JSX } from "react";
 
 /**
  * Is responsible for displaying all the images in the image array.

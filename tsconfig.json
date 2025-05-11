@@ -12,6 +12,7 @@
       "@hooks/*": ["hooks/*"],
       "@queries/*": ["queries/*"],
       "@store/*": ["store/*"],
+      "@models/*": ["models/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]

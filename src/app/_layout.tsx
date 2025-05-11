@@ -1,7 +1,8 @@
+import { GestureHandlerRootView } from "react-native-gesture-handler"; // Import this
 import { Stack } from "expo-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { StyleSheet } from "react-native";
-import { View } from "moti";
+import { StyleSheet, View } from "react-native";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 const queryClient = new QueryClient();
 
@@ -14,13 +15,17 @@ const queryClient = new QueryClient();
  */
 export default function RootLayout() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <>
-        <View style={styles.header}></View>
-        <Stack screenOptions={{ headerShown: false }} />
-        <View style={styles.footer}></View>
-      </>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <QueryClientProvider client={queryClient}>
+          <>
+            {/* <View style={styles.header}></View> */}
+            <Stack screenOptions={{ headerShown: false }} />
+            {/* <View style={styles.footer}></View> */}
+          </>
+        </QueryClientProvider>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }
 

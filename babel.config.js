@@ -15,10 +15,12 @@ module.exports = function (api) {
             "@utils": "./src/utils",
             "@hooks": "./src/hooks",
             "@queries": "./src/queries",
-            "@store": "./src/store", 
+            "@store": "./src/store",
+            "@models/*": "./src/models",
           },
         },
       ],
+      "react-native-reanimated/plugin",
     ],
   };
 };

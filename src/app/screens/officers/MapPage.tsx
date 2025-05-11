@@ -18,6 +18,13 @@ import { Dimensions } from "react-native";
 import * as Location from "expo-location";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useGetActiveReports from "@queries/useGetActiveReports";
+import { activeReport } from "@models/activeReport";
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
+import ReportBottomSheetModal from "@components/compound/officers/ReportBottomSheetModal";
 
 // constants
 const ANDROID_POI_CONFIG = [
@@ -64,14 +71,99 @@ export default function MapPage() {
       }
     : undefined;
 
-  const { data, isLoading: isActiveReportsLoading, isError } = useGetActiveReports();
-  
-  if (data) {
-    console.log(data);
-    
-  }
+  const {
+    data,
+    isLoading: isActiveReportsLoading,
+    isError,
+  } = useGetActiveReports();
+
+  // // testing. Delete this later
+  // if (data) {
+  //   console.log(data);
+  // }
+
+  // map where keys are the reportID and values are the report data
+  const [activeReportsMap, setActiveReportsMap] = useState<
+    Map<number, activeReport>
+  >(new Map());
+
+  // map over data, adding new reports to the Map
+  //todo: write this in a useMemo hook
+  useEffect(() => {
+    if (data && Array.isArray(data)) {
+      console.log("new render");
+
+      //todo: clean this up when the API is connected.
+      console.log("new data: ");
+      data.forEach((e) => {
+        console.log("id: ", e.reportID);
+        console.log("coords: ", e.lat, e.long);
+      });
+
+      //todo: when the API gets connected, makes changes to activeReports.ts
+      //const activeReports = data as activeReport[];
+
+      const newActiveReportsMap = new Map(activeReportsMap.entries());
+
+      data.forEach((report) => {
+        if (!newActiveReportsMap.has(report.reportID)) {
+          newActiveReportsMap.set(report.reportID, {
+            reportID: report.reportID,
+            latitude: report.lat,
+            longitude: report.long,
+            expiresAt: 0,
+            status: "new",
+          });
+        }
+      });
+
+      // console.log("new active reports: ");
+      // newActiveReportsMap.forEach((e) => {
+      //   console.log("id: ", e.reportID);
+      //   console.log("lat, long: ", e.latitude, e.longitude);
+      //   console.log("exp: ", e.expiresAt);
+      //   console.log("stat: ", e.status);
+      //   console.log("\n");
+      // });
+
+      // size might not be enough for this check.
+      // Removing a report then adding a report would result in the same size, potentially?
+      if (activeReportsMap.size !== newActiveReportsMap.size) {
+        setActiveReportsMap(newActiveReportsMap);
+      }
+    }
+  }, [data, activeReportsMap]);
+
+  const [selectedReportId, setSelectedReportId] = useState<number | null>(null);
 
   const mapRef = useRef<MapView>(null);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+  const handlePresentModalPress = (reportID: number) => {
+    console.log("present modal: ", reportID);
+
+    if (reportID) {
+      const report = activeReportsMap.get(reportID);
+      console.log("stupid fucking report: ", report);
+
+      const updatedReport: activeReport = {
+        ...report!,
+        status: "opened",
+      };
+
+      const newActiveReportsMap = new Map(activeReportsMap.entries());
+      newActiveReportsMap.set(reportID, updatedReport);
+      setActiveReportsMap(newActiveReportsMap);
+    }
+
+    setSelectedReportId(reportID);
+    bottomSheetRef.current?.present();
+  };
+
+  const handleDismissModalPress = () => {
+    setSelectedReportId(null);
+    bottomSheetRef.current?.dismiss();
+  };
 
   const handleRecenter = async () => {
     const { coords } = await Location.getCurrentPositionAsync({});
@@ -84,6 +176,11 @@ export default function MapPage() {
       longitudeDelta: 0.01,
     });
   };
+
+  useEffect(() => {
+    if (data) {
+    }
+  }, [data]);
 
   // todo: implement permission not granted ui
   const permDenied = !isLocationGranted && !isRequestGranted;
@@ -110,7 +207,32 @@ export default function MapPage() {
         mapType={MAP_TYPES.STANDARD}
         toolbarEnabled={false}
         {...POI_CONFIG}
-      ></MapView>
+      >
+        {Array.from(activeReportsMap.values()).map((report) => (
+          <Marker
+            key={
+              Platform.OS === "android"
+                ? `${report.reportID}-${report.status}`
+                : report.reportID
+            }
+            coordinate={{
+              latitude: report.latitude,
+              longitude: report.longitude,
+            }}
+            pinColor={
+              report.status === "opened"
+                ? "blue"
+                : report.status === "hidden"
+                ? "gray"
+                : "red" // default is new, red
+            }
+            onPress={() => {
+              console.log("marker pressed: ", report.reportID);
+              handlePresentModalPress(report.reportID);
+            }}
+          />
+        ))}
+      </MapView>
       <TouchableOpacity onPress={handleRecenter} style={style.recenterButton}>
         <Image
           source={require("@assets/images/buttonImages/recenterIcon.png")}
@@ -120,6 +242,12 @@ export default function MapPage() {
           }}
         />
       </TouchableOpacity>
+
+      <ReportBottomSheetModal
+        reportID={selectedReportId}
+        ref={bottomSheetRef}
+        onClose={handleDismissModalPress}
+      ></ReportBottomSheetModal>
     </View>
   );
 }
