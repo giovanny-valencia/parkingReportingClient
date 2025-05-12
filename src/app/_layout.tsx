@@ -19,9 +19,9 @@ export default function RootLayout() {
       <BottomSheetModalProvider>
         <QueryClientProvider client={queryClient}>
           <>
-            {/* <View style={styles.header}></View> */}
+            <View style={styles.header}></View>
             <Stack screenOptions={{ headerShown: false }} />
-            {/* <View style={styles.footer}></View> */}
+            <View style={styles.footer}></View>
           </>
         </QueryClientProvider>
       </BottomSheetModalProvider>

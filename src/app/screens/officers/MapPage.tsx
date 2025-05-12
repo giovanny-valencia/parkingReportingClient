@@ -25,6 +25,7 @@ import {
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
 import ReportBottomSheetModal from "@components/compound/officers/ReportBottomSheetModal";
+import { transform } from "@babel/core";
 
 // constants
 const ANDROID_POI_CONFIG = [
@@ -135,6 +136,10 @@ export default function MapPage() {
   }, [data, activeReportsMap]);
 
   const [selectedReportId, setSelectedReportId] = useState<number | null>(null);
+  const [coordinates, setCoordinates] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
 
   const mapRef = useRef<MapView>(null);
   const bottomSheetRef = useRef<BottomSheetModal>(null);
@@ -209,6 +214,7 @@ export default function MapPage() {
         {...POI_CONFIG}
       >
         {Array.from(activeReportsMap.values()).map((report) => (
+          // todo: make a custom marker component. Ios marker has onPress radius issues as the onPress is not registered unless he little "dot" is pressed.
           <Marker
             key={
               Platform.OS === "android"
@@ -246,6 +252,7 @@ export default function MapPage() {
       <ReportBottomSheetModal
         reportID={selectedReportId}
         ref={bottomSheetRef}
+        setCoordinates={setCoordinates}
         onClose={handleDismissModalPress}
       ></ReportBottomSheetModal>
     </View>
