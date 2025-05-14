@@ -23,6 +23,7 @@ import BottomSheet, {
 import { NavigatorContextValue } from "expo-router/build/views/Navigator";
 import { useCallback, useState } from "react";
 import DotIndicator from "./DotIndicator";
+import { ScrollView, FlatList } from "react-native-gesture-handler";
 
 interface Props {
   ref: React.Ref<BottomSheetFlatListMethods>;
@@ -51,8 +52,8 @@ export default function ImageCarousel({ ref, images }: Props) {
 
   return (
     <View>
-      <BottomSheetFlatList
-        ref={ref}
+      <FlatList
+        ref={ref as any} // Type assertion to avoid TypeScript error
         data={images}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (

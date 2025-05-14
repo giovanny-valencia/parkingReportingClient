@@ -80,7 +80,6 @@ export default function ReportBottomSheetModal({
     () => ["15%", "25%", "35%", "45%", "55%", "65%", "75%", "90%"],
     []
   );
-
   // query to get full report data
   const { data, isError, isLoading } = getReportData({ reportID });
   console.log("");
@@ -95,8 +94,6 @@ export default function ReportBottomSheetModal({
   }, [data]);
 
   const [address, setAddress] = useState<Fields | null>(null);
-
-  const [report, setReport] = useState<fullReportData | null>(null);
 
   // library seems to be broken so this is a workaround to close the modal...
   const handleSheetChanges = useCallback((index: number) => {
@@ -149,8 +146,10 @@ export default function ReportBottomSheetModal({
     fetchAddress();
   }, [data]);
 
+  const scrollRef = useRef<any>(null);
+
   return (
-    <BottomSheetModal
+    <BottomSheet
       //style={styles.contentContainer}
       ref={ref}
       index={3}
@@ -160,8 +159,8 @@ export default function ReportBottomSheetModal({
       backgroundStyle={{
         backgroundColor: "#131315",
       }}
-      failOffsetX={5}
-      activeOffsetY={[-5, 5]}
+      // failOffsetX={5}
+      // activeOffsetY={[-5, 5]}
     >
       {/* dismiss button */}
       <View
@@ -251,7 +250,7 @@ export default function ReportBottomSheetModal({
           )}
         </View>
       </BottomSheetScrollView>
-    </BottomSheetModal>
+    </BottomSheet>
   );
 }
 

@@ -145,11 +145,8 @@ export default function MapPage() {
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   const handlePresentModalPress = (reportID: number) => {
-    console.log("present modal: ", reportID);
-
     if (reportID) {
       const report = activeReportsMap.get(reportID);
-      console.log("stupid fucking report: ", report);
 
       const updatedReport: activeReport = {
         ...report!,
@@ -162,12 +159,12 @@ export default function MapPage() {
     }
 
     setSelectedReportId(reportID);
-    bottomSheetRef.current?.present();
+    // bottomSheetRef.current?.present();
   };
 
   const handleDismissModalPress = () => {
     setSelectedReportId(null);
-    bottomSheetRef.current?.dismiss();
+    //bottomSheetRef.current?.close();
   };
 
   const handleRecenter = async () => {
@@ -249,12 +246,14 @@ export default function MapPage() {
         />
       </TouchableOpacity>
 
-      <ReportBottomSheetModal
-        reportID={selectedReportId}
-        ref={bottomSheetRef}
-        setCoordinates={setCoordinates}
-        onClose={handleDismissModalPress}
-      ></ReportBottomSheetModal>
+      {selectedReportId && (
+        <ReportBottomSheetModal
+          reportID={selectedReportId}
+          ref={bottomSheetRef}
+          setCoordinates={setCoordinates}
+          onClose={handleDismissModalPress}
+        />
+      )}
     </View>
   );
 }
