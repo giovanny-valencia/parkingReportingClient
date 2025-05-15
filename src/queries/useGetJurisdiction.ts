@@ -9,15 +9,16 @@ import { Alert } from "react-native";
  *
  * @returns {Object} - { data: Map<string, Jurisdiction>, isLoading: boolean, error: any }
  */
+
+const JurisdictionAPI = process.env.EXPO_PUBLIC_JURISDICTION_API;
+
 export const useGetJurisdiction = () => {
   const SIX_HOURS = 1000 * 60 * 60 * 6;
 
   return useQuery({
     queryKey: ["getJurisdiction"],
     queryFn: async () => {
-      const response = await fetch(
-        "https://mocki.io/v1/e3d587f7-a23f-4e48-9d0b-a8ef2d8137c7"
-      );
+      const response = await fetch(`${JurisdictionAPI}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch, retry or come back later`);
       }

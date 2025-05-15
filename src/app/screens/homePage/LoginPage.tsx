@@ -95,10 +95,10 @@ export default function HomeScreen() {
       // If the login is successful, handle JWT, navigate to respective home screen
 
       // if regular user -> navigate to user home screen
-      //router.replace("/screens/user/HomePage");
+      router.replace("/screens/user/HomePage");
 
       // if officer -> navigate to officer home screen
-      router.replace("/screens/officers/MapPage");
+      //router.replace("/screens/officers/MapPage");
 
       // Otherwise, show an error message
     }

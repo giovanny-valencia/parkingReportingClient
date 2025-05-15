@@ -36,7 +36,6 @@ export default function ReportPage() {
     clearViolationImages();
     clearLocation();
     router.replace("/screens/user/HomePage");
-    console.log("there");
   };
 
   const handleBackClick = () => {
@@ -79,6 +78,8 @@ export default function ReportPage() {
 
   // Location hooks
   const { isRequestGranted, currentLocation } = useLocationData();
+
+  console.log("IRG, isRequestGranted: ", isRequestGranted);
 
   console.log("current location: ", currentLocation);
 
