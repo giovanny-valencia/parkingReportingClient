@@ -179,10 +179,10 @@ export default function MapPage() {
     });
   };
 
-  useEffect(() => {
-    if (data) {
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data) {
+  //   }
+  // }, [data]);
 
   // todo: implement permission not granted ui
   const permDenied = !isLocationGranted && !isRequestGranted;

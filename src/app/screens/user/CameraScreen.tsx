@@ -94,11 +94,6 @@ export default function CameraScreen() {
     }
   }, [keepPhoto]);
 
-  // useEffect(() => {
-  //   console.log("First Mount on Camera!");
-  //   console.log("Photo status: ", photo?.uri);
-  // }, []);
-
   if (!permission) {
     // Camera permissions are still loading.
     return <View />;
