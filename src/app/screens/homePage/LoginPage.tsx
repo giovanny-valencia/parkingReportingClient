@@ -80,19 +80,19 @@ export default function HomeScreen() {
     );
   }
 
-  useEffect(() => {
-    const test = async () => {
-      const url = process.env.EXPO_PUBLIC_BACKEND_API;
-      try {
-        const resp = await fetch(`${url}/test`);
-        console.log("API response: ", resp);
-      } catch (error) {
-        console.error("Error fetching API: ", error);
-      }
-    };
+  // useEffect(() => {
+  //   const test = async () => {
+  //     const url = process.env.EXPO_PUBLIC_BACKEND_API;
+  //     try {
+  //       const resp = await fetch(`${url}/test`);
+  //       console.log("API response: ", resp);
+  //     } catch (error) {
+  //       console.error("Error fetching API: ", error);
+  //     }
+  //   };
 
-    test();
-  });
+  //   test();
+  // });
 
   useEffect(() => {
     if (!validationTriggered) return;

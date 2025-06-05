@@ -23,11 +23,13 @@ import { useLicensePlateStore } from "@store/report/licensePlateStore";
 import { useViolationImageStore } from "@store/report/violationImageStore";
 import { useLocationStore } from "@store/report/locationStore";
 import AddressView from "@components/compound/userForms/AddressView";
+import * as ImageManipulator from "expo-image-manipulator";
 
 export default function ReportPage() {
   // Transition states
   const [currentStep, setStep] = useState(1);
   const [buttonClick, setButtonClick] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state for submission status
 
   const navigation = useNavigation();
 
@@ -197,12 +199,133 @@ export default function ReportPage() {
    * - vehicle location
    * - optional location notes
    */
-  const handleSubmit = () => {
-    console.log("Sending report data to server");
+  const backendAPI = `http://192.168.1.154:8080/api/v1/reports`; // for physical device testing
+  const testBackendAPI = `http://localhost:8080/api/v1/reports`; // for emulator testing
+
+  const handleSubmit = async () => {
+    // Prevent multiple submissions
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    // vehicle location is what is relevant to the report
+    const locationStore = useLocationStore.getState().vehicleLocation;
+
+    console.log("start handleSubmit");
+
+    // Sending the report didn't really work. Using it as a visual model for now.
+    const report = {
+      vehicle: {
+        state: plateState.toUpperCase(),
+        plateNumber: plateNumber.toUpperCase(),
+      },
+
+      address: {
+        streetAddress: locationStore?.streetAddress || "",
+        zipCode: locationStore?.zipCode?.toString() || "",
+        locationNotes: addressNotes || "",
+        location: {
+          latitude: locationStore?.latitude || 0,
+          longitude: locationStore?.longitude || 0,
+        },
+
+        jurisdiction: {
+          state: locationStore?.state.toUpperCase() || "",
+          city: locationStore?.city.trim() || "",
+        },
+      },
+
+      description: violation || "",
+    };
+
+    const licensePlateStoreState = useLicensePlateStore.getState();
+    const violationImageStoreState = useViolationImageStore.getState();
+
+    const imageUri = licensePlateStoreState.images[0].uri;
+    //console.log("Attempting to send image from URI:", imageUri);
+
+    console.log("logging violation images uri:");
+    violationImageStoreState.images.forEach((image, i) => {
+      console.log("Violation image URI :", "i = ", i, "\t", image.uri);
+    });
+
+    try {
+      console.log("Attempting to send report to backend...");
+
+      const formData = new FormData();
+
+      formData.append("report", JSON.stringify(report)); // Plain string, matches Postman
+      // formData.append(
+      //   "report",
+      //   new Blob([JSON.stringify(testJSON)], { type: "application/json" })
+      // ); // Blob, no filename
+
+      console.log("DEBUG: FormData object created. Will be sent to backend.");
+
+      // create the licensePlateImage formData
+      formData.append("licensePlateImage", {
+        uri: imageUri,
+        name: "license_plate.jpg",
+        type: "image/jpeg",
+      } as unknown as Blob); // Cast to Blob for FormData compatibility (not sure about the 'unknown' but it works)
+
+      // create the violationImage formData
+      violationImageStoreState.images.forEach((image, i) => {
+        if (image.uri) {
+          formData.append(`violationImages`, {
+            uri: image.uri,
+            name: `violation_image_${i}.jpg`, // Unique name for each image
+            type: "image/jpeg", // Assuming JPEG format
+          } as unknown as Blob); // Cast to Blob for FormData compatibility
+        }
+      });
+
+      console.log(`Sending FormData with image from URI: ${imageUri}`);
+
+      const response = await fetch(backendAPI, {
+        method: "POST",
+        headers: {
+          // 'Authorization': 'Bearer YOUR_TOKEN',
+        },
+        body: formData,
+      });
+
+      const responseStatus = response.status;
+      const responseBody = await response.text();
+      console.log(`Backend response status: ${responseStatus}`);
+      console.log(`Backend response body: ${responseBody}`);
+
+      if (response.ok) {
+        Alert.alert("Success", "Report submitted successfully!");
+        console.log("Image sent successfully!");
+      } else {
+        console.error(
+          `Backend returned an error: ${responseStatus} - ${responseBody}`
+        );
+        Alert.alert(
+          "Submission Error",
+          `Failed to submit report. Server responded with status ${responseStatus}.`
+        );
+      }
+    } catch (error) {
+      console.log("failed API call: ", error);
+    }
   };
 
   if (currentStep === 4) {
-    return <Text>Thanks!</Text>;
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Thanks! Your report is being processed.</Text>
+        <TouchableOpacity
+          style={styles.nextButton}
+          onPress={() => router.replace("/screens/user/HomePage")}
+        >
+          <Text style={{ color: "white", fontWeight: "bold" }}>Go Home</Text>
+        </TouchableOpacity>
+      </View>
+    );
   }
 
   return (
@@ -255,13 +378,21 @@ export default function ReportPage() {
             )}
 
           <View style={styles.buttonsArea}>
-            <TouchableOpacity onPress={handleBackClick}>
+            <TouchableOpacity onPress={handleBackClick} disabled={isSubmitting}>
               <Text style={styles.backButton}>
                 {currentStep === 1 ? "Home" : "Back"}
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPressOut={() => setButtonClick("next")}>
+            <TouchableOpacity
+              onPress={async () => {
+                if (currentStep === 3) {
+                  await handleSubmit();
+                }
+                setButtonClick("next");
+              }}
+              disabled={isSubmitting}
+            >
               <Text style={styles.nextButton}>
                 {currentStep === 3 ? "Submit" : "Next"}
               </Text>

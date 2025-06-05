@@ -113,7 +113,6 @@ export default function CameraScreen() {
   }
 
   const photo = imageArray.find((img) => img.id === id);
-  // console.log("def: ", photo?.uri);
 
   if (photo?.uri) {
     return PhotoPreview({

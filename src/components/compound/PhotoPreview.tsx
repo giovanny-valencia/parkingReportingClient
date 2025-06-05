@@ -33,7 +33,7 @@ const handleKeepPhoto = ({
   );
 
   setKeepPhoto(true);
-  router.back();
+  //router.back(); -- had to remove this, some expo update seems to handle this so now this was causing returning to home screen instead of the previous screen
 };
 
 const PhotoPreview = ({
