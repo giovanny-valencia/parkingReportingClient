@@ -10,7 +10,7 @@ import { Alert } from "react-native";
  * @returns {Object} - { data: Map<string, Jurisdiction>, isLoading: boolean, error: any }
  */
 
-const JurisdictionAPI = process.env.EXPO_PUBLIC_JURISDICTION_API;
+const JurisdictionAPI = process.env.EXPO_PUBLIC_BACKEND_API;
 
 export const useGetJurisdiction = () => {
   const SIX_HOURS = 1000 * 60 * 60 * 6;
@@ -18,7 +18,9 @@ export const useGetJurisdiction = () => {
   return useQuery({
     queryKey: ["getJurisdiction"],
     queryFn: async () => {
-      const response = await fetch(`${JurisdictionAPI}`);
+      console.log(`${JurisdictionAPI}/api/v1/jurisdictions`);
+
+      const response = await fetch(`${JurisdictionAPI}/api/v1/jurisdictions`);
       if (!response.ok) {
         throw new Error(`Failed to fetch, retry or come back later`);
       }
@@ -26,6 +28,8 @@ export const useGetJurisdiction = () => {
       if (!data || !Array.isArray(data)) {
         throw new Error("No valid jurisdiction data found");
       }
+
+      console.log("response: ", data);
 
       const jurisdictions = data as Jurisdiction[];
 
@@ -41,32 +45,16 @@ export const useGetJurisdiction = () => {
  * @param {Jurisdiction[]} data - Array of jurisdiction objects
  * @returns {Map<string, Jurisdiction>} Map with "stateInitials-city" as key and jurisdiction as value
  */
-const createMap = (jurisdiction: Jurisdiction[]) => {
+const createMap = (jurisdiction: Jurisdiction[]) =>
+
+  {
   return new Map(
     jurisdiction.map((item) => [
-      `${item.stateInitials.toUpperCase()}-${item.city
+      `${item.state.toUpperCase()}-${item.city
         .trim()
         .toUpperCase()
         .replace(/\s+/g, "-")}`,
       item,
     ])
   );
-};
-
-/**
- * Displays an alert for fetch-related errors.
- * @param {string} message - Error message to display
- * @returns {Promise<void>} Resolves when alert is dismissed
- */
-const showFetchErrorAlert = (message: string): Promise<void> => {
-  return new Promise((resolve) => {
-    Alert.alert(
-      "Error Connecting to Server",
-      message,
-      [{ text: "Ok", onPress: () => resolve() }],
-      {
-        onDismiss: () => resolve(),
-      }
-    );
-  });
 };

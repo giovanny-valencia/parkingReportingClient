@@ -11,26 +11,18 @@ import {
   Image,
   Dimensions,
   StyleSheet,
-  Text,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import BottomSheet, {
-  BottomSheetFlatList,
+import {
   BottomSheetFlatListMethods,
 } from "@gorhom/bottom-sheet";
-import { NavigatorContextValue } from "expo-router/build/views/Navigator";
 import { useCallback, useState } from "react";
 import DotIndicator from "./DotIndicator";
-import { ScrollView, FlatList } from "react-native-gesture-handler";
+import { FlatList } from "react-native-gesture-handler";
 
 interface Props {
   ref: React.Ref<BottomSheetFlatListMethods>;
-  images: {
-    id: number; // Added ID as key
-    uri: string; // Image URL
-  }[];
+  images: string[]; // Image URL
 }
 
 export default function ImageCarousel({ ref, images }: Props) {
@@ -55,11 +47,11 @@ export default function ImageCarousel({ ref, images }: Props) {
       <FlatList
         ref={ref as any} // Type assertion to avoid TypeScript error
         data={images}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <GestureHandlerRootView style={styles.imageContainer}>
             <Image
-              source={{ uri: item.uri }}
+              source={{ uri: item }}
               style={{
                 width: "100%",
                 height: 300,

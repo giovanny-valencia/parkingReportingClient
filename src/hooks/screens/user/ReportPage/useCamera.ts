@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { Camera, useCameraPermissions } from "expo-camera";
+import { useCameraPermissions } from "expo-camera";
 import { Alert, Linking } from "react-native";
 /**
  * Responsible for checking and requesting access to camera.

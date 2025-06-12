@@ -8,10 +8,10 @@
 import * as Location from "expo-location";
 import { useQuery } from "@tanstack/react-query";
 
-const activeReportsAPI = process.env.EXPO_PUBLIC_ACTIVE_REPORTS_API;
+const activeReportsAPI = process.env.EXPO_PUBLIC_BACKEND_API;
 
 export default function useGetActiveReports() {
-  console.log("env: ", activeReportsAPI);
+ // console.log("env: ", activeReportsAPI);
 
   return useQuery({
     queryKey: ["getActiveReports"],
@@ -23,14 +23,9 @@ export default function useGetActiveReports() {
           accuracy: Location.Accuracy.Highest,
         });
 
-        const params = new URLSearchParams({
-          latitude: coords.latitude.toString(),
-          longitude: coords.longitude.toString(),
-        });
-        const formattedURL = `${activeReportsAPI}?${params.toString()}`;
-        console.log("FURL: ", formattedURL);
-
-        const response = await fetch(`${activeReportsAPI}`);
+        const response = await fetch(
+          `${activeReportsAPI}/api/v1/reports/active-summaries`
+        );
 
         // check if response was successful
         if (!response.ok) {

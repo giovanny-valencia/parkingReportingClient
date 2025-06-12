@@ -1,25 +1,41 @@
 /**
  * Defines the content of an active report
  */
-
-// Brief description of the report for mapping purposes
 export interface activeReport {
-  reportID: number;
-  latitude: number;
-  longitude: number;
-  expiresAt: 0; //update this
+  id: number;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+  createdOn: string;
   status: "new" | "opened" | "hidden";
 }
 
 // This is the data returned from the full report API
 export interface fullReportData {
-  reportID: number;
-  latitude: number;
-  longitude: number;
-  createdAt: string;
-  images: string[];
-  licensePlate: string;
-  reportDescription: string;
-  address: string;
-  addressNotes: string;
+  id: number;
+  // It's good practice to align the property names with the backend DTOs
+  addressDto: {
+    // Based on your data: {"addressDto": { ... }}
+    streetAddress: string;
+    zipCode: string;
+    locationNotes: string;
+    location: {
+      latitude: number;
+      longitude: number;
+    };
+    jurisdiction: {
+      state: string;
+      city: string;
+    };
+  };
+  vehicleDto: {
+    // Based on your data: {"vehicleDto": { ... }}
+    state: string;
+    plateNumber: string;
+  };
+  // Change 'images' to 'reportImageDto' and update its type
+  reportImageDto: { url: string }[]; // Array of objects, each with a 'url' property
+  description: string; // Based on your data: "description": "Violation notes"
+  createdOn: string;
 }

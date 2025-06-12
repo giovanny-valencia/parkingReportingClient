@@ -2,5 +2,5 @@
 export interface Jurisdiction {
   id: number;
   city: string;
-  stateInitials: string;
+  state: string;
 }

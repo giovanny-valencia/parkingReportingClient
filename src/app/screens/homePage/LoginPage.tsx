@@ -80,20 +80,6 @@ export default function HomeScreen() {
     );
   }
 
-  // useEffect(() => {
-  //   const test = async () => {
-  //     const url = process.env.EXPO_PUBLIC_BACKEND_API;
-  //     try {
-  //       const resp = await fetch(`${url}/test`);
-  //       console.log("API response: ", resp);
-  //     } catch (error) {
-  //       console.error("Error fetching API: ", error);
-  //     }
-  //   };
-
-  //   test();
-  // });
-
   useEffect(() => {
     if (!validationTriggered) return;
 
@@ -108,11 +94,10 @@ export default function HomeScreen() {
 
       // If the login is successful, handle JWT, navigate to respective home screen
 
-      // if regular user -> navigate to user home screen
-      router.replace("/screens/user/HomePage");
-
-      // if officer -> navigate to officer home screen
-      //router.replace("/screens/officers/MapPage");
+      // ****** obviously this needs to be removed *******
+      if (email.includes("officer")) {
+        router.replace("/screens/officers/MapPage");
+      } else router.replace("/screens/user/HomePage");
 
       // Otherwise, show an error message
     }

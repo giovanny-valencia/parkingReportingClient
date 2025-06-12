@@ -3,29 +3,17 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Alert,
-  TextInput,
-  KeyboardAvoidingView,
   Platform,
   Image,
 } from "react-native";
 import MapView, { MAP_TYPES, Marker } from "react-native-maps";
-import { Polygon } from "react-native-maps";
-import { useNavigation } from "expo-router";
 import { useLocationData } from "@hooks/screens/user/ReportPage/useLocationData";
 import { useEffect, useState, useRef } from "react";
-import { Dimensions } from "react-native";
 import * as Location from "expo-location";
-import { SafeAreaView } from "react-native-safe-area-context";
 import useGetActiveReports from "@queries/useGetActiveReports";
 import { activeReport } from "@models/activeReport";
-import {
-  BottomSheetModal,
-  BottomSheetView,
-  BottomSheetModalProvider,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import ReportBottomSheetModal from "@components/compound/officers/ReportBottomSheetModal";
-import { transform } from "@babel/core";
 
 // constants
 const ANDROID_POI_CONFIG = [
@@ -78,11 +66,6 @@ export default function MapPage() {
     isError,
   } = useGetActiveReports();
 
-  // // testing. Delete this later
-  // if (data) {
-  //   console.log(data);
-  // }
-
   // map where keys are the reportID and values are the report data
   const [activeReportsMap, setActiveReportsMap] = useState<
     Map<number, activeReport>
@@ -92,50 +75,32 @@ export default function MapPage() {
   //todo: write this in a useMemo hook
   useEffect(() => {
     if (data && Array.isArray(data)) {
-      console.log("new render");
+      setActiveReportsMap((prevMap) => {
+        // Use a functional update to ensure you're working with the latest state
+        const newActiveReportsMap = new Map(prevMap.entries());
 
-      //todo: clean this up when the API is connected.
-      console.log("new data: ");
-      data.forEach((e) => {
-        console.log("id: ", e.reportID);
-        console.log("coords: ", e.lat, e.long);
+        data.forEach((report) => {
+          if (!newActiveReportsMap.has(report.id)) {
+            newActiveReportsMap.set(report.id, {
+              id: report.id,
+              location: {
+                latitude: report.location.latitude,
+                longitude: report.location.longitude,
+              },
+              createdOn: report.createdOn,
+              status: "new",
+            });
+          }
+        });
+        console.log("new active reports for rendering: ", newActiveReportsMap); // Added for clarity
+        return newActiveReportsMap;
       });
-
-      //todo: when the API gets connected, makes changes to activeReports.ts
-      //const activeReports = data as activeReport[];
-
-      const newActiveReportsMap = new Map(activeReportsMap.entries());
-
-      data.forEach((report) => {
-        if (!newActiveReportsMap.has(report.reportID)) {
-          newActiveReportsMap.set(report.reportID, {
-            reportID: report.reportID,
-            latitude: report.lat,
-            longitude: report.long,
-            expiresAt: 0,
-            status: "new",
-          });
-        }
-      });
-
-      // console.log("new active reports: ");
-      // newActiveReportsMap.forEach((e) => {
-      //   console.log("id: ", e.reportID);
-      //   console.log("lat, long: ", e.latitude, e.longitude);
-      //   console.log("exp: ", e.expiresAt);
-      //   console.log("stat: ", e.status);
-      //   console.log("\n");
-      // });
-
-      // size might not be enough for this check.
-      // Removing a report then adding a report would result in the same size, potentially?
-      if (activeReportsMap.size !== newActiveReportsMap.size) {
-        setActiveReportsMap(newActiveReportsMap);
-      }
     }
-  }, [data, activeReportsMap]);
+  }, [data]);
 
   const [selectedReportId, setSelectedReportId] = useState<number | null>(null);
+
+  // what's this for again?
   const [coordinates, setCoordinates] = useState<{
     latitude: number;
     longitude: number;
@@ -159,6 +124,9 @@ export default function MapPage() {
     }
 
     setSelectedReportId(reportID);
+
+    // for now, handling API call in useEffect
+
     // bottomSheetRef.current?.present();
   };
 
@@ -178,11 +146,6 @@ export default function MapPage() {
       longitudeDelta: 0.01,
     });
   };
-
-  // useEffect(() => {
-  //   if (data) {
-  //   }
-  // }, [data]);
 
   // todo: implement permission not granted ui
   const permDenied = !isLocationGranted && !isRequestGranted;
@@ -215,12 +178,12 @@ export default function MapPage() {
           <Marker
             key={
               Platform.OS === "android"
-                ? `${report.reportID}-${report.status}`
-                : report.reportID
+                ? `${report.id}-${report.status}`
+                : report.id
             }
             coordinate={{
-              latitude: report.latitude,
-              longitude: report.longitude,
+              latitude: report.location.latitude,
+              longitude: report.location.longitude,
             }}
             pinColor={
               report.status === "opened"
@@ -230,8 +193,8 @@ export default function MapPage() {
                 : "red" // default is new, red
             }
             onPress={() => {
-              console.log("marker pressed: ", report.reportID);
-              handlePresentModalPress(report.reportID);
+              console.log("marker pressed: ", report.id);
+              handlePresentModalPress(report.id);
             }}
           />
         ))}

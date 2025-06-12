@@ -1,8 +1,4 @@
-import {
-  BottomSheetModal,
-  BottomSheetView,
-  BottomSheetScrollView,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import {
   StyleSheet,
   Text,
@@ -10,21 +6,14 @@ import {
   Image,
   View,
   Alert,
-  FlatList,
-  Dimensions,
 } from "react-native";
-import { useMemo, useCallback, useState, useEffect, use, useRef } from "react";
+import { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import getReportData from "@queries/useReportData";
-import { fullReportData } from "@models/activeReport";
 import { reverseGeocodeAsync } from "expo-location";
 import { createAddress } from "@utils/addressUtils";
 import { Fields } from "@constants/addressFields";
-import { ScrollView } from "react-native-gesture-handler";
 import ImageCarousel from "@components/compound/officers/ImageCarousel";
-import BottomSheet, {
-  BottomSheetFlatList,
-  BottomSheetFlatListMethods,
-} from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetFlatListMethods } from "@gorhom/bottom-sheet";
 import DataCard from "./DataCard";
 
 interface Props {
@@ -58,16 +47,6 @@ const convertTime = (createdAt: string) => {
   return time12HourFormat;
 };
 
-const mockImages = [
-  {
-    id: 1, // Added ID as key
-    uri: "https://media.istockphoto.com/id/184096116/photo/california-license-plate-1947.jpg?s=612x612&w=0&k=20&c=wC6bPPgmzxnGuTiSP-LSr66YdEPe9KXhn-cnqk8Yj0A=", // Replaced first image URL
-  },
-  {
-    id: 2, // Added ID as key
-    uri: "https://i.pinimg.com/736x/e8/c4/9b/e8c49be35a390d0562dcefb67fa1e5d5.jpg", // Original second image URL
-  },
-];
 export default function ReportBottomSheetModal({
   reportID,
   ref,
@@ -81,12 +60,19 @@ export default function ReportBottomSheetModal({
     []
   );
   // query to get full report data
-  const { data, isError, isLoading } = getReportData({ reportID });
-  console.log("");
+  const { data } = getReportData({ reportID });
+
+  // Map the array of image objects to an array of just their URLs (strings)
+  const imageUrls = useMemo(() => {
+    if (data && data.reportImageDto) {
+      return data.reportImageDto.map((image: { url: string }) => image.url);
+    }
+    return []; // Ensure an empty array is returned if no data or images are present
+  }, [data]); // Recalculate if 'data' changes
 
   const reportTime = useMemo(() => {
     if (data) {
-      const createdAt = data.createdAt;
+      const createdAt = data.createdOn;
       const time = convertTime(createdAt);
       return time;
     }
@@ -106,16 +92,20 @@ export default function ReportBottomSheetModal({
 
   useEffect(() => {
     const fetchAddress = async () => {
-      if (data && data.latitude && data.longitude) {
+      if (
+        data &&
+        data.addressDto.location.latitude &&
+        data.addressDto.location.longitude
+      ) {
         setCoordinates({
-          latitude: data.latitude,
-          longitude: data.longitude,
+          latitude: data.addressDto.location.latitude,
+          longitude: data.addressDto.location.longitude,
         });
 
         try {
           const location = await reverseGeocodeAsync({
-            latitude: data.latitude,
-            longitude: data.longitude,
+            latitude: data.addressDto.location.latitude,
+            longitude: data.addressDto.location.longitude,
           });
 
           if (!location) {
@@ -124,8 +114,8 @@ export default function ReportBottomSheetModal({
 
           const formattedAddress = createAddress({
             location: location,
-            latitude: data.latitude,
-            longitude: data.longitude,
+            latitude: data.addressDto.location.latitude,
+            longitude: data.addressDto.location.longitude,
           });
 
           setAddress(formattedAddress);
@@ -146,8 +136,6 @@ export default function ReportBottomSheetModal({
     fetchAddress();
   }, [data]);
 
-  const scrollRef = useRef<any>(null);
-
   return (
     <BottomSheet
       //style={styles.contentContainer}
@@ -159,8 +147,6 @@ export default function ReportBottomSheetModal({
       backgroundStyle={{
         backgroundColor: "#131315",
       }}
-      // failOffsetX={5}
-      // activeOffsetY={[-5, 5]}
     >
       {/* dismiss button */}
       <View
@@ -178,7 +164,7 @@ export default function ReportBottomSheetModal({
         <View>
           {data && (
             <View>
-              <ImageCarousel images={data.images} ref={flatListRef} />
+              <ImageCarousel images={imageUrls} ref={flatListRef} />
 
               {/* Hide report button */}
               <View>
@@ -199,11 +185,14 @@ export default function ReportBottomSheetModal({
               <View style={styles.line} />
 
               {/* Report Vehicle License Plate number */}
-              <DataCard image={carPlateIcon} text={data.licensePlate} />
+              <DataCard
+                image={carPlateIcon}
+                text={data.vehicleDto.plateNumber}
+              />
               <View style={styles.line} />
 
               {/* Report Description */}
-              <DataCard image={reportIcon} text={data.reportDescription} />
+              <DataCard image={reportIcon} text={data.description} />
               <View style={styles.line} />
 
               {/* Report Location */}
@@ -218,9 +207,12 @@ export default function ReportBottomSheetModal({
               <View style={styles.line} />
 
               {/* Optional Report Address Notes */}
-              {data.addressNotes && (
+              {data.addressDto.locationNotes && (
                 <>
-                  <DataCard image={mapIcon} text={data.addressNotes} />
+                  <DataCard
+                    image={mapIcon}
+                    text={data.addressDto.locationNotes}
+                  />
                   <View style={styles.line} />
                 </>
               )}
