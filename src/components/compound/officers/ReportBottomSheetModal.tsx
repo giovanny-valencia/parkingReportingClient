@@ -6,8 +6,9 @@ import {
   Image,
   View,
   Alert,
+  Platform,
 } from "react-native";
-import { useMemo, useCallback, useState, useEffect, useRef } from "react";
+import { useMemo, useCallback, useState, useEffect, useRef, use } from "react";
 import getReportData from "@queries/useReportData";
 import { reverseGeocodeAsync } from "expo-location";
 import { createAddress } from "@utils/addressUtils";
@@ -15,15 +16,20 @@ import { Fields } from "@constants/addressFields";
 import ImageCarousel from "@components/compound/officers/ImageCarousel";
 import BottomSheet, { BottomSheetFlatListMethods } from "@gorhom/bottom-sheet";
 import DataCard from "./DataCard";
+import { useLocationData } from "@hooks/screens/user/ReportPage/useLocationData";
+import decodePolyline, { LatLng } from "@utils/officerMaps/polylineDecoder";
 
 interface Props {
   reportID: number | null;
-  ref: React.Ref<BottomSheetModal>;
+  bottomSheetRef: React.Ref<BottomSheetModal>;
   setCoordinates: (coordinates: {
     latitude: number;
     longitude: number;
   }) => void;
   onClose: () => void;
+  setPolylineCoordinates: (coordinates: LatLng[]) => void;
+  setDistance: (distance: string) => void;
+  setDuration: (duration: string) => void;
 }
 
 const dismissIcon = require("@assets/images/buttonImages/dismissIcon.png");
@@ -33,6 +39,8 @@ const locationIcon = require("@assets/images/buttonImages/location.png");
 const carPlateIcon = require("@assets/images/buttonImages/carPlateIcon.png");
 const reportIcon = require("@assets/images/buttonImages/report.png");
 const mapIcon = require("@assets/images/buttonImages/map.png");
+
+const Maps_API_KEY = process.env.EXPO_PUBLIC_IOS_GOOGLE_DIRECTIONS_API_KEY;
 
 const convertTime = (createdAt: string) => {
   const date = new Date(createdAt);
@@ -49,9 +57,12 @@ const convertTime = (createdAt: string) => {
 
 export default function ReportBottomSheetModal({
   reportID,
-  ref,
+  bottomSheetRef: ref,
   setCoordinates,
   onClose,
+  setPolylineCoordinates,
+  setDistance,
+  setDuration,
 }: Props) {
   const flatListRef = useRef<BottomSheetFlatListMethods>(null);
 
@@ -59,8 +70,13 @@ export default function ReportBottomSheetModal({
     () => ["15%", "25%", "35%", "45%", "55%", "65%", "75%", "90%"],
     []
   );
+
+  const travelMode = useState<"driving" | "walking">("walking"); // Default to walking
+
   // query to get full report data
   const { data } = getReportData({ reportID });
+
+  const { isLoading, latitude, longitude } = useLocationData();
 
   // Map the array of image objects to an array of just their URLs (strings)
   const imageUrls = useMemo(() => {
@@ -89,6 +105,75 @@ export default function ReportBottomSheetModal({
       onClose();
     }
   }, []);
+
+  const fetchDirections = async () => {
+    if (
+      data === null ||
+      !data?.addressDto.location.latitude ||
+      !data?.addressDto.location.longitude ||
+      isLoading ||
+      latitude === undefined ||
+      longitude === undefined
+    )
+      return;
+
+    const origin = {
+      latitude: latitude,
+      longitude: longitude,
+    };
+    const destination = {
+      latitude: data.addressDto.location.latitude,
+      longitude: data.addressDto.location.longitude,
+    };
+
+    const originStr = `${origin.latitude},${origin.longitude}`;
+    const destinationStr = `${destination.latitude},${destination.longitude}`;
+
+    console.log("key: ", Maps_API_KEY);
+
+    const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${originStr}&destination=${destinationStr}&mode=${travelMode}&key=${Maps_API_KEY}`;
+
+    try {
+      const response = await fetch(url);
+      const json = await response.json();
+      console.log("response: ", json);
+
+      console.log("status: ", json.status);
+
+      console.log("routes: ", json.routes);
+
+      if (json.status === `OK` && json.routes && json.routes.length > 0) {
+        const route = json.routes[0];
+        const encodedPolyline = route.overview_polyline.points;
+        const decodedCoords = decodePolyline(encodedPolyline);
+        console.log("Decoded Polyline Coordinates:", decodedCoords);
+        setPolylineCoordinates(decodedCoords);
+        // Extract distance and duration from the first leg of the route
+        setDistance(route.legs[0].distance.text);
+        setDuration(route.legs[0].duration.text);
+
+        console.log("success: ", json);
+      } else {
+        Alert.alert(
+          "Directions API Error",
+          `Status: ${json.status}. Message: ${
+            json.error_message || "Unknown error"
+          }`
+        );
+        setPolylineCoordinates([]);
+        setDistance("");
+        setDuration("");
+      }
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  };
+
+  useEffect(() => {
+    if (!isLoading && latitude !== undefined && longitude !== undefined) {
+      fetchDirections();
+    }
+  }, [latitude, longitude]);
 
   useEffect(() => {
     const fetchAddress = async () => {

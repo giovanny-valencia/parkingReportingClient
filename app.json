@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.parkingClient"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,8 +19,14 @@
       },
       "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
       "softwareKeyboardLayoutMode": "pan",
-      "package": "com.anonymous.parkingClient"
+      "package": "com.anonymous.parkingClient",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDY14rH4Rt7ndC5H_YdPsCCKZB_8NpLXlI"
+        }
+      }
     },
+
     "web": {
       "bundler": "metro",
       "output": "static",

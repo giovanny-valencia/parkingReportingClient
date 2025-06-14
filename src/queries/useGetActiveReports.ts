@@ -11,7 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 const activeReportsAPI = process.env.EXPO_PUBLIC_BACKEND_API;
 
 export default function useGetActiveReports() {
- // console.log("env: ", activeReportsAPI);
+  // console.log("env: ", activeReportsAPI);
 
   return useQuery({
     queryKey: ["getActiveReports"],
