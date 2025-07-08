@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Jurisdiction } from "@constants/jurisdiction";
+import { Jurisdiction } from "@constants/Jurisdiction";
 import { Alert } from "react-native";
 
 /**

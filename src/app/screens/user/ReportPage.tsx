@@ -16,8 +16,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ErrorIndex, ErrorField } from "@constants/userReportFieldErrors";
 import { ViolationForm } from "@components/compound/userForms/ViolationForm";
 import { useLocationData } from "@hooks/screens/user/ReportPage/useLocationData";
-import { Fields } from "constants/addressFields";
-import { Jurisdiction } from "@constants/jurisdiction";
+import { Fields } from "constants/AddressFields";
+import { Jurisdiction } from "@constants/Jurisdiction";
 import { useNavigation } from "expo-router";
 import { useLicensePlateStore } from "@store/report/licensePlateStore";
 import { useViolationImageStore } from "@store/report/violationImageStore";
@@ -199,9 +199,10 @@ export default function ReportPage() {
    * - vehicle location
    * - optional location notes
    */
-  const backendAPI = `http://192.168.1.154:8080/api/v1/reports`; // for physical device testing
-  const testBackendAPI = `http://localhost:8080/api/v1/reports`; // for emulator testing
-
+  //const backendAPI = `http://192.168.1.154:8080/api/v1/reports`; // for physical device testing
+  //const testBackendAPI = `http://localhost:8080/api/v1/reports`; // for emulator testing
+  const backendAPI = process.env.EXPO_PUBLIC_BACKEND_API + "/api/v1/reports";
+  
   const handleSubmit = async () => {
     // Prevent multiple submissions
     if (isSubmitting) {
