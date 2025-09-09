@@ -17,6 +17,7 @@ module.exports = function (api) {
             "@queries": "./src/queries",
             "@store": "./src/store",
             "@models/*": "./src/models",
+            "@features/*": "./src/features",
           },
         },
       ],
