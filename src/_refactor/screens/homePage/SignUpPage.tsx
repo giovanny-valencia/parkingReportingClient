@@ -3,9 +3,9 @@ import { useState, useEffect } from "react";
 import SignUpForm from "@components/compound/auth/SignUpView";
 import { router } from "expo-router";
 import validateName from "_refactor/utils/validateName";
-import validateEmail from "_refactor/utils/validateEmail";
-import validatePassword from "_refactor/utils/validatePassword";
-import { VALIDATION_TYPE } from "_refactor/utils/validatePassword";
+import validateEmail from "@features/auth/utils/validateEmail";
+import validatePassword from "@features/auth/utils/validateRegistrationPassword";
+import { VALIDATION_TYPE } from "@features/auth/utils/validateRegistrationPassword";
 import {
   FIELD_INDICES,
   FieldError,

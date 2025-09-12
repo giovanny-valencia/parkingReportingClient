@@ -1,4 +1,11 @@
 {
   "java.compile.nullAnalysis.mode": "disabled",
-  "cSpell.words": ["gorhom", "moti", "SCROLLVIEW", "viewability"]
+  "cSpell.words": [
+    "dtos",
+    "gorhom",
+    "moti",
+    "SCROLLVIEW",
+    "viewability",
+    "worklets"
+  ]
 }

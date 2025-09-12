@@ -6,15 +6,10 @@
     "paths": {
       "@app/*": ["app/*"],
       "@assets/*": ["assets/*"],
-      "@components/*": ["components/*"],
-      "@constants/*": ["constants/*"],
-      "@utils/*": ["utils/*"],
-      "@hooks/*": ["hooks/*"],
-      "@queries/*": ["queries/*"],
-      "@store/*": ["store/*"],
-      "@models/*": ["models/*"],
-      "@features/*": ["features/*"]
+      "@common/*": ["common/*"],
+      "@features/*": ["features/*"],
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["_refactor"]
 }
