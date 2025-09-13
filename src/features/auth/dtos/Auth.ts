@@ -20,3 +20,15 @@ export interface RegistrationDto {
   email: string;
   password: string;
 }
+
+export interface UserDto {
+  userId: number;
+  email: string;
+  role: "USER" | "OFFICER";
+}
+
+export interface UserJwtPayload {
+  userId: number;
+  sub: string;
+  role: "USER" | "OFFICER";
+}

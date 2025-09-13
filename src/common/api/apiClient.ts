@@ -1,6 +1,8 @@
 import axios from "axios";
-import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
+import { HttpStatusCode } from "axios";
+import { useAuthStore } from "@features/auth/store/useAuthStore";
+import authService from "@features/auth/services/authService";
 
 /**
  * --- API Client Configuration ---
@@ -36,7 +38,7 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   async (config) => {
     // Get the token from secure storage
-    const token = await SecureStore.getItemAsync("userAuthToken");
+    const { token } = useAuthStore.getState();
 
     // If a token exists, attach it to the Authorization header
     if (token) {
@@ -50,27 +52,28 @@ apiClient.interceptors.request.use(
 );
 
 /**
- * review this later
- */
-
-/**
  * --- Response Interceptor ---
  * This interceptor is executed for every API response.
- * It is used for centralized error handling, specifically for handling
- * unauthorized (401) responses to log the user out.
+ *
+ * Global handler for universal errors that require a consistent action across entire application.
+ * For example, 401 res. invalid user token means that the user should be logged out.
  */
-// TODO: review the error handling
 apiClient.interceptors.response.use(
   (response) => {
     return response;
   },
   async (error) => {
     // Handle errors globally
-    if (error.response && error.response.status === 401) {
+    if (
+      error.response &&
+      error.response.status === HttpStatusCode.Unauthorized
+    ) {
       // You can add logic here to log out the user or refresh the token
-      console.error("Unauthorized request. Logging out...");
-      await SecureStore.deleteItemAsync("userAuthToken");
-      // Redirect to login screen if necessary
+      // await SecureStore.deleteItemAsync("userAuthToken");
+      // const { clearAuth } = useAuthStore.getState();
+      // clearAuth();
+      authService.logout;
+      // Redirect to login screen is handled by _layout's hydration
     }
     return Promise.reject(error);
   }

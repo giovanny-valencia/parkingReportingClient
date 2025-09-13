@@ -12,11 +12,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import AnimatedInput from "common/components/AnimatedInput";
 import LoginErrorMessage from "./LoginErrorMessage";
 
+import * as SecureStore from "expo-secure-store";
+import { useAuthStore } from "../store/useAuthStore";
+
 interface LoginViewProps {
   email: string;
   password: string;
   emailAndServerErrorMessage: string;
   passwordErrorMessage: string;
+  isLoading: boolean;
   setEmail: (email: string) => void;
   setPassword: (password: string) => void;
   onForgotPasswordPress: () => void;
@@ -24,11 +28,19 @@ interface LoginViewProps {
   onSignUpPress: () => void;
 }
 
+const getKey = async () => {
+  const key = await SecureStore.getItemAsync("userAuthToken");
+  console.log("SS Key:", key);
+  const { user } = useAuthStore.getState();
+  console.log("user: ", user);
+};
+
 export default function LoginView({
   email,
   password,
   emailAndServerErrorMessage,
   passwordErrorMessage,
+  isLoading,
   setEmail,
   setPassword,
   onForgotPasswordPress,
@@ -42,6 +54,10 @@ export default function LoginView({
 
         <View style={styles.contentContainer}>
           <Text style={styles.title}>Sign In</Text>
+
+          <TouchableOpacity onPress={getKey}>
+            <Text style={styles.signUpText}>Get token</Text>
+          </TouchableOpacity>
 
           <LoginErrorMessage
             emailAndServerErrorMessage={emailAndServerErrorMessage}
@@ -81,11 +97,10 @@ export default function LoginView({
           <TouchableOpacity
             onPress={onLoginPress}
             style={styles.loginButton}
-            //disabled={isLoggingIn}
+            disabled={isLoading}
           >
             <Text style={styles.loginButtonText}>
-              Log In
-              {/* {isLoading ? "Logging In..." : "Log In"} */}
+              {isLoading ? "Logging In..." : "Log In"}
             </Text>
           </TouchableOpacity>
 

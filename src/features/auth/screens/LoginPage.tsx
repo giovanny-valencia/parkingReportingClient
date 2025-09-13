@@ -5,6 +5,8 @@ import LoginView from "../components/LoginView";
 import validateSimpleLoginPassword from "../utils/validateSimpleLoginPassword";
 import { LoginCredentialsDto, RegistrationDto } from "@features/auth/dtos/Auth";
 import authService from "../services/authService";
+import { jwtDecode } from "jwt-decode";
+import { useAuthStore } from "../store/useAuthStore";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -12,7 +14,9 @@ export default function LoginPage() {
   const [emailAndServerErrorMessage, setEmailAndServerErrorMessage] =
     useState("");
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
-  const [validationTriggered, setValidationTriggered] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { token, user } = useAuthStore();
 
   const handleForgotPassword = () => {
     console.log("Forgot password pressed");
@@ -20,8 +24,6 @@ export default function LoginPage() {
   };
 
   const handleLogin = async () => {
-    console.log("Login pressed");
-
     // validate email field
     const isEmailValid = validateEmail({
       email,
@@ -35,7 +37,7 @@ export default function LoginPage() {
     });
 
     if (isEmailValid && isPasswordValid) {
-      console.log("No errors, sending data to backend...");
+      setIsLoading(true);
 
       try {
         const userLoginCredentials: LoginCredentialsDto = {
@@ -43,16 +45,18 @@ export default function LoginPage() {
           password: password,
         };
 
-        console.log("data being sent... ");
-        console.log("email:", userLoginCredentials.email);
-        console.log("password:", userLoginCredentials.password);
+        const res = await authService.login(userLoginCredentials);
 
-        await authService.login(userLoginCredentials);
-        console.log("login successful!");
+        console.log("data: ", user, token);
+
+        console.log(jwtDecode(res));
       } catch (error: any) {
         console.log("failed in Page: ", error.message);
+        setEmailAndServerErrorMessage(error.message);
+      } finally {
+        setIsLoading(false);
       }
-    } else console.log("errors found");
+    }
   };
 
   const handleSignUp = () => {
@@ -65,6 +69,7 @@ export default function LoginPage() {
       password={password}
       emailAndServerErrorMessage={emailAndServerErrorMessage}
       passwordErrorMessage={passwordErrorMessage}
+      isLoading={isLoading}
       setEmail={setEmail}
       setPassword={setPassword}
       onForgotPasswordPress={handleForgotPassword}
