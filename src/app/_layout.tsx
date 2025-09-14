@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { View, Text } from "react-native";
 import { UserJwtPayload, UserDto } from "@features/auth/dtos/Auth";
 import { jwtDecode } from "jwt-decode";
+import { ROUTES } from "@common/constants/routes";
 
 const queryClient = new QueryClient();
 
@@ -41,19 +42,19 @@ export default function RootLayout() {
 
           // Now navigate based on the loaded user role
           if (user?.role === "USER") {
-            router.replace("/reporting/userDashboard");
+            router.replace(ROUTES.USER_DASHBOARD);
           } else {
             // Handle other roles or default to login
-            router.replace("/auth/login");
+            router.replace(ROUTES.LOGIN);
           }
         } else {
           // No token found, redirect to login
-          router.replace("/auth/login");
+          router.replace(ROUTES.LOGIN);
         }
       } catch (error) {
         console.error("Failed to load auth token from secure store", error);
         clearAuth();
-        router.replace("/auth/login");
+        router.replace(ROUTES.LOGIN);
       } finally {
         setIsLoading(false);
       }

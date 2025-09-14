@@ -51,7 +51,6 @@ async function login(loginCredentials: LoginCredentialsDto): Promise<any> {
 
 async function register(registrationData: RegistrationDto) {}
 
-//TODO: implement logout function
 async function logout() {
   //logoutRequest: any
   await SecureStore.deleteItemAsync("userAuthToken");

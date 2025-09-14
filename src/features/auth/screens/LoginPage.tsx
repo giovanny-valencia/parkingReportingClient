@@ -7,6 +7,7 @@ import { LoginCredentialsDto, RegistrationDto } from "@features/auth/dtos/Auth";
 import authService from "../services/authService";
 import { jwtDecode } from "jwt-decode";
 import { useAuthStore } from "../store/useAuthStore";
+import { ROUTES } from "@common/constants/routes";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -20,7 +21,7 @@ export default function LoginPage() {
 
   const handleForgotPassword = () => {
     console.log("Forgot password pressed");
-    router.push("./forgotPassword");
+    router.push(ROUTES.FORGOT_PASSWORD);
   };
 
   const handleLogin = async () => {
@@ -60,7 +61,7 @@ export default function LoginPage() {
   };
 
   const handleSignUp = () => {
-    router.push("./register");
+    router.push(ROUTES.REGISTER);
   };
 
   return (
