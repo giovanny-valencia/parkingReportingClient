@@ -14,12 +14,14 @@ const loginEndPoint = "/api/v1/auth/login";
  */
 //TODO: explicit return type
 async function login(loginCredentials: LoginCredentialsDto): Promise<any> {
+  const { refreshAuth } = useAuthStore.getState();
   try {
     const response = await apiClient.post(loginEndPoint, loginCredentials);
 
     const { token } = response.data;
 
     await SecureStore.setItemAsync("userAuthToken", token);
+    refreshAuth();
 
     return token;
   } catch (error: any) {
@@ -52,10 +54,10 @@ async function login(loginCredentials: LoginCredentialsDto): Promise<any> {
 async function register(registrationData: RegistrationDto) {}
 
 async function logout() {
-  //logoutRequest: any
+  const { refreshAuth } = useAuthStore.getState();
+
   await SecureStore.deleteItemAsync("userAuthToken");
-  const { clearAuth } = useAuthStore.getState();
-  clearAuth();
+  refreshAuth();
 }
 
 const authService = {

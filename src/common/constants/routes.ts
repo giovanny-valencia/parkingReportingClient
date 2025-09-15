@@ -2,9 +2,9 @@ export const ROUTES = {
   /**
    * auth screens
    */
-  LOGIN: "/auth/login",
-  REGISTER: "/auth/register",
-  FORGOT_PASSWORD: "/auth/forgotPassword",
+  LOGIN: "/login",
+  REGISTER: "/register",
+  FORGOT_PASSWORD: "/forgotPassword",
 
   /**
    * user pages

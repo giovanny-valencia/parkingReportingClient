@@ -2,7 +2,6 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { HttpStatusCode } from "axios";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
-import authService from "@features/auth/services/authService";
 
 /**
  * --- API Client Configuration ---
@@ -28,6 +27,8 @@ const apiClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  // 15 seconds before failing
+  timeout: 15000,
 });
 
 /**
@@ -68,12 +69,10 @@ apiClient.interceptors.response.use(
       error.response &&
       error.response.status === HttpStatusCode.Unauthorized
     ) {
-      // You can add logic here to log out the user or refresh the token
-      // await SecureStore.deleteItemAsync("userAuthToken");
-      // const { clearAuth } = useAuthStore.getState();
-      // clearAuth();
-      authService.logout;
-      // Redirect to login screen is handled by _layout's hydration
+      const { refreshAuth } = useAuthStore.getState();
+
+      await SecureStore.deleteItemAsync("userAuthToken");
+      refreshAuth();
     }
     return Promise.reject(error);
   }

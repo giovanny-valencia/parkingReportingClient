@@ -6,7 +6,6 @@ import validateSimpleLoginPassword from "../utils/validateSimpleLoginPassword";
 import { LoginCredentialsDto, RegistrationDto } from "@features/auth/dtos/Auth";
 import authService from "../services/authService";
 import { jwtDecode } from "jwt-decode";
-import { useAuthStore } from "../store/useAuthStore";
 import { ROUTES } from "@common/constants/routes";
 
 export default function LoginPage() {
@@ -16,8 +15,6 @@ export default function LoginPage() {
     useState("");
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const { token, user } = useAuthStore();
 
   const handleForgotPassword = () => {
     console.log("Forgot password pressed");
@@ -47,8 +44,6 @@ export default function LoginPage() {
         };
 
         const res = await authService.login(userLoginCredentials);
-
-        console.log("data: ", user, token);
 
         console.log(jwtDecode(res));
       } catch (error: any) {

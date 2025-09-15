@@ -1,90 +1,56 @@
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Stack, router } from "expo-router";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import * as SecureStore from "expo-secure-store";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
-import { useEffect } from "react";
-import { View, Text } from "react-native";
-import { UserJwtPayload, UserDto } from "@features/auth/dtos/Auth";
-import { jwtDecode } from "jwt-decode";
+import { router } from "expo-router"; // Import router
+import { useEffect, useState } from "react";
+import { StatusBar, View, Text, ActivityIndicator } from "react-native";
 import { ROUTES } from "@common/constants/routes";
+import { Stack } from "expo-router"; // Re-import Stack for the final layout structure
 
-const queryClient = new QueryClient();
-
-/**
- * The root layout for the app.
- *
- * wraps the entire app in a query client provider, so that we can use react-query to fetch data from the backend.
- *
- * @returns root layout for the app, stack navigator
- */
 export default function RootLayout() {
-  const { setAuth, clearAuth, token, user, setIsLoading, isLoading } =
-    useAuthStore();
+  const [isInitializing, setIsInitializing] = useState(true);
+  const { user, refreshAuth } = useAuthStore();
+  console.log("app start layout");
 
-  // Combined effect to handle initial authentication check and navigation.
+  // This effect handles the initial authentication check on app load.
   useEffect(() => {
-    const loadTokenAndNavigate = async () => {
-      try {
-        const storedToken = await SecureStore.getItemAsync("userAuthToken");
+    async function loadAuth() {
+      await refreshAuth();
+      setIsInitializing(false);
+    }
+    loadAuth();
+  }, [refreshAuth]);
 
-        if (storedToken) {
-          console.log("found token: ", storedToken);
-          const decodedJwt = jwtDecode(storedToken) as UserJwtPayload;
-          const user: UserDto = {
-            userId: decodedJwt.userId,
-            email: decodedJwt.sub,
-            role: decodedJwt.role,
-          };
-          console.log("user: ", user);
-          setAuth(storedToken, user);
-
-          // Now navigate based on the loaded user role
-          if (user?.role === "USER") {
-            router.replace(ROUTES.USER_DASHBOARD);
-          } else {
-            // Handle other roles or default to login
-            router.replace(ROUTES.LOGIN);
-          }
-        } else {
-          // No token found, redirect to login
-          router.replace(ROUTES.LOGIN);
-        }
-      } catch (error) {
-        console.error("Failed to load auth token from secure store", error);
-        clearAuth();
+  // This effect handles the navigation once the user state changes.
+  useEffect(() => {
+    if (!isInitializing) {
+      if (user) {
+        // If the user logs in, navigate to the protected dashboard.
+        router.replace(ROUTES.USER_DASHBOARD);
+      } else {
+        // If the user logs out or is not logged in, navigate to the login screen.
         router.replace(ROUTES.LOGIN);
-      } finally {
-        setIsLoading(false);
       }
-    };
-    loadTokenAndNavigate();
-  }, [setAuth, clearAuth, setIsLoading]);
+    }
+  }, [isInitializing, user]);
 
-  // Show a loading screen while the app is checking for the token.
-  if (isLoading) {
-    // You could replace this with a custom splash screen component.
+  // Show a loading screen while the authentication state is being initialized.
+  if (isInitializing) {
     return (
-      <View>
-        <Text>Loading...</Text>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
       </View>
     );
   }
 
+  // Once the app is initialized, this layout will simply render the
+  // children routes. The `useEffect` above handles all navigation.
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <BottomSheetModalProvider>
-        <QueryClientProvider client={queryClient}>
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              title: "",
-              headerStyle: { backgroundColor: "black" },
-            }}
-          />
-        </QueryClientProvider>
-      </BottomSheetModalProvider>
-    </GestureHandlerRootView>
+    <>
+      <StatusBar barStyle="light-content" backgroundColor="transparent" />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      />
+    </>
   );
 }

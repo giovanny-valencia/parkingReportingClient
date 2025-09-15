@@ -25,10 +25,14 @@ export interface UserDto {
   userId: number;
   email: string;
   role: "USER" | "OFFICER";
+  exp: number;
+  iat: number;
 }
 
 export interface UserJwtPayload {
   userId: number;
   sub: string;
   role: "USER" | "OFFICER";
+  exp: number;
+  iat: number;
 }

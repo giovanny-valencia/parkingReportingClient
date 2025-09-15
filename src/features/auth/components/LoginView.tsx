@@ -2,7 +2,6 @@ import {
   View,
   Text,
   StyleSheet,
-  StatusBar,
   TouchableWithoutFeedback,
   Keyboard,
   TouchableOpacity,
@@ -35,6 +34,11 @@ const getKey = async () => {
   console.log("user: ", user);
 };
 
+const killKey = async () => {
+  SecureStore.deleteItemAsync("userAuthToken");
+  console.log("killed key");
+};
+
 export default function LoginView({
   email,
   password,
@@ -47,16 +51,25 @@ export default function LoginView({
   onLoginPress,
   onSignUpPress,
 }: LoginViewProps) {
+  const { refreshAuth } = useAuthStore.getState();
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.safeAreaContainer}>
-        <StatusBar barStyle="light-content" backgroundColor="transparent" />
-
         <View style={styles.contentContainer}>
           <Text style={styles.title}>Sign In</Text>
 
           <TouchableOpacity onPress={getKey}>
             <Text style={styles.signUpText}>Get token</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              killKey();
+              refreshAuth();
+            }}
+          >
+            <Text style={styles.signUpText}>kill key</Text>
           </TouchableOpacity>
 
           <LoginErrorMessage
