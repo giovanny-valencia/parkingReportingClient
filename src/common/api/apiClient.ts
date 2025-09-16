@@ -65,10 +65,7 @@ apiClient.interceptors.response.use(
   },
   async (error) => {
     // Handle errors globally
-    if (
-      error.response &&
-      error.response.status === HttpStatusCode.Unauthorized
-    ) {
+    if (error.response && error.response.status === HttpStatusCode.Unauthorized) {
       const { refreshAuth } = useAuthStore.getState();
 
       await SecureStore.deleteItemAsync("userAuthToken");

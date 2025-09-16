@@ -2,10 +2,7 @@ interface emailProps {
   email: string;
   handleSetError: (error: string) => void;
 }
-export default function validateEmail({
-  email,
-  handleSetError,
-}: emailProps): boolean {
+export default function validateEmail({ email, handleSetError }: emailProps): boolean {
   // Check if email is empty
   if (email.length === 0) {
     handleSetError("Email is required");

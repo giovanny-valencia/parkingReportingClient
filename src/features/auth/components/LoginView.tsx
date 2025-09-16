@@ -98,23 +98,14 @@ export default function LoginView({
                 autoCapitalize="none"
                 autocorrect={false}
               />
-              <TouchableOpacity
-                onPress={onForgotPasswordPress}
-                style={styles.forgotPasswordLink}
-              >
+              <TouchableOpacity onPress={onForgotPasswordPress} style={styles.forgotPasswordLink}>
                 <Text style={styles.forgotPasswordText}>Forgot password?</Text>
               </TouchableOpacity>
             </View>
           </View>
 
-          <TouchableOpacity
-            onPress={onLoginPress}
-            style={styles.loginButton}
-            disabled={isLoading}
-          >
-            <Text style={styles.loginButtonText}>
-              {isLoading ? "Logging In..." : "Log In"}
-            </Text>
+          <TouchableOpacity onPress={onLoginPress} style={styles.loginButton} disabled={isLoading}>
+            <Text style={styles.loginButtonText}>{isLoading ? "Logging In..." : "Log In"}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={onSignUpPress}>

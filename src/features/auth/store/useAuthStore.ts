@@ -25,8 +25,7 @@ interface AuthActions {
  * @returns {AuthState & AuthActions} The combined state and actions.
  */
 export const useAuthStore = create<AuthState & AuthActions>((set, get) => {
-  const setAuth = (token: string, user: UserDto) =>
-    set({ token: token, user: user });
+  const setAuth = (token: string, user: UserDto) => set({ token: token, user: user });
   const clearAuth = () => set({ token: null, user: null });
 
   return {

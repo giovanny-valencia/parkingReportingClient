@@ -71,19 +71,13 @@ function signUpCheck(
 
   // Special character check
   if (!/[^a-zA-Z0-9]/.test(password)) {
-    handleSetError(
-      errorIndex,
-      "Password must contain at least one special character"
-    );
+    handleSetError(errorIndex, "Password must contain at least one special character");
     return;
   }
 
   // Uppercase check
   if (!/[A-Z]/.test(password)) {
-    handleSetError(
-      errorIndex,
-      "Password must contain at least one uppercase letter"
-    );
+    handleSetError(errorIndex, "Password must contain at least one uppercase letter");
     return;
   }
 

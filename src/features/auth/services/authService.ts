@@ -1,4 +1,4 @@
-import { HttpStatusCode } from "axios";
+import { HttpStatusCode, isAxiosError } from "axios";
 import apiClient from "common/api/apiClient";
 import { LoginCredentialsDto, RegistrationDto } from "@features/auth/dtos/Auth";
 import * as SecureStore from "expo-secure-store";
@@ -12,7 +12,6 @@ const loginEndPoint = "/api/v1/auth/login";
  * @returns {Promise<any>} The response data from the backend, including the JWT token.
  * @throws {Error} Throws a specific error message based on the HTTP status code or network issues.
  */
-//TODO: explicit return type
 async function login(loginCredentials: LoginCredentialsDto): Promise<any> {
   const { refreshAuth } = useAuthStore.getState();
   try {
@@ -24,26 +23,23 @@ async function login(loginCredentials: LoginCredentialsDto): Promise<any> {
     refreshAuth();
 
     return token;
-  } catch (error: any) {
+  } catch (error: unknown) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx
-    if (error.response) {
-      if (
-        error.response.status === HttpStatusCode.Unauthorized ||
-        error.response.status === HttpStatusCode.NotFound
-      ) {
+    if (isAxiosError(error) && error.response) {
+      const status = error.response.status;
+
+      if (status === HttpStatusCode.Unauthorized || status === HttpStatusCode.NotFound) {
         throw new Error("Incorrect email or password");
-      } else if (error.response.status >= HttpStatusCode.InternalServerError) {
+      } else if (status >= HttpStatusCode.InternalServerError) {
         throw new Error("Server error. Please try again later.");
       } else {
         // Handle other client errors (e.g., 400 Bad Request)
         throw new Error("An unexpected error occurred. Please try again.");
       }
-    } else if (error.request) {
+    } else if (isAxiosError(error) && error.request) {
       // The request was made but no response was received
-      throw new Error(
-        "Error connecting to the internet. Please check your connection."
-      );
+      throw new Error("Error connecting to the internet. Please check your connection.");
     } else {
       // Something happened in setting up the request that triggered an Error
       throw new Error("An unknown error occurred. Try again later.");

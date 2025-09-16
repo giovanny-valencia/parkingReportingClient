@@ -11,8 +11,7 @@ import { ROUTES } from "@common/constants/routes";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [emailAndServerErrorMessage, setEmailAndServerErrorMessage] =
-    useState("");
+  const [emailAndServerErrorMessage, setEmailAndServerErrorMessage] = useState("");
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -46,9 +45,10 @@ export default function LoginPage() {
         const res = await authService.login(userLoginCredentials);
 
         console.log(jwtDecode(res));
-      } catch (error: any) {
-        console.log("failed in Page: ", error.message);
-        setEmailAndServerErrorMessage(error.message);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setEmailAndServerErrorMessage(error.message);
+        } else setEmailAndServerErrorMessage("An unexpected error occurred.");
       } finally {
         setIsLoading(false);
       }
