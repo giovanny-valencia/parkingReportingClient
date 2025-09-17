@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import validateEmail from "@features/auth/utils/validateEmail";
 import LoginView from "../components/LoginView";
 import validateSimpleLoginPassword from "../utils/validateSimpleLoginPassword";

@@ -25,10 +25,7 @@ function formatDate(date: Date) {
 export default function DateField({ value, onChange }: DateFieldProps) {
   const [show, setShow] = useState(true);
 
-  const handleChange = (
-    event: DateTimePickerEvent,
-    selectedDate: Date | undefined
-  ) => {
+  const handleChange = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
     if (selectedDate) {
       onChange(selectedDate);
     }
@@ -53,12 +50,7 @@ export default function DateField({ value, onChange }: DateFieldProps) {
     <View style={styles.container}>
       {Platform.OS === "ios" && show && (
         <View>
-          <DateTimePicker
-            value={value}
-            mode="date"
-            onChange={handleChange}
-            display="compact"
-          />
+          <DateTimePicker value={value} mode="date" onChange={handleChange} display="compact" />
         </View>
       )}
 
@@ -73,21 +65,22 @@ export default function DateField({ value, onChange }: DateFieldProps) {
   );
 }
 
-//styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    marginBottom: 5,
+    marginBottom: 50,
   },
   input: {
     width: "100%",
     height: 40,
     borderWidth: 1,
-    borderColor: "black",
+    borderColor: "#444",
     padding: 10,
     marginBottom: 15,
     borderRadius: 5,
+    color: "#E0E0E0",
+    backgroundColor: "#2C2C2C",
   },
 });

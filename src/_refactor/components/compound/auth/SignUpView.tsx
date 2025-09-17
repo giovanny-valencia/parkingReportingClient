@@ -2,10 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import AnimatedInput from "@components/common/AnimatedInput";
 import { useState } from "react";
 import DateField from "@components/common/DateField";
-import {
-  FIELD_INDICES,
-  FieldError,
-} from "_refactor/constants/signUpFieldError";
+import { FIELD_INDICES, FieldError } from "_refactor/constants/signUpFieldError";
 
 interface SignUpFormProps {
   firstName: string;
@@ -45,28 +42,16 @@ export default function SignUpForm({
       <Text style={styles.title}>Register Your Account</Text>
 
       <View style={styles.inputFieldsAndErrorMessage}>
-        <AnimatedInput
-          placeholder="First Name"
-          value={firstName}
-          onChangeText={setFirstName}
-        />
+        <AnimatedInput placeholder="First Name" value={firstName} onChangeText={setFirstName} />
         {error[FIELD_INDICES.firstName].message.length > 0 && (
-          <Text style={styles.error}>
-            {error[FIELD_INDICES.firstName].message}
-          </Text>
+          <Text style={styles.error}>{error[FIELD_INDICES.firstName].message}</Text>
         )}
       </View>
 
       <View style={styles.inputFieldsAndErrorMessage}>
-        <AnimatedInput
-          placeholder="Last Name"
-          value={lastName}
-          onChangeText={setLastName}
-        />
+        <AnimatedInput placeholder="Last Name" value={lastName} onChangeText={setLastName} />
         {error[FIELD_INDICES.lastName].message.length > 0 && (
-          <Text style={styles.error}>
-            {error[FIELD_INDICES.lastName].message}
-          </Text>
+          <Text style={styles.error}>{error[FIELD_INDICES.lastName].message}</Text>
         )}
       </View>
 
@@ -92,9 +77,7 @@ export default function SignUpForm({
           autoCapitalize="none"
         />
         {error[FIELD_INDICES.password].message.length > 0 && (
-          <Text style={styles.error}>
-            {error[FIELD_INDICES.password].message}
-          </Text>
+          <Text style={styles.error}>{error[FIELD_INDICES.password].message}</Text>
         )}
       </View>
 
@@ -107,21 +90,14 @@ export default function SignUpForm({
           autoCapitalize="none"
         />
         {error[FIELD_INDICES.confirmPassword].message.length > 0 && (
-          <Text style={styles.error}>
-            {error[FIELD_INDICES.confirmPassword].message}
-          </Text>
+          <Text style={styles.error}>{error[FIELD_INDICES.confirmPassword].message}</Text>
         )}
       </View>
 
       <Text style={styles.label}>Date of Birth:</Text>
-      <DateField
-        value={date}
-        onChange={(selectedDate) => setDate(selectedDate)}
-      />
+      <DateField value={date} onChange={(selectedDate) => setDate(selectedDate)} />
       {error[FIELD_INDICES.dateOfBirth].message.length > 0 && (
-        <Text style={styles.error}>
-          {error[FIELD_INDICES.dateOfBirth].message}
-        </Text>
+        <Text style={styles.error}>{error[FIELD_INDICES.dateOfBirth].message}</Text>
       )}
     </View>
   );

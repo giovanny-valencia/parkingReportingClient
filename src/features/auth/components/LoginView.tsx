@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { appStyles } from "@common/styles/appStyles";
 import AnimatedInput from "common/components/AnimatedInput";
 import LoginErrorMessage from "./LoginErrorMessage";
 
@@ -55,9 +55,9 @@ export default function LoginView({
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView style={styles.safeAreaContainer}>
-        <View style={styles.contentContainer}>
-          <Text style={styles.title}>Sign In</Text>
+      <SafeAreaView style={appStyles.safeAreaContainer}>
+        <View style={appStyles.contentContainer}>
+          <Text style={appStyles.title}>Sign In</Text>
 
           <TouchableOpacity onPress={getKey}>
             <Text style={styles.signUpText}>Get token</Text>
@@ -104,8 +104,12 @@ export default function LoginView({
             </View>
           </View>
 
-          <TouchableOpacity onPress={onLoginPress} style={styles.loginButton} disabled={isLoading}>
-            <Text style={styles.loginButtonText}>{isLoading ? "Logging In..." : "Log In"}</Text>
+          <TouchableOpacity
+            onPress={onLoginPress}
+            style={appStyles.submitButton}
+            disabled={isLoading}
+          >
+            <Text style={appStyles.submitButtonText}>{isLoading ? "Logging In..." : "Log In"}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={onSignUpPress}>
@@ -118,26 +122,6 @@ export default function LoginView({
 }
 
 const styles = StyleSheet.create({
-  safeAreaContainer: {
-    flex: 1,
-    backgroundColor: "#121212",
-  },
-
-  contentContainer: {
-    flex: 1,
-    paddingHorizontal: 24,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#E0E0E0",
-    marginBottom: 48, // More space to separate from the form
-    alignSelf: "flex-start", // Left-align for a cleaner look
-  },
-
   formContainer: {
     width: "100%", // Take up full width of parent
     marginBottom: 32,
@@ -154,21 +138,6 @@ const styles = StyleSheet.create({
 
   forgotPasswordText: {
     color: "#B0B0B0", // A muted color for secondary text
-  },
-
-  loginButton: {
-    backgroundColor: "#BB86FC", // Your accent color for buttons
-    paddingVertical: 14,
-    borderRadius: 10,
-    width: "100%",
-    alignItems: "center",
-    marginBottom: 24,
-  },
-
-  loginButtonText: {
-    color: "#121212", // Dark text on a light background for contrast
-    fontSize: 18,
-    fontWeight: "bold",
   },
 
   signUpText: {

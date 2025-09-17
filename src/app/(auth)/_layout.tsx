@@ -9,7 +9,7 @@ export default function AuthLayout() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="login" />
+      <Stack.Screen name="login" options={{ animation: "slide_from_left" }} />
       <Stack.Screen name="register" />
       <Stack.Screen name="forgotPassword" />
     </Stack>

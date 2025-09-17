@@ -31,7 +31,6 @@ export const useAuthStore = create<AuthState & AuthActions>((set, get) => {
   return {
     token: null,
     user: null,
-    isLoading: true,
 
     checkIfSessionExpired: () => {
       const user = get().user;
