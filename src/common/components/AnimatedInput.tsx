@@ -1,25 +1,24 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
-  TextInput,
   View,
   StyleSheet,
-  KeyboardTypeOptions,
   StyleProp,
   ViewStyle,
   TextStyle,
+  KeyboardTypeOptions,
 } from "react-native";
-import { MotiText, motify } from "moti";
+import { TextInput, DefaultTheme } from "react-native-paper";
 
 /**
  * AnimatedInput TextInput Component
  *
- * todo: refactor this, currently background cannot be changed and bleeds when label hovers when active.
+ * This refactored version ensures the TextInput is the sole touch target,
+ * which reliably opens the keyboard. The label is now purely a visual
+ * component that animates based on the input's state.
  */
 
-const TouchableMotiText = motify(MotiText)();
-
 export interface InputFieldProps {
-  placeholder?: string;
+  placeholder: string;
   value: string;
   onChangeText: (text: string) => void;
   keyboardType?: KeyboardTypeOptions;
@@ -30,6 +29,8 @@ export interface InputFieldProps {
   titleStyle?: StyleProp<TextStyle>;
   backgroundColor?: string;
   autocorrect?: boolean;
+  placeholderColor?: string;
+  inputTextColor?: string;
 }
 
 export default function AnimatedInput({
@@ -42,44 +43,39 @@ export default function AnimatedInput({
   autocorrect = false,
   viewStyle,
   inputStyle,
-  titleStyle,
   backgroundColor = "#2C2C2C",
+  placeholderColor = "#E0E0E0", // Default color for the stationary label
+  inputTextColor = "#B0B0B0", // Default color for the input text
 }: InputFieldProps) {
-  const [isFocused, setIsFocused] = useState(false);
-  const isActive = isFocused || value.length > 0;
-  const inputRef = useRef<TextInput>(null);
-
-  const handlePlaceholderPress = () => {
-    inputRef.current?.focus();
+  // Create a custom theme object to override the background and text colors.
+  const theme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: backgroundColor,
+      // This color applies to the stationary label text
+      onSurface: placeholderColor,
+      // This color applies to the main input text
+      onSurfaceVariant: inputTextColor,
+    },
   };
 
   return (
-    <View style={[styles.container, { backgroundColor }, viewStyle]}>
-      <TouchableMotiText
-        style={[
-          styles.label,
-          { backgroundColor },
-          isActive ? styles.titleActive : styles.titleInactive,
-          titleStyle,
-        ]}
-        from={{ top: 18 }}
-        animate={{ top: isActive ? -10 : 18 }}
-        transition={{ type: "timing", duration: 200 }}
-        onPress={handlePlaceholderPress}
-      >
-        {placeholder}
-      </TouchableMotiText>
+    <View style={[styles.container, viewStyle]}>
       <TextInput
-        ref={inputRef}
-        style={[styles.input, isFocused && styles.inputFocused, inputStyle]}
+        label={placeholder}
         value={value}
         onChangeText={onChangeText}
         keyboardType={keyboardType}
         secureTextEntry={secureTextEntry}
         autoCapitalize={autoCapitalize}
         autoCorrect={autocorrect}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        style={[styles.input, { backgroundColor }, inputStyle]}
+        mode="outlined"
+        outlineColor="#444"
+        activeOutlineColor="#BB86FC"
+        // Pass the theme prop here to apply the custom colors
+        theme={theme}
       />
     </View>
   );
@@ -90,38 +86,9 @@ const styles = StyleSheet.create({
     width: "100%",
     marginBottom: 6,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#444",
     overflow: "visible",
   },
-  label: {
-    position: "absolute",
-    left: 10,
-    fontWeight: "bold",
-    paddingHorizontal: 4,
-    zIndex: 1,
-  },
-  titleInactive: {
-    fontSize: 16,
-    color: "#B0B0B0",
-  },
-  titleActive: {
-    fontSize: 12,
-    color: "#E0E0E0",
-  },
   input: {
-    width: "100%",
     height: 50,
-    borderWidth: 1,
-    borderColor: "transparent",
-    color: "#E0E0E0",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingTop: 15,
-    fontSize: 16,
-  },
-  inputFocused: {
-    borderColor: "#BB86FC",
-    borderWidth: 2,
   },
 });

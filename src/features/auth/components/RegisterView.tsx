@@ -31,6 +31,13 @@ interface RegistrationProps {
   setDate: (date: Date) => void;
 }
 
+/**
+ * UI for the registration page
+ *
+ * @param param0 - State variables and state setters for the user registration
+ * @returns View - UI for the registration page
+ */
+
 export default function RegisterView({
   firstName,
   lastName,
@@ -48,10 +55,10 @@ export default function RegisterView({
 }: RegistrationProps) {
   return (
     <SafeAreaView style={[appStyles.safeAreaContainer]}>
-      <KeyboardAwareScrollView contentContainerStyle={appStyles.contentContainer}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAwareScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.formWrapper}>
-            <Text style={appStyles.title}>Register Page</Text>
+            <Text style={[appStyles.title, { marginBottom: 24 }]}>Create an account</Text>
 
             <View style={styles.inputSpacer}>
               <AnimatedInput
@@ -136,25 +143,33 @@ export default function RegisterView({
               </TouchableOpacity>
             </View>
           </View>
-        </TouchableWithoutFeedback>
-      </KeyboardAwareScrollView>
+        </KeyboardAwareScrollView>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   inputSpacer: {
-    marginBottom: 20, // More space between inputs
+    marginBottom: 20,
+  },
+
+  scrollContainer: {
+    flexGrow: 1,
+    paddingHorizontal: 24,
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   formWrapper: {
-    width: "100%", // Take up full width of parent
+    marginTop: 25,
+    width: "100%",
     marginBottom: 32,
   },
   signInWrapper: {
-    marginTop: 20, // Add space above the text
-    flexDirection: "row", // Align the children horizontally
-    justifyContent: "center", // Center the content
+    marginTop: 20,
+    flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
   },
   signInText: {

@@ -3,6 +3,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { PaperProvider } from "react-native-paper";
 
 const queryClient = new QueryClient();
 
@@ -12,7 +13,9 @@ export default function GlobalProviders({ children }: { children: React.ReactNod
     // <SafeAreaProvider>
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        <QueryClientProvider client={queryClient}>
+          <PaperProvider>{children}</PaperProvider>
+        </QueryClientProvider>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>
     // </SafeAreaProvider>

@@ -1,9 +1,9 @@
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import validateEmail from "@features/auth/utils/validateEmail";
 import LoginView from "../components/LoginView";
 import validateSimpleLoginPassword from "../utils/validateSimpleLoginPassword";
-import { LoginCredentialsDto, RegistrationDto } from "@features/auth/dtos/Auth";
+import { LoginCredentialsDto } from "@features/auth/dtos/Auth";
 import authService from "../services/authService";
 import { jwtDecode } from "jwt-decode";
 import { ROUTES } from "@common/constants/routes";
