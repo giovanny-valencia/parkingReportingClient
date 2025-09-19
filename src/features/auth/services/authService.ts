@@ -1,6 +1,6 @@
 import { HttpStatusCode, isAxiosError } from "axios";
 import apiClient from "common/api/apiClient";
-import { LoginCredentialsDto, RegistrationDto } from "@features/auth/dtos/Auth";
+import { LoginCredentialsDto, RegistrationInputs } from "@features/auth/dtos/Auth";
 import * as SecureStore from "expo-secure-store";
 import { useAuthStore } from "../store/useAuthStore";
 
@@ -47,7 +47,7 @@ async function login(loginCredentials: LoginCredentialsDto): Promise<any> {
   }
 }
 
-async function register(registrationData: RegistrationDto) {}
+async function register() {}
 
 async function logout() {
   const { refreshAuth } = useAuthStore.getState();

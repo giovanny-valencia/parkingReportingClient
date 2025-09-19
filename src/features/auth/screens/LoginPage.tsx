@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import validateEmail from "@features/auth/utils/validateEmail";
+import validateEmail from "../utils/validationUtils";
 import LoginView from "../components/LoginView";
 import validateSimpleLoginPassword from "../utils/validateSimpleLoginPassword";
 import { LoginCredentialsDto } from "@features/auth/dtos/Auth";
@@ -22,10 +22,13 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     // validate email field
-    const isEmailValid = validateEmail({
-      email,
-      handleSetError: setEmailAndServerErrorMessage,
-    });
+
+    //BUG: broke this in the latest refactor
+    const emailErrorMessage = validateEmail(email);
+    if (emailErrorMessage) {
+      setEmailAndServerErrorMessage(emailErrorMessage);
+    }
+    const isEmailValid = emailErrorMessage ? false : true;
 
     // validate password field
     const isPasswordValid = validateSimpleLoginPassword({

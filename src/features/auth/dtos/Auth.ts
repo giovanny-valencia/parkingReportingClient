@@ -14,13 +14,35 @@ export interface LoginCredentialsDto {
 }
 
 /**
- * Interface representing the data required for new user registration.
+ * Interface representing the state and inputs of the user registration form on the frontend.
+ * This is the "model" for form state.
  */
-export interface RegistrationDto {
+export interface RegistrationInputs {
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
+  confirmPassword: string;
+  dateOfBirth: Date;
+  agreedToTerms: boolean;
 }
 
+/**
+ * Interface representing the data required for new user registration to be sent to the backend.
+ * This is the actual Data Transfer Object (DTO) for the API call.
+ */ //TODO: revise
+export interface RegisterDto {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  /** The user's date of birth as an ISO-formatted string (YYYY-MM-DD). */
+  dateOfBirth: string;
+}
+
+/**
+ * Interface representing the user data returned by the API after login or registration.
+ */
 export interface UserDto {
   userId: number;
   email: string;
@@ -29,6 +51,9 @@ export interface UserDto {
   iat: number;
 }
 
+/**
+ * Interface for the data contained within the JWT token payload.
+ */
 export interface UserJwtPayload {
   userId: number;
   sub: string;

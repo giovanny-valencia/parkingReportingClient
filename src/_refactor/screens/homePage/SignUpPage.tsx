@@ -2,14 +2,11 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 import SignUpForm from "@components/compound/auth/SignUpView";
 import { router } from "expo-router";
-import validateName from "_refactor/utils/validateName";
-import validateEmail from "@features/auth/utils/validateEmail";
+import validateName from "@features/auth/utils/validationUtils";
+import validateEmail from "@features/auth/utils/validationUtils";
 import validatePassword from "@features/auth/utils/validateRegistrationPassword";
 import { VALIDATION_TYPE } from "@features/auth/utils/validateRegistrationPassword";
-import {
-  FIELD_INDICES,
-  FieldError,
-} from "_refactor/constants/signUpFieldError";
+import { FIELD_INDICES, FieldError } from "_refactor/constants/signUpFieldError";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function SignUpScreen() {
@@ -21,12 +18,10 @@ export default function SignUpScreen() {
   const [date, setDate] = useState(new Date());
   const [validationTriggered, setValidationTriggered] = useState(false); // Track validation start
 
-  const initialErrors: FieldError[] = Object.values(FIELD_INDICES).map(
-    (index) => ({
-      id: index,
-      message: "",
-    })
-  );
+  const initialErrors: FieldError[] = Object.values(FIELD_INDICES).map((index) => ({
+    id: index,
+    message: "",
+  }));
 
   const [error, setError] = useState<FieldError[]>(initialErrors);
 
