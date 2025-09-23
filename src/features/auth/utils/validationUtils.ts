@@ -127,3 +127,12 @@ export function validateDateOfBirth(dateOfBirth: Date): string[] {
 
   return errors;
 }
+
+/**
+ *
+ */
+export function validateTOSAgreement(agreedToTos: boolean): string[] {
+  return agreedToTos === true
+    ? []
+    : ["You need to accept the Terms of Service in order to create an account."];
+}

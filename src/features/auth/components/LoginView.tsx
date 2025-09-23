@@ -13,15 +13,14 @@ import LoginErrorMessage from "./LoginErrorMessage";
 
 import * as SecureStore from "expo-secure-store";
 import { useAuthStore } from "../store/useAuthStore";
+import { LoginCredentialsDto } from "../dtos/Auth";
 
 interface LoginViewProps {
-  email: string;
-  password: string;
+  loginDto: LoginCredentialsDto;
   emailAndServerErrorMessage: string;
   passwordErrorMessage: string;
   isLoading: boolean;
-  setEmail: (email: string) => void;
-  setPassword: (password: string) => void;
+  onInputChange: (field: keyof LoginCredentialsDto, email: string) => void;
   onForgotPasswordPress: () => void;
   onLoginPress: () => void;
   onSignUpPress: () => void;
@@ -40,13 +39,11 @@ const killKey = async () => {
 };
 
 export default function LoginView({
-  email,
-  password,
+  loginDto,
   emailAndServerErrorMessage,
   passwordErrorMessage,
   isLoading,
-  setEmail,
-  setPassword,
+  onInputChange,
   onForgotPasswordPress,
   onLoginPress,
   onSignUpPress,
@@ -81,8 +78,8 @@ export default function LoginView({
             <View style={styles.inputSpacer}>
               <AnimatedInput
                 placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
+                value={loginDto.email}
+                onChangeText={(text: string) => onInputChange("email", text)}
                 keyboardType="email-address"
                 autoCapitalize="words"
                 autocorrect={false}
@@ -92,8 +89,8 @@ export default function LoginView({
             <View style={styles.inputSpacer}>
               <AnimatedInput
                 placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
+                value={loginDto.password}
+                onChangeText={(text: string) => onInputChange("password", text)}
                 secureTextEntry={true}
                 autoCapitalize="none"
                 autocorrect={false}

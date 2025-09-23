@@ -2,6 +2,7 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { HttpStatusCode } from "axios";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
+import { BASE_URL } from "@common/constants/apiEndpoints";
 
 /**
  * --- API Client Configuration ---
@@ -9,10 +10,6 @@ import { useAuthStore } from "@features/auth/store/useAuthStore";
  * All API requests should be made using this client to ensure consistent headers
  * and centralized handling of authentication and errors.
  */
-
-// Safely retrieve the base URL from the app's configuration
-//const BASE_URL = Constants.expoConfig?.extra?.EXPO_PUBLIC_BASE_URL;
-const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
 
 if (!BASE_URL) {
   throw new Error("EXPO_PUBLIC_BASE_URL is not set in app.config.ts");

@@ -1,79 +1,27 @@
-import { router } from "expo-router";
-import { useState } from "react";
-import validateEmail from "../utils/validationUtils";
 import LoginView from "../components/LoginView";
-import validateSimpleLoginPassword from "../utils/validateSimpleLoginPassword";
-import { LoginCredentialsDto } from "@features/auth/dtos/Auth";
-import authService from "../services/authService";
-import { jwtDecode } from "jwt-decode";
-import { ROUTES } from "@common/constants/routes";
+import { useLogin } from "../hooks/useLogin";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [emailAndServerErrorMessage, setEmailAndServerErrorMessage] = useState("");
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleForgotPassword = () => {
-    console.log("Forgot password pressed");
-    router.push(ROUTES.FORGOT_PASSWORD);
-  };
-
-  const handleLogin = async () => {
-    // validate email field
-
-    //BUG: broke this in the latest refactor
-    const emailErrorMessage = validateEmail(email);
-    if (emailErrorMessage) {
-      setEmailAndServerErrorMessage(emailErrorMessage);
-    }
-    const isEmailValid = emailErrorMessage ? false : true;
-
-    // validate password field
-    const isPasswordValid = validateSimpleLoginPassword({
-      password,
-      setPasswordError: setPasswordErrorMessage,
-    });
-
-    if (isEmailValid && isPasswordValid) {
-      setIsLoading(true);
-
-      try {
-        const userLoginCredentials: LoginCredentialsDto = {
-          email: email,
-          password: password,
-        };
-
-        const res = await authService.login(userLoginCredentials);
-
-        console.log(jwtDecode(res));
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          setEmailAndServerErrorMessage(error.message);
-        } else setEmailAndServerErrorMessage("An unexpected error occurred.");
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
-
-  const handleSignUp = () => {
-    router.push(ROUTES.REGISTER);
-  };
-
+  const {
+    loginDto,
+    emailAndServerErrorMessage,
+    passwordErrorMessage,
+    isLoading,
+    handleInputChange,
+    handleLogin,
+    handleSignUp,
+    handleForgotPassword,
+  } = useLogin();
   return (
     <LoginView
-      email={email}
-      password={password}
+      loginDto={loginDto}
       emailAndServerErrorMessage={emailAndServerErrorMessage}
       passwordErrorMessage={passwordErrorMessage}
       isLoading={isLoading}
-      setEmail={setEmail}
-      setPassword={setPassword}
-      onForgotPasswordPress={handleForgotPassword}
+      onInputChange={handleInputChange}
       onLoginPress={handleLogin}
       onSignUpPress={handleSignUp}
+      onForgotPasswordPress={handleForgotPassword}
     />
   );
 }

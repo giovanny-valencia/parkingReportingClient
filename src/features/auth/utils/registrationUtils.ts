@@ -5,11 +5,14 @@ import {
   validatePassword,
   validateConfirmPassword,
   validateDateOfBirth,
+  validateTOSAgreement,
 } from "./validationUtils";
 import { ErrorIndex, createInitialErrors } from "./registrationErrorUtils";
 
 export default function validateRegistrationData(registration: RegistrationInputs) {
   let updatedErrors = createInitialErrors(); // creates a cleared no error array
+
+  console.log("args: ", registration);
 
   const firstNameErrorMessage = validateName(registration.firstName);
   if (firstNameErrorMessage) {
@@ -42,6 +45,11 @@ export default function validateRegistrationData(registration: RegistrationInput
   const dateOfBirthErrorMessage = validateDateOfBirth(registration.dateOfBirth);
   if (dateOfBirthErrorMessage) {
     updatedErrors[ErrorIndex.DATE_OF_BIRTH].message = dateOfBirthErrorMessage;
+  }
+
+  const agreedToTermsErrorMessage = validateTOSAgreement(registration.agreedToTerms);
+  if (agreedToTermsErrorMessage) {
+    updatedErrors[ErrorIndex.AGREED_TO_TOS].message = agreedToTermsErrorMessage;
   }
 
   return updatedErrors;

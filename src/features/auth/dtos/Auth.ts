@@ -36,6 +36,8 @@ export interface RegisterDto {
   lastName: string;
   email: string;
   password: string;
+  confirmPassword: string;
+  agreedToTerms: boolean;
   /** The user's date of birth as an ISO-formatted string (YYYY-MM-DD). */
   dateOfBirth: string;
 }

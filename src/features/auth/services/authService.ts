@@ -1,10 +1,13 @@
 import { HttpStatusCode, isAxiosError } from "axios";
 import apiClient from "common/api/apiClient";
-import { LoginCredentialsDto, RegistrationInputs } from "@features/auth/dtos/Auth";
+import { LoginCredentialsDto, RegisterDto, RegistrationInputs } from "@features/auth/dtos/Auth";
 import * as SecureStore from "expo-secure-store";
 import { useAuthStore } from "../store/useAuthStore";
+import { API_ENDPOINTS } from "@common/constants/apiEndpoints";
+import { BASE_URL } from "@common/constants/apiEndpoints";
 
-const loginEndPoint = "/api/v1/auth/login";
+const loginEndPoint = API_ENDPOINTS.auth.login;
+const registerEndPoint = API_ENDPOINTS.auth.register;
 
 /**
  * Handles user login by sending credentials to the backend API.
@@ -39,7 +42,7 @@ async function login(loginCredentials: LoginCredentialsDto): Promise<any> {
       }
     } else if (isAxiosError(error) && error.request) {
       // The request was made but no response was received
-      throw new Error("Error connecting to the internet. Please check your connection.");
+      throw new Error("Error connecting to internet. Please check your connection.");
     } else {
       // Something happened in setting up the request that triggered an Error
       throw new Error("An unknown error occurred. Try again later.");
@@ -47,7 +50,39 @@ async function login(loginCredentials: LoginCredentialsDto): Promise<any> {
   }
 }
 
-async function register() {}
+async function register(registration: RegisterDto): Promise<any> {
+  const { refreshAuth } = useAuthStore.getState();
+  console.log("here");
+
+  try {
+    console.log("hitting: ", BASE_URL, " -- ", registerEndPoint);
+    console.log("with?: ", registration);
+
+    const response = await apiClient.post(registerEndPoint, registration);
+    console.log("res: ", response);
+
+    const { token } = response.data;
+
+    await SecureStore.setItemAsync("userAuthToken", token);
+    refreshAuth();
+
+    return token;
+  } catch (error: unknown) {
+    if (isAxiosError(error) && error.request) {
+      const status = error.request.status;
+
+      if (status === HttpStatusCode.Conflict) {
+        throw new Error("Email already taken."); //TODO: not a fan of this error message
+      } else if (isAxiosError(error) && error.request) {
+        console.log("error and request ", error);
+
+        throw new Error("Error connecting to internet. Please check your connection.");
+      }
+    } else {
+      throw new Error("An unknown error occurred. Try again later.");
+    }
+  }
+}
 
 async function logout() {
   const { refreshAuth } = useAuthStore.getState();

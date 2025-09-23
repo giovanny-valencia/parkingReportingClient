@@ -3,7 +3,8 @@ import { StyleSheet } from "react-native";
 export const appStyles = StyleSheet.create({
   safeAreaContainer: {
     flex: 1,
-    backgroundColor: "#121212",
+    //backgroundColor: "#1E1E1E",
+    backgroundColor: "#111827",
   },
 
   contentContainer: {
@@ -28,7 +29,7 @@ export const appStyles = StyleSheet.create({
     borderRadius: 10,
     width: "100%",
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: 16,
   },
   submitButtonText: {
     color: "#121212", // Dark text on a light background for contrast

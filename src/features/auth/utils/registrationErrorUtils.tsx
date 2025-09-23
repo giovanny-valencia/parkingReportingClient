@@ -9,6 +9,7 @@ export const ErrorIndex = {
   PASSWORD: 3,
   CONFIRM_PASSWORD: 4,
   DATE_OF_BIRTH: 5,
+  AGREED_TO_TOS: 6,
 } as const; // 'as const' makes the values read-only and literal.
 
 /**
