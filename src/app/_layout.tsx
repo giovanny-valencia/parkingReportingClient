@@ -1,4 +1,4 @@
-import { useAuthStore } from "@features/auth/store/useAuthStore";
+import { useAuthStore } from "@features/auth/stores/useAuthStore";
 import { useEffect, useState } from "react";
 import { StatusBar } from "react-native";
 import { Stack } from "expo-router";

@@ -1,14 +1,17 @@
-import { useAuthStore } from "@features/auth/store/useAuthStore";
+import { useAuthStore } from "@features/auth/stores/useAuthStore";
 import { View, Text, TouchableOpacity } from "react-native";
 import { appStyles } from "@common/styles/appStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
+import useDashboard from "../hooks/useDashboard";
 
-export default function UserDashboardScreen() {
+export default function UserDashboardPage() {
   const { user } = useAuthStore();
+  const { isLoading } = useDashboard();
   return (
     <SafeAreaView style={appStyles.safeAreaContainer}>
       <View>
+        {/* junk */}
         <View style={{ backgroundColor: "red", alignItems: "center" }}>
           <Text>User Dashboard Screen</Text>
           <Text>
@@ -25,6 +28,7 @@ export default function UserDashboardScreen() {
             <Text style={{ fontWeight: "bold" }}>kill key</Text>
           </TouchableOpacity>
         </View>
+        {/* junk */}
       </View>
     </SafeAreaView>
   );

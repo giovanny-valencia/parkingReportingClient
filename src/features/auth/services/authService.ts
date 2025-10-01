@@ -2,7 +2,7 @@ import { HttpStatusCode, isAxiosError } from "axios";
 import apiClient from "common/api/apiClient";
 import { LoginCredentialsDto, RegisterDto, RegistrationInputs } from "@features/auth/dtos/Auth";
 import * as SecureStore from "expo-secure-store";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../stores/useAuthStore";
 import { API_ENDPOINTS } from "@common/constants/apiEndpoints";
 import { BASE_URL } from "@common/constants/apiEndpoints";
 
@@ -73,6 +73,8 @@ async function register(registration: RegisterDto): Promise<any> {
 
       if (status === HttpStatusCode.Conflict) {
         throw new Error("Email already taken."); //TODO: not a fan of this error message
+      } else if (status === HttpStatusCode.TooManyRequests) {
+        throw new Error("Too many requests. Try again in a few seconds.");
       } else if (isAxiosError(error) && error.request) {
         console.log("error and request ", error);
 

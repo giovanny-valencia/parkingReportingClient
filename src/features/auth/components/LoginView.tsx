@@ -12,7 +12,7 @@ import AnimatedInput from "common/components/AnimatedInput";
 import LoginErrorMessage from "./LoginErrorMessage";
 
 import * as SecureStore from "expo-secure-store";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../stores/useAuthStore";
 import { LoginCredentialsDto } from "../dtos/Auth";
 
 interface LoginViewProps {

@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { HttpStatusCode } from "axios";
-import { useAuthStore } from "@features/auth/store/useAuthStore";
+import { useAuthStore } from "@features/auth/stores/useAuthStore";
 import { BASE_URL } from "@common/constants/apiEndpoints";
 
 /**
