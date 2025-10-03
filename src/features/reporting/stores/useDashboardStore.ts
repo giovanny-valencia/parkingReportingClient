@@ -11,11 +11,11 @@ import { LocationDto, cityDto } from "@features/reporting/dtos/Location";
 interface LocationState {
   currentUserCoordinates: LocationDto | null;
   currentCityData: cityDto | null;
-  cachedCities: cityDto[] | null;
+  cachedCities: cityDto[] | null; // will be used for point-in-polygon checks
 }
 
 interface LocationActions {
-  setCurrentCity: (currentUserCoordinates: LocationDto) => void;
+  setCurrentCity: (currentUserCoordinates: LocationDto, currentCity: cityDto) => void;
   clearDeashBoardStore: () => void;
 }
 
@@ -23,8 +23,13 @@ export const useDashboardStore = create<LocationState & LocationActions>((set, g
   return {
     currentUserCoordinates: null,
     currentCityData: null,
-    cachedCities: null,
-    setCurrentCity: (currentUserCoordinates) => {},
+    cachedCities: null, // not being used yet
+    setCurrentCity: (currentUserCoordinates, currentCity) => {
+      set({
+        currentUserCoordinates: currentUserCoordinates,
+        currentCityData: currentCity,
+      });
+    },
     clearDeashBoardStore: () =>
       set({
         currentUserCoordinates: null,

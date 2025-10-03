@@ -23,7 +23,7 @@ export const API_ENDPOINTS = {
   },
 
   jurisdiction: {
-    get: JURISDICTION_BASE,
+    get: `${JURISDICTION_BASE}/isUserLocationSupported`,
   },
 
   reporting: {

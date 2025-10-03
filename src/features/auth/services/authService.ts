@@ -4,7 +4,6 @@ import { LoginCredentialsDto, RegisterDto, RegistrationInputs } from "@features/
 import * as SecureStore from "expo-secure-store";
 import { useAuthStore } from "../stores/useAuthStore";
 import { API_ENDPOINTS } from "@common/constants/apiEndpoints";
-import { BASE_URL } from "@common/constants/apiEndpoints";
 
 const loginEndPoint = API_ENDPOINTS.auth.login;
 const registerEndPoint = API_ENDPOINTS.auth.register;
@@ -55,7 +54,6 @@ async function register(registration: RegisterDto): Promise<any> {
   console.log("here");
 
   try {
-    console.log("hitting: ", BASE_URL, " -- ", registerEndPoint);
     console.log("with?: ", registration);
 
     const response = await apiClient.post(registerEndPoint, registration);

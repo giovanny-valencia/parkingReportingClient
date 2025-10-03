@@ -4,10 +4,11 @@ import { appStyles } from "@common/styles/appStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
 import useDashboard from "../hooks/useDashboard";
+import UserDashboard from "../components/compound/UserDashboard";
 
 export default function UserDashboardPage() {
   const { user } = useAuthStore();
-  const { isLoading } = useDashboard();
+  const { isLoading, currentCityData, getUserLocation, clearDeashBoardStore } = useDashboard();
   return (
     <SafeAreaView style={appStyles.safeAreaContainer}>
       <View>
@@ -17,7 +18,6 @@ export default function UserDashboardPage() {
           <Text>
             {user?.email}, {user?.role}, {user?.exp}{" "}
           </Text>
-
           <TouchableOpacity
             style={{ backgroundColor: "green" }}
             onPress={() => {
@@ -29,6 +29,8 @@ export default function UserDashboardPage() {
           </TouchableOpacity>
         </View>
         {/* junk */}
+
+        <UserDashboard currentLocation={currentCityData} refreshLocation={getUserLocation} />
       </View>
     </SafeAreaView>
   );

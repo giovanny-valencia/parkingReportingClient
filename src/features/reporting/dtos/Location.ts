@@ -6,5 +6,6 @@ export interface LocationDto {
 export interface cityDto {
   state: string;
   city: string;
-  boundaries: LocationDto[];
+  //TODO: add boundaries later so client can perform point-in-polygon checks
+  //boundaries: LocationDto[];
 }
