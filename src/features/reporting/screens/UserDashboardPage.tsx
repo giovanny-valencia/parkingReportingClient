@@ -4,11 +4,11 @@ import { appStyles } from "@common/styles/appStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
 import useDashboard from "../hooks/useDashboard";
-import UserDashboard from "../components/compound/UserDashboard";
+import UserDashboard from "../components/UserDashboard";
 
 export default function UserDashboardPage() {
   const { user } = useAuthStore();
-  const { isLoading, currentCityData, getUserLocation, clearDeashBoardStore } = useDashboard();
+  const { locationStatus } = useDashboard();
   return (
     <SafeAreaView style={appStyles.safeAreaContainer}>
       <View>
@@ -30,7 +30,7 @@ export default function UserDashboardPage() {
         </View>
         {/* junk */}
 
-        <UserDashboard currentLocation={currentCityData} refreshLocation={getUserLocation} />
+        <UserDashboard locationStatus={locationStatus} />
       </View>
     </SafeAreaView>
   );

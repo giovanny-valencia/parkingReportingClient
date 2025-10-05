@@ -15,22 +15,22 @@ interface LocationState {
 }
 
 interface LocationActions {
-  setCurrentCity: (currentUserCoordinates: LocationDto, currentCity: cityDto) => void;
-  clearDeashBoardStore: () => void;
+  setDashCurrentCity: (currentUserCoordinates: LocationDto, currentCity: cityDto) => void;
+  clearDashLocation: () => void;
 }
 
-export const useDashboardStore = create<LocationState & LocationActions>((set, get) => {
+export const useDashLocationStore = create<LocationState & LocationActions>((set, get) => {
   return {
     currentUserCoordinates: null,
     currentCityData: null,
     cachedCities: null, // not being used yet
-    setCurrentCity: (currentUserCoordinates, currentCity) => {
+    setDashCurrentCity: (currentUserCoordinates, currentCity) => {
       set({
         currentUserCoordinates: currentUserCoordinates,
         currentCityData: currentCity,
       });
     },
-    clearDeashBoardStore: () =>
+    clearDashLocation: () =>
       set({
         currentUserCoordinates: null,
         currentCityData: null,

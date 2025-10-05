@@ -1,17 +1,18 @@
 import { View, Text, StyleSheet } from "react-native";
-import CurrentLocation from "../common/CurrentLocation";
+import CurrentLocation from "../CurrentLocation";
 import { cityDto } from "@features/reporting/dtos/Location";
+import ReportEntryCard from "../ReportEntryCard";
+import { LocationStatusProps } from "@features/reporting/dtos/Location";
 
 interface Props {
-  currentLocation: cityDto | null;
-  refreshLocation: () => void;
+  locationStatus: LocationStatusProps;
 }
 
-export default function UserDashboard({ currentLocation, refreshLocation }: Props) {
+export default function UserDashboard({ locationStatus }: Props) {
   return (
     <View>
       <View>
-        <CurrentLocation currentLocation={currentLocation} refreshLocation={refreshLocation} />
+        <CurrentLocation locationStatus={locationStatus} />
       </View>
 
       <View style={styles.ParkingReport}>

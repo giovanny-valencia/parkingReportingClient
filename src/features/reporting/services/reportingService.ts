@@ -3,6 +3,7 @@ import { LocationDto } from "../dtos/Location";
 import apiClient from "@common/api/apiClient";
 import { HttpStatusCode, isAxiosError } from "axios";
 import { cityDto } from "../dtos/Location";
+import { TooManyRequestsError } from "@common/exceptions/custom/TooManyRequestsError";
 
 const supportedJurisdictionEndpoint = API_ENDPOINTS.jurisdiction.get;
 
@@ -29,7 +30,7 @@ export const fetchJurisdiction = async (userLocation: LocationDto) => {
     if (isAxiosError(error) && error.response) {
       if (error.status === HttpStatusCode.TooManyRequests) {
         console.log("too many requests");
-        return;
+        throw new TooManyRequestsError();
       }
       console.log("error: ", error);
       //TODO: handle this

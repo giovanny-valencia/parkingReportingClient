@@ -1,3 +1,10 @@
+export interface LocationStatusProps {
+  isLoading: boolean;
+  cooldownTimer: number;
+  currentCityData: cityDto | null;
+  clearDashLocation: () => void;
+  getUserLocation: () => void;
+}
 export interface LocationDto {
   longitude: number;
   latitude: number;
