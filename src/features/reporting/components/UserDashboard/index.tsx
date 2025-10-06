@@ -1,8 +1,9 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View } from "react-native";
 import CurrentLocation from "../CurrentLocation";
-import { cityDto } from "@features/reporting/dtos/Location";
 import ReportEntryCard from "../ReportEntryCard";
-import { LocationStatusProps } from "@features/reporting/dtos/Location";
+import { LocationStatusProps } from "@features/reporting/dtos";
+import { ServiceAction, SupportAction } from "@features/reporting/constants";
+import SupportEntry from "../SupportEntryCard";
 
 interface Props {
   locationStatus: LocationStatusProps;
@@ -15,23 +16,31 @@ export default function UserDashboard({ locationStatus }: Props) {
         <CurrentLocation locationStatus={locationStatus} />
       </View>
 
-      <View style={styles.ParkingReport}>
-        <Text>Create Illegal Parking Report</Text>
+      <View>
+        <ReportEntryCard
+          title="Create Vehicle Report"
+          isServiceSupported={true}
+          handleRoute={() => {
+            console.log("click CVR!");
+          }}
+        />
       </View>
 
-      <View style={styles.InfraReport}>
-        <Text>Create City Infrastructure Report</Text>
+      <View>
+        <ReportEntryCard
+          title="Create City Infrastructure Report"
+          isServiceSupported={false}
+          handleRoute={() => {
+            console.log("Clicked infra report!");
+          }}
+        />
+      </View>
+
+      <View>
+        <SupportEntry supportType={SupportAction.GuideAndFAQ} />
+
+        <SupportEntry supportType={SupportAction.Account} />
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {},
-
-  ParkingReport: {
-    backgroundColor: "blue",
-  },
-
-  InfraReport: { backgroundColor: "red" },
-});

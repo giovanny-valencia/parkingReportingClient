@@ -1,3 +1,5 @@
+// -- Location type dtos
+
 export interface LocationStatusProps {
   isLoading: boolean;
   cooldownTimer: number;

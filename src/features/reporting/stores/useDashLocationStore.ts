@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import * as Location from "expo-location";
-import { LocationDto, cityDto } from "@features/reporting/dtos/Location";
+import { LocationDto, cityDto } from "@features/reporting/dtos";
 
 /**
  * Interface representing useable location data

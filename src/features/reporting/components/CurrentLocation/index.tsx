@@ -1,4 +1,4 @@
-import { LocationStatusProps } from "@features/reporting/dtos/Location";
+import { LocationStatusProps } from "@features/reporting/dtos";
 import { View, StyleSheet } from "react-native";
 import LocationDisplay from "./LocationDisplay";
 import RefreshButton from "./RefreshButton";

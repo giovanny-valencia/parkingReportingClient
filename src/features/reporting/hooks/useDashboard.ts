@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useDashLocationStore } from "../stores/useDashLocationStore";
 import { fetchJurisdiction } from "@features/reporting/services/reportingService";
 import { useNavigation } from "@react-navigation/native";
-import { cityDto, LocationDto } from "../dtos/Location";
+import { cityDto, LocationDto } from "../dtos";
 import { TooManyRequestsError } from "@common/exceptions/custom/TooManyRequestsError";
 
 export default function useDashboard() {

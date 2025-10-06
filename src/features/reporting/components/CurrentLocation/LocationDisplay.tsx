@@ -9,7 +9,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { Image, ImageSource } from "expo-image";
-import { cityDto } from "@features/reporting/dtos/Location";
+import { cityDto } from "@features/reporting/dtos";
 
 const userLocationImage = require("@assets/images/buttonImages/UserLocationPin.png");
 

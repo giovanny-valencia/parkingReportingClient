@@ -1,8 +1,8 @@
 import { API_ENDPOINTS } from "@common/constants/apiEndpoints";
-import { LocationDto } from "../dtos/Location";
+import { LocationDto } from "../dtos";
 import apiClient from "@common/api/apiClient";
 import { HttpStatusCode, isAxiosError } from "axios";
-import { cityDto } from "../dtos/Location";
+import { cityDto } from "../dtos";
 import { TooManyRequestsError } from "@common/exceptions/custom/TooManyRequestsError";
 
 const supportedJurisdictionEndpoint = API_ENDPOINTS.jurisdiction.get;
