@@ -1,4 +1,4 @@
-package com.anonymous.parking_client
+package com.anonymous.parkingClient.dev
 
 import android.app.Application
 import android.content.res.Configuration

@@ -9,29 +9,5 @@ import UserDashboard from "../components/UserDashboard";
 export default function UserDashboardPage() {
   const { user } = useAuthStore();
   const { locationStatus } = useDashboard();
-  return (
-    <SafeAreaView style={appStyles.safeAreaContainer}>
-      <View>
-        {/* junk */}
-        <View style={{ backgroundColor: "red", alignItems: "center" }}>
-          <Text>User Dashboard Screen</Text>
-          <Text>
-            {user?.email}, {user?.role}, {user?.exp}{" "}
-          </Text>
-          <TouchableOpacity
-            style={{ backgroundColor: "green" }}
-            onPress={() => {
-              SecureStore.deleteItemAsync("userAuthToken");
-              useAuthStore.getState().refreshAuth();
-            }}
-          >
-            <Text style={{ fontWeight: "bold" }}>kill key</Text>
-          </TouchableOpacity>
-        </View>
-        {/* junk */}
-
-        <UserDashboard locationStatus={locationStatus} />
-      </View>
-    </SafeAreaView>
-  );
+  return <UserDashboard locationStatus={locationStatus} />;
 }
