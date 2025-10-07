@@ -4,7 +4,7 @@
 export enum SupportAction {
   GuideAndFAQ = "GuideAndFAQ",
   Account = "Account",
-  ContactUs = "ContactUs",
+  //ContactUs = "ContactUs",
 }
 
 /**

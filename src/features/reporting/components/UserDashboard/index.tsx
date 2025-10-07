@@ -14,29 +14,17 @@ interface Props {
 export default function UserDashboard({ locationStatus }: Props) {
   return (
     <SafeAreaView style={[appStyles.safeAreaContainer, styles.container]}>
+      {/* Current Location */}
+      <CurrentLocation locationStatus={locationStatus} />
+
+      {/* Reports Group */}
       <View style={styles.mainContent}>
-        {/* Current Location */}
-        <CurrentLocation locationStatus={locationStatus} />
-
-        {/* Reports Group */}
         <View style={styles.reportContainer}>
-          <Text style={styles.supportHeader}>Report Services</Text>
+          <Text style={styles.supportHeader}>CREATE A NEW REPORT</Text>
 
-          <ReportEntryCard
-            title="Create Vehicle Report"
-            isServiceSupported={true}
-            handleRoute={() => {
-              console.log("click CVR!");
-            }}
-          />
+          <ReportEntryCard type={ServiceAction.VehicleReport} isServiceSupported={true} />
 
-          <ReportEntryCard
-            title="Create City Infrastructure Report"
-            isServiceSupported={false}
-            handleRoute={() => {
-              console.log("Clicked infra report!");
-            }}
-          />
+          <ReportEntryCard type={ServiceAction.InfrastructureReport} isServiceSupported={false} />
         </View>
       </View>
 
@@ -55,8 +43,6 @@ export default function UserDashboard({ locationStatus }: Props) {
 }
 
 const styles = StyleSheet.create({
-  // This wrapper ensures all your top cards stay grouped together
-
   container: {
     justifyContent: "space-between",
     paddingHorizontal: 20,

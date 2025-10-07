@@ -32,7 +32,7 @@ export default function LocationDisplay({ currentCityData, isLoading }: Props) {
 
         {isLoading ? (
           <View style={styles.loadingStateRow}>
-            <ActivityIndicator size="small" color={styles.locationText.color} />
+            {/* <ActivityIndicator size="small" color={styles.locationText.color} /> */}
             <Text style={[styles.locationText, styles.loadingText]}>Loading...</Text>
           </View>
         ) : (

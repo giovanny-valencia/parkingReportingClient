@@ -1,5 +1,5 @@
 import { SupportAction } from "@features/reporting/constants";
-import { User, BookOpen, MessageCircle, ChevronRight } from "lucide-react-native";
+import { User, BookOpen } from "lucide-react-native";
 
 // Maps enum value to a user-friendly label and description
 export const getSupportDetails = (type: SupportAction) => {
@@ -22,15 +22,6 @@ export const getSupportDetails = (type: SupportAction) => {
           console.log("Guides and FAQ route");
         },
       };
-    // case SupportAction.ContactUs:
-    //   return {
-    //     label: "Contact Support Team",
-    //     description: "Get dedicated help from our staff",
-    //     Icon: MessageCircle,
-    //     handleRoute: () => {
-    //       console.log("Contact Support route");
-    //     },
-    //   };
     default:
       return {
         label: "Support Action",

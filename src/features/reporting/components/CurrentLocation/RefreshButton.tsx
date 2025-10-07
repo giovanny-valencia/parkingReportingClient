@@ -1,16 +1,8 @@
 import React from "react";
-import {
-  TouchableOpacity,
-  View,
-  Text,
-  ImageStyle,
-  ViewStyle,
-  TextStyle,
-  StyleSheet,
-} from "react-native";
+import { TouchableOpacity, View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { Image, ImageSource } from "expo-image";
-
-const refreshLocationImage = require("@assets/images/buttonImages/myLocationVector.png");
+import { Navigation } from "lucide-react-native";
+import { opacity } from "react-native-reanimated/lib/typescript/Colors";
 
 interface Props {
   cooldownTimer: number;
@@ -20,23 +12,23 @@ interface Props {
 
 export default function RefreshButton({ cooldownTimer, isLoading, getUserLocation }: Props) {
   const isOnCooldown = cooldownTimer > 0;
+  const isDisabled = isOnCooldown || isLoading;
+  const iconColor = !isDisabled || isLoading ? Colors.activeIcon : Colors.disabledIcon;
+  const buttonOpacity = isDisabled ? 0.6 : 1;
+
   return (
     <TouchableOpacity
       onPress={getUserLocation}
-      style={[
-        styles.refreshButtonBase,
-        isOnCooldown || isLoading ? styles.refreshButtonDisabled : styles.refreshButtonActive,
-      ]}
+      style={[styles.refreshButtonBase, styles.refreshButtonActive, { opacity: buttonOpacity }]}
       disabled={isOnCooldown || isLoading}
     >
-      <Image
-        source={refreshLocationImage}
-        style={[
-          styles.refreshLocationImage,
-          isOnCooldown ? styles.refreshIconDisabled : styles.refreshIconActive,
-        ]}
-        contentFit="contain"
-      />
+      {isLoading ? (
+        // Show Activity Indicator when loading
+        <ActivityIndicator color={Colors.activeIcon} size="large" />
+      ) : !isOnCooldown ? (
+        /* Show Navigation Icon */
+        <Navigation color={iconColor} size={28} />
+      ) : null}
 
       {isOnCooldown && (
         <View style={styles.cooldownOverlay}>
@@ -47,6 +39,15 @@ export default function RefreshButton({ cooldownTimer, isLoading, getUserLocatio
   );
 }
 
+// Define the colors for clarity and easy modification
+const Colors = {
+  activeBackground: "#1F2937", // Near-black for a premium, modern feel
+  activeIcon: "#FFFFFF", // Pure White for max contrast on black
+  shadow: "rgba(0, 0, 0, 0.4)", // Black shadow for a natural float
+  disabledIcon: "#9CA3AF", // Muted icon color
+  cooldownOverlay: "rgba(0, 0, 0, 0.7)",
+  cooldownText: "#FFFFFF",
+};
 const styles = StyleSheet.create({
   // --- Refresh Button Styles ---
   refreshButtonBase: {
@@ -55,35 +56,22 @@ const styles = StyleSheet.create({
     position: "relative",
     justifyContent: "center",
     alignItems: "center",
-    height: 52, // Slightly smaller touch target but still generous
-    width: 52,
+    height: 60, // Slightly smaller touch target but still generous
+    width: 60,
     overflow: "hidden",
   },
   refreshButtonActive: {
     // Vibrant background color for the active state (FAB look)
-    backgroundColor: "#06B6D4", // Modern Cyan/Teal
-    // Additional elevation to make it pop when active
-    shadowColor: "#06B6D4",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 8,
+    backgroundColor: Colors.activeBackground, // Additional elevation to make it pop when active
+    shadowColor: Colors.shadow, // <--- Corrected Shadow Color to match black button    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 6 }, // Deeper float
+    shadowOpacity: 0.6, // Darker shadow for more impact
+    shadowRadius: 12, // Wider blur
+    elevation: 10,
   },
-  refreshButtonDisabled: {
-    // Flat, neutral background when disabled
-    backgroundColor: "#E5E7EB", // Light Gray
-  },
-
-  refreshLocationImage: {
-    width: 32, // Slightly smaller icon size for a cleaner look
-    height: 32,
-  },
-  refreshIconActive: {
-    tintColor: "#FFFFFF", // White icon for high contrast on the teal background
-  },
-  refreshIconDisabled: {
-    tintColor: "#9CA3AF", // Soft gray icon when disabled
-  },
+  // refreshButtonDisabled: {
+  //   backgroundColor: "Red",
+  // },
 
   // --- Cooldown Overlay Styles (Kept largely the same for functionality) ---
   cooldownOverlay: {
@@ -93,14 +81,14 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     borderRadius: 50,
-    backgroundColor: "rgba(0, 0, 0, 0.7)", // Slightly darker for better number visibility
+    backgroundColor: Colors.cooldownOverlay,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 10,
   },
   cooldownText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "800",
+    color: Colors.cooldownText,
+    fontSize: 20,
+    fontWeight: "bold",
   },
 });
