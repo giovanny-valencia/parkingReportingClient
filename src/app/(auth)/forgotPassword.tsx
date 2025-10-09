@@ -1,3 +1,3 @@
-import ForgotPasswordPage from "@features/auth/screens/ForgotPasswordPage";
+import ForgotPasswordContainer from "@features/auth/components/ForgotPassword";
 
-export default ForgotPasswordPage;
+export default ForgotPasswordContainer;

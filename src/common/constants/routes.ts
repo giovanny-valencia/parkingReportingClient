@@ -10,4 +10,5 @@ export const ROUTES = {
    * user pages
    */
   USER_DASHBOARD: "/reporting/userDashboard",
-};
+  USER_VEHICLE_REPORT: "/reporting/vehicleReport",
+} as const;

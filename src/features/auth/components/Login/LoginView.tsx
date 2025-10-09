@@ -9,11 +9,11 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { appStyles } from "@common/styles/appStyles";
 import AnimatedInput from "common/components/AnimatedInput";
-import LoginErrorMessage from "./LoginErrorMessage";
+import LoginErrorMessage from "../LoginErrorMessage";
 
 import * as SecureStore from "expo-secure-store";
-import { useAuthStore } from "../stores/useAuthStore";
-import { LoginCredentialsDto } from "../dtos/Auth";
+import { useAuthStore } from "../../stores/useAuthStore";
+import { LoginCredentialsDto } from "../../dtos/Auth";
 
 interface LoginViewProps {
   loginDto: LoginCredentialsDto;

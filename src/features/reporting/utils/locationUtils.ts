@@ -8,6 +8,7 @@ import { LocationPermissionDeniedError } from "@common/exceptions/custom/Locatio
  * Requests location access permission to user, displays alert if rejected again
  *
  * @param message relevant message explaining why location permissions are needed
+ * @throws LocationPermissionDeniedError if the user rejects permission
  */
 const requestPermission = async (message: string) => {
   const { status } = await Location.requestForegroundPermissionsAsync(); // first ask

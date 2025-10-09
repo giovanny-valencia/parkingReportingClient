@@ -19,7 +19,7 @@ export default function CurrentLocation({ locationStatus }: Props) {
         <RefreshButton
           cooldownTimer={locationStatus.cooldownTimer}
           isLoading={locationStatus.isLoading}
-          getUserLocation={locationStatus.getUserLocation}
+          getUserLocation={locationStatus.refreshLocation}
         />
       </View>
     </View>

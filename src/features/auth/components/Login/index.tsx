@@ -1,6 +1,7 @@
-import LoginView from "../components/LoginView";
-import { useLogin } from "../hooks/useLogin";
+import LoginView from "./LoginView";
+import { useLogin } from "@features/auth/hooks/useLogin";
 
+//TODO: refactor out these screens, removing redundant proxy
 export default function LoginPage() {
   const {
     loginDto,

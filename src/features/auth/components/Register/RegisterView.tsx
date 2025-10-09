@@ -13,10 +13,10 @@ import DateField from "@common/components/DateField";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { router } from "expo-router";
 import { ROUTES } from "@common/constants/routes";
-import { ErrorIndex, ErrorMessage } from "../utils/registrationErrorUtils";
+import { ErrorIndex, ErrorMessage } from "../../utils/registrationErrorUtils";
 import { Checkbox } from "react-native-paper";
 import { useEffect, useRef } from "react";
-import { RegistrationInputs } from "../dtos/Auth";
+import { RegistrationInputs } from "../../dtos/Auth";
 
 interface RegisterProps {
   registrationForm: RegistrationInputs;

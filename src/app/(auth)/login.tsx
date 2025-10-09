@@ -1,3 +1,3 @@
-import LoginPage from "@features/auth/screens/LoginPage";
+import LoginContainer from "features/auth/components/Login";
 
-export default LoginPage;
+export default LoginContainer;

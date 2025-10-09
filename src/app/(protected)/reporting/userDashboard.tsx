@@ -1,3 +1,3 @@
-import UserDashboardScreen from "@features/reporting/screens/UserDashboardPage";
+import UserDashboardContainer from "@features/reporting/components/UserDashboard";
 
-export default UserDashboardScreen;
+export default UserDashboardContainer;

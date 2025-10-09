@@ -1,7 +1,7 @@
-import RegisterView from "../components/RegisterView";
-import { useRegistration } from "../hooks/useRegistration";
+import { useRegistration } from "@features/auth/hooks/useRegistration";
+import RegisterView from "./RegisterView";
 
-export default function RegisterPage() {
+export default function Register() {
   const { registrationForm, errors, isLoading, handleInputChange, handleRegister } =
     useRegistration();
 

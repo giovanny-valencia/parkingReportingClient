@@ -5,7 +5,7 @@ export interface LocationStatusProps {
   cooldownTimer: number;
   currentCityData: cityDto | null;
   clearDashLocation: () => void;
-  getUserLocation: () => void;
+  refreshLocation: () => void;
 }
 export interface LocationDto {
   longitude: number;

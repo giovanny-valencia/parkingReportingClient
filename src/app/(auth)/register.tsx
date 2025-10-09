@@ -1,3 +1,3 @@
-import RegisterPage from "@features/auth/screens/RegisterPage";
+import RegisterContainer from "@features/auth/components/Register";
 
-export default RegisterPage;
+export default RegisterContainer;

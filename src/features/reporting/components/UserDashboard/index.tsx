@@ -6,12 +6,12 @@ import { ServiceAction, SupportAction } from "@features/reporting/constants";
 import SupportEntry from "../SupportEntryCard";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { appStyles } from "@common/styles/appStyles";
+import useDashboard from "@features/reporting/hooks/useDashboard";
 
-interface Props {
-  locationStatus: LocationStatusProps;
-}
 //TODO: not the prettiest of UIs
-export default function UserDashboard({ locationStatus }: Props) {
+export default function UserDashboard() {
+  const { locationStatus } = useDashboard();
+
   return (
     <SafeAreaView style={[appStyles.safeAreaContainer, styles.container]}>
       {/* Current Location */}
