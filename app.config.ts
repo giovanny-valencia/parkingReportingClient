@@ -1,7 +1,8 @@
 import { ConfigContext, ExpoConfig } from "@expo/config";
 
-const IS_DEV = process.env.APP_VARIANT === "development";
-const IS_PREVIEW = process.env.APP_VARIANT === "preview";
+const environment = process.env.APP_VARIANT || "development";
+const IS_DEV = environment === "development";
+const IS_PREVIEW = environment === "preview";
 
 const getUniqueIdentifier = () => {
   if (IS_DEV) {
@@ -31,6 +32,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   // *** VERIFICATION LOG ***
   console.log("✅ app.config.ts is running. Current App Name:", getAppName());
   console.log("Current Bundle ID:", getUniqueIdentifier());
+  console.log("*** environment: ", environment, " ***");
+
   // ************************
 
   return {
