@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import * as Location from "expo-location";
 import { LocationDto, cityDto } from "@features/reporting/dtos";
 
 /**
@@ -14,12 +13,15 @@ interface LocationState {
   cachedCities: cityDto[] | null; // will be used for point-in-polygon checks
 }
 
+/**
+ * Interface of
+ */
 interface LocationActions {
   setDashCurrentCity: (currentUserCoordinates: LocationDto, currentCity: cityDto) => void;
   clearDashLocation: () => void;
 }
 
-export const useDashLocationStore = create<LocationState & LocationActions>((set, get) => {
+export const useDashLocationStore = create<LocationState & LocationActions>((set) => {
   return {
     currentUserCoordinates: null,
     currentCityData: null,

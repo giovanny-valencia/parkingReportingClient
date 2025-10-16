@@ -60,13 +60,17 @@ apiClient.interceptors.response.use(
   (response) => {
     return response;
   },
+  // Handle errors globally
   async (error) => {
-    // Handle errors globally
-    if (error.response && error.response.status === HttpStatusCode.Unauthorized) {
-      const { refreshAuth } = useAuthStore.getState();
+    if (error.response) {
+      const { refreshAuth, checkIfSessionExpired } = useAuthStore.getState();
 
-      await SecureStore.deleteItemAsync("userAuthToken");
-      refreshAuth();
+      if (error.response.status === HttpStatusCode.Unauthorized) {
+        await SecureStore.deleteItemAsync("userAuthToken");
+        refreshAuth();
+      } else if (error.response.status === HttpStatusCode.Forbidden) {
+        await checkIfSessionExpired();
+      }
     }
     return Promise.reject(error);
   }

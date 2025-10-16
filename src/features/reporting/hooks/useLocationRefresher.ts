@@ -38,8 +38,13 @@ export const useLocationRefresher = () => {
 
   // -- Public
 
+  /**
+   * Obtain the users updated location coordinates.
+   */
   const refreshLocation = async () => {
     setIsLoading(true);
+
+    //TODO: refactor message out
     const message = "Location access while using this application is required to continue.";
     const userLocation: LocationDto = await getLocationWithPermission(message);
 
@@ -59,6 +64,8 @@ export const useLocationRefresher = () => {
         setCooldownTimer(10);
       } else {
         // Handle all other errors (connection, unknown server errors, etc.)
+        console.log("** suspected expired auth? **");
+
         console.error("Jurisdiction fetch failed:", error);
       }
     }

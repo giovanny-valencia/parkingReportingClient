@@ -1,6 +1,10 @@
 import { useEffect } from "react";
 import { useLocationRefresher } from "./useLocationRefresher";
 
+/**
+ * Store shared by Dashboard and Report's on mount -- if on Report mount, user is no longer in a supported region, clear location.
+ * @returns locationStatus coupled data
+ */
 export default function useDashboard() {
   const { isLoading, currentCityData, cooldownTimer, refreshLocation, clearDashLocation } =
     useLocationRefresher();
