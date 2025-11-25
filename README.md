@@ -1,4 +1,4 @@
-# Illegal Parking Reporter (Mobile Client)
+# Parking Violation Reporter (Mobile Client)
 
 **React Native (Expo)** + **TypeScript** mobile app for reporting illegal parking with **geolocation**, **photos**, and **city boundary validation**.
 
